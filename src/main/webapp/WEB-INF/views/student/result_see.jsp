@@ -25,7 +25,8 @@
                         <p class="txt-blar">모든 문제풀기를 완료하였습니다.</p>
                         <p class="txt-date">2019-10-07 11:08</p>
                         <div class="graph-wrap">
-                            <div class="graph"><canvas id="percentCorrect" height="235"></canvas></div>
+                            <div class="graph">
+                                <canvas id="percentCorrect" height="235"></canvas></div>
                             <span class="percent">{{items}}/{{total}}</span>
                         </div>
                         <button class="btn-blar" @click="close()">나의 평가 목록으로</button>
@@ -37,6 +38,9 @@
     </div>
 </div>
 <script>
+    import Chart from '${ASSETS}/script/chart/Chart.js'
+    
+    Vue.use(Chart)
     let router = new VueRouter({
         mode: 'history',
         routes: []
@@ -54,6 +58,48 @@
             items: 0,
             total: 0,
             isReEval: false,
+            planetChartData : {
+                type: 'doughnut',
+                plugins: {
+                    beforeDraw: function (chart) {
+                        var meta = chart.getDatasetMeta(0).data[1]._model
+                        meta.outerRadius = 110
+                    },
+                },
+                data: {
+                    labels: ['오답', '정답'],
+                    datasets: [{
+                        data: [50, 50],
+                        borderWidth: 0,
+                        backgroundColor: ["#e3e3e3", "#fcae40"],
+                        hoverBackgroundColor: ["#e3e3e3", "#fca03e"]
+                    }]
+                },
+                options: {
+                    layout: {
+                        padding: 20
+                    },
+                    legend: false,
+                    tooltips: false,
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutoutPercentage: 57,
+                    rotation: Math.PI + 0.3,
+                    plugins: {
+                        datalabels: {
+                            color: ['transparent', "transparent"],
+                            font: {
+                                weight: 'bold',
+                                size: 20,
+                                family: 'Noto Sans'
+                            },
+                            formatter: function(value, context) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
         },
         mounted(){
             let parameters = this.$route.query
@@ -83,10 +129,6 @@
                     
                     var _this = this
     
-                    // const userData = JSON.parse(localStorage.getItem('userData'));
-                    // console.log("token::::")
-                    // console.log(userData)
-    
                     var loginId = '${sessionScope.loginId}';
                     
                     const headers = {
@@ -109,76 +151,31 @@
                         _this.total = response.data.result.mainData,
                         _this.isReEval = response.data.result.isReEval
                         // this.score = (this.items/this.total)*100
+    
+                        _this.planetChartData.data.datasets[0].data = [_this.total-_this.items,  _this.items]
+                        _this.createChart('planet-chart', _this.planetChartData);
+                        
                     },function (error){
                         console.log("axios error found")
                         console.log(error);
                     });
-            
-                    // this.planetChartData.data.datasets[0].data = [this.total-this.items,  this.items]
-                    // this.createChart('planet-chart', this.planetChartData);
+             
                 } catch (error) {
                     console.log("hheeell");
             
                     console.log(error);
                 }
             },
-            // createChart(chartId, chartData) {
-            //     const ctx = document.getElementById(chartId);
-            //     const myChart = new Chart(ctx, {
-            //         type: chartData.type,
-            //         data: chartData.data,
-            //         options: chartData.options,
-            //     });
-            // }
+            createChart(chartId, chartData) {
+                const ctx = document.getElementById(chartId);
+                const myChart = new Chart(ctx, {
+                    type: chartData.type,
+                    data: chartData.data,
+                    options: chartData.options,
+                });
+            }
         }
     });
 </script>
-<%--<script type="text/javascript">--%>
-<%--    var correctgraph = document.getElementById("percentCorrect");--%>
-<%--    var corrsetplugin = {--%>
-<%--        beforeDraw: function (chart) {--%>
-<%--            var meta = chart.getDatasetMeta(0).data[1]._model;--%>
-<%--            meta.outerRadius = 110;--%>
-<%--        },--%>
-<%--    };--%>
-<%--    var setPercentCorrect = new Chart(correctgraph, {--%>
-<%--        type: 'doughnut',--%>
-<%--        plugins: corrsetplugin,--%>
-<%--        data: {--%>
-<%--            labels: ['오답', '정답'],--%>
-<%--            datasets: [{--%>
-<%--                data: [44, 66],--%>
-<%--                borderWidth: 0,--%>
-<%--                backgroundColor: ["#e3e3e3", "#fcae40"],--%>
-<%--                hoverBackgroundColor: ["#e3e3e3", "#fca03e"]--%>
-<%--            }]--%>
-<%--        },--%>
-<%--        options: {--%>
-<%--            layout: {--%>
-<%--                padding: 20--%>
-<%--            },--%>
-<%--            legend: false,--%>
-<%--            tooltips: false,--%>
-<%--            responsive: true,--%>
-<%--            maintainAspectRatio: false,--%>
-<%--            cutoutPercentage: 57,--%>
-<%--            rotation: Math.PI + 0.3,--%>
-<%--            plugins: {--%>
-<%--                datalabels: {--%>
-<%--                    color: ['transparent', "transparent"],--%>
-<%--                    font: {--%>
-<%--                        weight: 'bold',--%>
-<%--                        size: 20,--%>
-<%--                        family: 'Noto Sans'--%>
-<%--                    },--%>
-<%--                    formatter: function(value, context) {--%>
-<%--                        return value + '%';--%>
-<%--                    }--%>
-<%--                }--%>
-<%--            }--%>
-<%--        }--%>
-<%--    });--%>
-<%--</script>--%>
-
 </body>
 </html>
