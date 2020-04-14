@@ -1,0 +1,12 @@
+package com.nsdevil.osce.app.estimation.dao;
+
+import java.util.HashMap;
+import java.util.List;
+
+public interface EstimationAppDao {
+	public String getEstimationState(HashMap<String, Object> param) throws Exception;
+	public HashMap<String, Object> getREsultEstimationInfo(HashMap<String, Object> param) throws Exception;
+	public int upsertResultEstimation(HashMap<String, Object> param) throws Exception;
+	public int upsertResultScore(HashMap<String, Object> param) throws Exception;
+	public List<HashMap<String, Object>> getEstimationResult(HashMap<String, Object> param) throws Exception;
+}

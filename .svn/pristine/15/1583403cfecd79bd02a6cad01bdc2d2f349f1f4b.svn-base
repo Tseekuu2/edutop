@@ -1,0 +1,835 @@
+package com.nsdevil.osce.web.result.service;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import com.nsdevil.osce.common.bean.ResultMap;
+import com.nsdevil.osce.common.exception.LogicException;
+import com.nsdevil.osce.common.util.FileUploader;
+import com.nsdevil.osce.common.util.PagingHelper;
+import com.nsdevil.osce.common.util.ZipUtil;
+import com.nsdevil.osce.web.result.dao.ResultDao;
+
+@Service
+public class ResultService {
+	
+	@Autowired
+	private ResultDao dao;
+	
+	@Value("#{config['result_file_path']}")
+	private String RESULT_FILE_PATH;
+	
+	public HashMap<String, Object> getResultList(HashMap<String, Object> param) throws Exception {
+		int totalCount = dao.getResultCnt(param);
+		PagingHelper pagingHelper = new PagingHelper();
+		List<HashMap<String, Object>> ContentsList = dao.getResultList(pagingHelper.getPagingParam(param, totalCount));
+		return pagingHelper.getPageList(ContentsList, (String)param.get("listFunctionName"), totalCount);
+	}
+	
+	public ResultMap resultDownloadCheck(HashMap<String, Object> param) throws Exception{
+		ResultMap resultMap = new ResultMap();
+		param.put("exam_seq", Integer.parseInt((String)param.get("exam_seq"))); 
+		HashMap<String, Object> examInfo = dao.getExamInfo(param);
+		if (examInfo != null && !examInfo.isEmpty()) {
+			String examStartDate = String.valueOf(examInfo.get("start_date")); //시험시작일
+			examStartDate = examStartDate.replaceAll("-","");
+			String examName = String.valueOf(examInfo.get("exam_name")); //시험명
+			String typeName = (String)param.get("type");
+			if (typeName.equals("evalution_form")) {
+				typeName = "평가지별";
+				createEvalutionFromTypeExcel(param);
+			} else if (typeName.equals("professor")) {
+				typeName = "평가자별";
+				createProfessorTypeExcel(param);
+			} else { 
+				typeName = "학생별";
+				createStudentTypeExcel(param);
+			}
+			String zipName = examStartDate+"_"+examName+"_"+typeName+".zip";
+		    resultMap.put("zipPath", RESULT_FILE_PATH + "/" + zipName);
+		    resultMap.put("zipName", zipName);
+		}
+		
+		return resultMap;
+	}
+	
+	public void createEvalutionFromTypeExcel(HashMap<String, Object> param) throws Exception {
+		
+		int examSeq = (Integer)param.get("exam_seq");
+		String dirName = "";
+		String dirPath = "";
+		String fileName = "";
+		
+		List<HashMap<String, Object>> resultEstimationInfoList = new ArrayList<HashMap<String, Object>>();
+		resultEstimationInfoList = dao.getResultEstimationInfoList(param);
+		//시험 결과
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		
+		//기본 폰트
+		HSSFFont defalutFont = workbook.createFont();
+		defalutFont.setFontName(HSSFFont.FONT_ARIAL);
+
+		//학생이름
+		HSSFCellStyle examStudentNameStyle = workbook.createCellStyle();
+		examStudentNameStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		examStudentNameStyle.setFont(defalutFont);
+
+		//No, 항목, 점수
+		HSSFCellStyle headerStyle = workbook.createCellStyle();
+		headerStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		headerStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		headerStyle.setBorderBottom(CellStyle.BORDER_THIN);
+		headerStyle.setBorderLeft(CellStyle.BORDER_THIN);
+		headerStyle.setBorderTop(CellStyle.BORDER_THIN);
+		headerStyle.setBorderRight(CellStyle.BORDER_THIN);
+		headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
+		headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		headerStyle.setFont(defalutFont);
+		
+		HSSFCellStyle contentsStyle = workbook.createCellStyle();
+		contentsStyle.setBorderBottom(CellStyle.BORDER_THIN);
+		contentsStyle.setBorderLeft(CellStyle.BORDER_THIN);
+		contentsStyle.setBorderTop(CellStyle.BORDER_THIN);
+		contentsStyle.setBorderRight(CellStyle.BORDER_THIN);
+		contentsStyle.setFont(defalutFont);
+		
+		for (HashMap<String, Object> evalutionInfo : resultEstimationInfoList) {
+			param.put("exam_seq", examSeq);
+			param.put("evalution_form_seq", evalutionInfo.get("evalution_form_seq"));
+			param.put("professor_seq", evalutionInfo.get("professor_seq"));
+			param.put("student_seq", evalutionInfo.get("student_seq"));
+			
+			//평가결과 정보
+			List<HashMap<String, Object>> resultEstimationList = new ArrayList<HashMap<String, Object>>();
+			resultEstimationList = dao.getResultEstimationList(param);
+			
+			HSSFSheet sheet = null;
+			String sheetName = "";
+			String evalutionFormName = "";
+			int row = 0;
+			
+			for (HashMap<String, Object> resultEstimation : resultEstimationList) {
+				int evalutionFormSeq = (Integer)resultEstimation.get("evalution_form_seq"); //평가지 시퀀스 
+				evalutionFormName = String.valueOf(resultEstimation.get("evalution_form_name")); //평가지명
+				String examName = String.valueOf(resultEstimation.get("exam_name")); //시험명
+				String studentNumber = String.valueOf(resultEstimation.get("student_number")); //학번
+				String studentName = String.valueOf(resultEstimation.get("student_name")); //학생이름
+				Double totalScore = Double.valueOf(String.valueOf(resultEstimation.get("total_score"))); //총점 
+				String examStartDate = String.valueOf(resultEstimation.get("start_date")); //시험시작일
+				int studentSeq = (Integer)resultEstimation.get("student_seq"); //학생시퀀스
+				DecimalFormat format = new DecimalFormat("###.##");
+
+				param.put("student_seq", studentSeq);
+				param.put("exam_seq", examSeq);
+				param.put("evalution_form_seq", evalutionFormSeq);
+				
+				
+				//지문, 점수
+				List<HashMap<String, Object>> viewAnswerList = new ArrayList<HashMap<String, Object>>();
+				viewAnswerList = dao.getViewAnswerList(param);
+				
+				//시트 생성 (헤더, 파일명)
+				if (!sheetName.equals(evalutionFormName)) {
+					
+					examStartDate = examStartDate.replaceAll("-","");
+					sheetName = evalutionFormName;
+					dirName = examStartDate+"_"+examName+"_"+"평가지별";
+					fileName = examStartDate+"_"+examName+".xls";
+					dirPath = RESULT_FILE_PATH + "/" + dirName + "/";
+					
+					sheet = workbook.createSheet(sheetName);
+					
+					int headerColCnt = 0;
+					
+					Row headerRow = sheet.createRow(row);
+					
+					Cell rowStudentNumber = headerRow.createCell(headerColCnt);//학번
+					rowStudentNumber.setCellValue("학번");
+					rowStudentNumber.setCellStyle(headerStyle);
+
+					Cell rowStudentName = headerRow.createCell(++headerColCnt);//학생이름
+					rowStudentName.setCellValue("이름");
+					rowStudentName.setCellStyle(headerStyle);
+					
+					for (int i=0; i<viewAnswerList.size(); i++) {
+						Cell viewAnswerCell = headerRow.createCell(++headerColCnt);//지문
+						viewAnswerCell.setCellValue("항목 " +String.valueOf(i+1));
+						viewAnswerCell.setCellStyle(headerStyle);
+						
+						if (i == viewAnswerList.size()-1) {
+							Cell totalCell = headerRow.createCell(viewAnswerList.size()+2);//지문
+							totalCell.setCellValue("총점");
+							totalCell.setCellStyle(headerStyle);
+						}
+					}
+				}
+				
+				row++;
+				
+				int contentsColCnt = 0;
+				double totalResultScore = 0.00;//총점
+				
+				Row contentRow = sheet.createRow(row);
+				
+				Cell studentNumberCell = contentRow.createCell(contentsColCnt++);//학번
+				studentNumberCell.setCellValue(studentNumber);
+				studentNumberCell.setCellStyle(contentsStyle);
+				
+				Cell studentNameCell = contentRow.createCell(contentsColCnt++);//이름
+				studentNameCell.setCellValue(studentName);
+				studentNameCell.setCellStyle(contentsStyle);
+				
+				for (HashMap<String, Object> viewAnswer : viewAnswerList) {
+					double score = Double.valueOf(String.valueOf(viewAnswer.get("score")));
+					totalResultScore += score;
+					
+					Cell scoreCell = contentRow.createCell(contentsColCnt);
+					scoreCell.setCellValue(String.valueOf(format.format(score)));
+					scoreCell.setCellStyle(contentsStyle);
+					contentsColCnt++;
+				}
+				
+				Cell scoreTotalCell = contentRow.createCell(contentsColCnt);
+				scoreTotalCell.setCellValue(String.valueOf(format.format(totalResultScore)+"/" +format.format(totalScore)));
+				scoreTotalCell.setCellStyle(contentsStyle);
+				
+				for (int i=0; i<4; i++) {
+					sheet.autoSizeColumn((short)i);
+					sheet.setColumnWidth(i, (sheet.getColumnWidth(i))+512 );
+				}
+			}
+		}
+		
+		if (!FileUploader.evalutionFileCreate(dirPath, fileName, workbook)) {
+			throw new LogicException("EXCEL_FILE_UPLOAD_FAIL", "003");
+		}
+		
+		ZipUtil.zip(dirPath, RESULT_FILE_PATH + "/" + dirName+".zip");
+	}
+	
+	public void createProfessorTypeExcel(HashMap<String, Object> param) throws Exception {
+		
+		int examSeq = (Integer)param.get("exam_seq");
+		String dirName = "";
+		String dirPath = "";
+		String fileName = "";
+		
+		List<HashMap<String, Object>> resultEstimationInfoList = new ArrayList<HashMap<String, Object>>();
+		resultEstimationInfoList = dao.getResultEstimationInfoList(param);
+		
+		//기본 폰트
+		HSSFFont defalutFont = null;
+
+		//학생이름
+		HSSFCellStyle examStudentNameStyle = null;
+
+		//No, 항목, 점수
+		HSSFCellStyle headerStyle = null;
+		
+		HSSFCellStyle contentsStyle = null;
+		
+		
+		//시험 결과
+		for (HashMap<String, Object> evalutionInfo : resultEstimationInfoList) {
+
+			param.put("exam_seq", examSeq);
+			param.put("evalution_form_seq", evalutionInfo.get("evalution_form_seq"));
+			param.put("professor_seq", evalutionInfo.get("professor_seq"));
+			param.put("student_seq", evalutionInfo.get("student_seq"));
+			
+			//평가결과 정보
+			List<HashMap<String, Object>> resultEstimationList = new ArrayList<HashMap<String, Object>>();
+			resultEstimationList = dao.getResultEstimationList(param);
+			
+			HSSFSheet sheet = null;
+			String sheetName = "";
+			String evalutionFormName = "";
+			int row = 0;
+			HSSFWorkbook workbook = null;
+			for (HashMap<String, Object> resultEstimation : resultEstimationList) {
+				
+				int evalutionFormSeq = (Integer)resultEstimation.get("evalution_form_seq"); //평가지 시퀀스 
+				evalutionFormName = String.valueOf(resultEstimation.get("evalution_form_name")); //평가지명
+				String examName = String.valueOf(resultEstimation.get("exam_name")); //시험명
+				String studentNumber = String.valueOf(resultEstimation.get("student_number")); //학번
+				String studentName = String.valueOf(resultEstimation.get("student_name")); //학생이름
+				String professorName = String.valueOf(resultEstimation.get("professor_name")); //교수이름
+				String responsibilitySubject = String.valueOf(resultEstimation.get("responsibility_subject")); //교수 담당
+				Double totalScore = Double.valueOf(String.valueOf(resultEstimation.get("total_score"))); //총점 
+				String examStartDate = String.valueOf(resultEstimation.get("start_date")); //시험시작일
+				int studentSeq = (Integer)resultEstimation.get("student_seq"); //학생시퀀스
+				DecimalFormat format = new DecimalFormat("###.##");
+
+				param.put("student_seq", studentSeq);
+				param.put("exam_seq", examSeq);
+				param.put("evalution_form_seq", evalutionFormSeq);
+				
+				
+				//지문, 점수
+				List<HashMap<String, Object>> viewAnswerList = new ArrayList<HashMap<String, Object>>();
+				viewAnswerList = dao.getViewAnswerList(param);
+				
+				//시트 생성 (헤더, 파일명)
+				if (!sheetName.equals(evalutionFormName)) {
+					workbook = new HSSFWorkbook();
+					//기본 폰트
+					defalutFont = workbook.createFont();
+					defalutFont.setFontName(HSSFFont.FONT_ARIAL);
+
+					//학생이름
+					examStudentNameStyle = workbook.createCellStyle();
+					examStudentNameStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+					examStudentNameStyle.setFont(defalutFont);
+
+					//No, 항목, 점수
+					headerStyle = workbook.createCellStyle();
+					headerStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+					headerStyle.setAlignment(CellStyle.ALIGN_CENTER);
+					headerStyle.setBorderBottom(CellStyle.BORDER_THIN);
+					headerStyle.setBorderLeft(CellStyle.BORDER_THIN);
+					headerStyle.setBorderTop(CellStyle.BORDER_THIN);
+					headerStyle.setBorderRight(CellStyle.BORDER_THIN);
+					headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
+					headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+					headerStyle.setFont(defalutFont);
+					
+					contentsStyle = workbook.createCellStyle();
+					contentsStyle.setBorderBottom(CellStyle.BORDER_THIN);
+					contentsStyle.setBorderLeft(CellStyle.BORDER_THIN);
+					contentsStyle.setBorderTop(CellStyle.BORDER_THIN);
+					contentsStyle.setBorderRight(CellStyle.BORDER_THIN);
+					contentsStyle.setFont(defalutFont);
+					
+					examStartDate = examStartDate.replaceAll("-","");
+					sheetName = evalutionFormName;
+					fileName = examStartDate+"_"+examName+"_"+evalutionFormName+"_"+professorName+"("+responsibilitySubject+")"+".xls";
+					dirName = examStartDate+"_"+examName+"_"+"평가자별";
+					dirPath = RESULT_FILE_PATH + "/" + dirName + "/";
+					sheet = workbook.createSheet(sheetName);
+
+					int headerColCnt = 0;
+					
+					Row headerRow = sheet.createRow(row);
+					
+					Cell rowStudentNumber = headerRow.createCell(headerColCnt);//학번
+					rowStudentNumber.setCellValue("학번");
+					rowStudentNumber.setCellStyle(headerStyle);
+					
+					Cell rowStudentName = headerRow.createCell(++headerColCnt);//학생이름
+					rowStudentName.setCellValue("이름");
+					rowStudentName.setCellStyle(headerStyle);
+					
+					for (int i=0; i<viewAnswerList.size(); i++) {
+						Cell viewAnswerCell = headerRow.createCell(++headerColCnt);//지문
+						viewAnswerCell.setCellValue("항목 " +String.valueOf(i+1));
+						viewAnswerCell.setCellStyle(headerStyle);
+						
+						if (i == viewAnswerList.size()-1) {
+							Cell totalCell = headerRow.createCell(viewAnswerList.size()+2);//지문
+							totalCell.setCellValue("총점");
+							totalCell.setCellStyle(headerStyle);
+						}
+					}
+				}
+				
+				row++;
+				
+				int contentsColCnt = 0;
+				double totalResultScore = 0.00;//총점
+				
+				Row contentRow = sheet.createRow(row);
+				
+				Cell studentNumberCell = contentRow.createCell(contentsColCnt++);//학번
+				studentNumberCell.setCellValue(studentNumber);
+				studentNumberCell.setCellStyle(contentsStyle);
+				
+				Cell studentNameCell = contentRow.createCell(contentsColCnt++);//이름
+				studentNameCell.setCellValue(studentName);
+				studentNameCell.setCellStyle(contentsStyle);
+				
+				for (HashMap<String, Object> viewAnswer : viewAnswerList) {
+					double score = Double.valueOf(String.valueOf(viewAnswer.get("score")));
+					totalResultScore += score;
+				
+					Cell scoreCell = contentRow.createCell(contentsColCnt);
+					scoreCell.setCellValue(String.valueOf(format.format(score)));
+					scoreCell.setCellStyle(contentsStyle);
+					contentsColCnt++;
+				}
+				
+				Cell scoreTotalCell = contentRow.createCell(contentsColCnt);
+				scoreTotalCell.setCellValue(String.valueOf(format.format(totalResultScore)+"/" +format.format(totalScore)));
+				scoreTotalCell.setCellStyle(contentsStyle);
+				
+				for (int i=0; i<4; i++) {
+					sheet.autoSizeColumn((short)i);
+					sheet.setColumnWidth(i, (sheet.getColumnWidth(i))+512 );
+				}
+				
+				if (!FileUploader.evalutionFileCreate(dirPath, fileName, workbook)) {
+					throw new LogicException("EXCEL_FILE_UPLOAD_FAIL", "003");
+				}
+			}
+		}
+		
+		ZipUtil.zip(dirPath, RESULT_FILE_PATH + "/" + dirName+".zip");
+	}
+	
+	public void createStudentTypeExcel(HashMap<String, Object> param) throws Exception{
+		int examSeq = (Integer)param.get("exam_seq");
+		String dirName = "";
+		String dirPath = "";
+		
+		
+		//기본 폰트
+		HSSFFont defalutFont = null;
+		HSSFFont headerFont = null;
+		
+		//표지 제목 스타일
+		HSSFCellStyle hearderTitleStyle = null;
+
+		HSSFCellStyle tableHeaderStyle = null;
+		
+		HSSFCellStyle tableContentStyle = null;
+		
+		
+		HSSFCellStyle contentsStyle = null;
+
+		HSSFCellStyle contentsStyle_2 = null;
+		
+		List<HashMap<String, Object>> resultEstimationInfoList = new ArrayList<HashMap<String, Object>>();
+		resultEstimationInfoList = dao.getResultEstimationInfoList(param);
+		//시험 결과
+		for (HashMap<String, Object> evalutionInfo : resultEstimationInfoList) {
+			
+			param.put("exam_seq", examSeq);
+			param.put("student_seq", evalutionInfo.get("student_seq"));
+
+			//평가결과 정보
+			List<HashMap<String, Object>> resultEstimationList = new ArrayList<HashMap<String, Object>>();
+			resultEstimationList = dao.getResultEstimationList(param);
+			
+			HSSFWorkbook workbook = new HSSFWorkbook();
+			int hearderEvalutionFormSeq = (Integer)resultEstimationList.get(0).get("evalution_form_seq"); //평가지 시퀀스 
+			String headerExamName = String.valueOf(resultEstimationList.get(0).get("exam_name")); //시험명
+			String headerStudentNumber = String.valueOf(resultEstimationList.get(0).get("student_number")); //학번
+			String headerStudentName = String.valueOf(resultEstimationList.get(0).get("student_name")); //학생이름
+			String examStartDate = String.valueOf(resultEstimationList.get(0).get("start_date")); //시험시작일
+			int headerStudentSeq = (Integer)resultEstimationList.get(0).get("student_seq"); //학생시퀀스
+			DecimalFormat format = new DecimalFormat("###.##");
+
+			param.put("student_seq", headerStudentSeq);
+			param.put("exam_seq", examSeq);
+			param.put("evalution_form_seq", hearderEvalutionFormSeq);
+			
+			/*****************************************************************************/
+			/*								스타일 START									 */
+			/*****************************************************************************/
+			
+			//기본 폰트
+			defalutFont = workbook.createFont();
+			defalutFont.setFontName(HSSFFont.FONT_ARIAL);
+			defalutFont.setFontHeightInPoints((short) 10);
+			
+			headerFont = workbook.createFont();
+			headerFont.setFontName(HSSFFont.FONT_ARIAL);
+			headerFont.setFontHeightInPoints((short) 14);
+			headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+			
+			//표지 제목 스타일
+			hearderTitleStyle = workbook.createCellStyle();
+			hearderTitleStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+			hearderTitleStyle.setAlignment(CellStyle.ALIGN_CENTER);
+			hearderTitleStyle.setFont(headerFont);
+			hearderTitleStyle.setWrapText(true);
+
+			tableHeaderStyle = workbook.createCellStyle();
+			tableHeaderStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+			tableHeaderStyle.setAlignment(CellStyle.ALIGN_CENTER);
+			tableHeaderStyle.setBorderBottom(CellStyle.BORDER_THIN);
+			tableHeaderStyle.setBorderLeft(CellStyle.BORDER_THIN);
+			tableHeaderStyle.setBorderTop(CellStyle.BORDER_THIN);
+			tableHeaderStyle.setBorderRight(CellStyle.BORDER_THIN);
+			tableHeaderStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
+			tableHeaderStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			tableHeaderStyle.setFont(defalutFont);
+			tableHeaderStyle.setWrapText(true);
+			
+			tableContentStyle = workbook.createCellStyle();
+			tableContentStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+			tableContentStyle.setAlignment(CellStyle.ALIGN_CENTER);
+			tableContentStyle.setBorderBottom(CellStyle.BORDER_THIN);
+			tableContentStyle.setBorderLeft(CellStyle.BORDER_THIN);
+			tableContentStyle.setBorderTop(CellStyle.BORDER_THIN);
+			tableContentStyle.setBorderRight(CellStyle.BORDER_THIN);
+			tableContentStyle.setFont(defalutFont);
+			tableContentStyle.setWrapText(true);
+			
+			/*****************************************************************************/
+			/*								스타일 END									 */
+			/*****************************************************************************/
+			
+			
+			
+			/*****************************************************************************/
+			/*								표지 시트 START									 */
+			/*****************************************************************************/
+			
+			HSSFSheet sheet = workbook.createSheet("표지");
+			
+			//시트명
+			sheet.addMergedRegion(new CellRangeAddress(0 , 1 , 0, 5 )); //표지 제목
+			
+			Row headerRow = sheet.createRow(0);
+			
+			//시험명
+			Cell headerCell = headerRow.createCell(0);
+			headerCell.setCellValue("[" + headerExamName + " 개별 성적]");
+			headerCell.setCellStyle(hearderTitleStyle);
+			
+			//학번
+			Row studentNumberRow = sheet.createRow(2);
+			Cell studentNumberLabelCell = studentNumberRow.createCell(4);
+			studentNumberLabelCell.setCellValue("학번");
+			
+			Cell studentNumberCell = studentNumberRow.createCell(5);
+			studentNumberCell.setCellValue(headerStudentNumber);
+			
+			//이름
+			Row studentNameRow = sheet.createRow(3);
+			Cell studentNameLabelCell = studentNameRow.createCell(4);
+			studentNameLabelCell.setCellValue("이름");
+			
+			Cell studentNameCell = studentNameRow.createCell(5);
+			studentNameCell.setCellValue(headerStudentName);
+			
+			sheet.addMergedRegion(new CellRangeAddress(4 , 5 , 0, 0 )) ; //번호
+			sheet.addMergedRegion(new CellRangeAddress(4 , 5 , 1, 1 )); //항목명
+			sheet.addMergedRegion(new CellRangeAddress(4 , 5 , 2, 2 )); //학생점수
+			sheet.addMergedRegion(new CellRangeAddress(4 , 4 , 3, 5 )); //학년 전체 취득 점수
+			
+			Row tableHeaderRow_4 = sheet.createRow(4);
+			Cell tableHeaderCell_4_0 = tableHeaderRow_4.createCell(0);
+			tableHeaderCell_4_0.setCellValue("번호");
+			tableHeaderCell_4_0.setCellStyle(tableHeaderStyle);
+			
+			Cell tableHeaderCell_4_1 = tableHeaderRow_4.createCell(1);
+			tableHeaderCell_4_1.setCellValue("항목명");
+			tableHeaderCell_4_1.setCellStyle(tableHeaderStyle);
+			
+			Cell tableHeaderCell_4_2 = tableHeaderRow_4.createCell(2);
+			tableHeaderCell_4_2.setCellValue("학생점수\r\n100점 만점");
+			tableHeaderCell_4_2.setCellStyle(tableHeaderStyle);
+			
+			Cell tableHeaderCell_4_3 = tableHeaderRow_4.createCell(3);
+			tableHeaderCell_4_3.setCellValue("학년 전체 취득 점수");
+			tableHeaderCell_4_3.setCellStyle(tableHeaderStyle);
+			
+			Cell tableHeaderCell_4_4 = tableHeaderRow_4.createCell(4);
+			tableHeaderCell_4_4.setCellStyle(tableHeaderStyle);
+			
+			Cell tableHeaderCell_4_5 = tableHeaderRow_4.createCell(5);
+			tableHeaderCell_4_5.setCellStyle(tableHeaderStyle);
+			
+			Row tableHeaderRow_5 = sheet.createRow(5);
+			Cell tableHeaderCell_5_0 = tableHeaderRow_5.createCell(0);
+			tableHeaderCell_5_0.setCellStyle(tableHeaderStyle);
+			
+			Cell tableHeaderCell_5_1 = tableHeaderRow_5.createCell(1);
+			tableHeaderCell_5_1.setCellStyle(tableHeaderStyle);
+			
+			Cell tableHeaderCell_5_2 = tableHeaderRow_5.createCell(2);
+			tableHeaderCell_5_2.setCellStyle(tableHeaderStyle);
+			
+			Cell tableHeaderCell_5_3 = tableHeaderRow_5.createCell(3);
+			tableHeaderCell_5_3.setCellStyle(tableHeaderStyle);
+			
+			tableHeaderCell_5_3.setCellValue("최고");
+			tableHeaderCell_5_3.setCellStyle(tableHeaderStyle);
+			
+			Cell tableHeaderCell_5_4 = tableHeaderRow_5.createCell(4);
+			tableHeaderCell_5_4.setCellValue("최저");
+			tableHeaderCell_5_4.setCellStyle(tableHeaderStyle);
+			
+			Cell tableHeaderCell_5_5 = tableHeaderRow_5.createCell(5);
+			tableHeaderCell_5_5.setCellValue("평균");
+			tableHeaderCell_5_5.setCellStyle(tableHeaderStyle);
+			
+			int hearderContentRow = 6;
+			int numbering = 1;
+			double totalScore = 0;
+			double maxTotalScore = 0;
+			double minTotalScore = 0;
+			double avgTotalScore = 0;
+			for (HashMap<String, Object> resultEstimation : resultEstimationList) {
+				
+				HashMap<String, Object> scoreParam = new HashMap<String, Object>();
+				scoreParam.put("evalution_form_seq", resultEstimation.get("evalution_form_seq"));
+				scoreParam.put("exam_seq", resultEstimation.get("exam_seq"));
+				scoreParam.put("student_seq", resultEstimation.get("student_seq"));
+
+				HashMap<String, Object> scoreInfo = dao.getResultEstimationTotalScore(scoreParam);
+				
+				double score = Double.valueOf(String.valueOf(scoreInfo.get("total_score")));
+				double maxScore = Double.valueOf(String.valueOf(scoreInfo.get("max_total_score")));
+				double minScore = Double.valueOf(String.valueOf(scoreInfo.get("min_total_score")));
+				double avgScore = Double.valueOf(String.valueOf(scoreInfo.get("avg_total_score")));
+				
+				totalScore += score;
+				maxTotalScore += maxScore;
+				minTotalScore += minScore;
+				avgTotalScore += avgScore;
+				
+				Row contentRow = sheet.createRow(hearderContentRow++);
+				
+				Cell contentCell_0 = contentRow.createCell(0);
+				contentCell_0.setCellValue(numbering++);//번호
+				contentCell_0.setCellStyle(tableContentStyle);
+				
+				Cell contentCell_1 = contentRow.createCell(1);
+				contentCell_1.setCellValue(String.valueOf(resultEstimation.get("evalution_form_name")));//항목명
+				contentCell_1.setCellStyle(tableContentStyle);
+				
+				Cell contentCell_2 = contentRow.createCell(2);
+				contentCell_2.setCellValue(String.valueOf(score));//학생점수
+				contentCell_2.setCellStyle(tableContentStyle);
+				
+				Cell contentCell_3 = contentRow.createCell(3);
+				contentCell_3.setCellValue(String.valueOf(maxScore));//최고
+				contentCell_3.setCellStyle(tableContentStyle);
+				
+				Cell contentCell_4 = contentRow.createCell(4);
+				contentCell_4.setCellValue(String.valueOf(minScore));//최저
+				contentCell_4.setCellStyle(tableContentStyle);
+				
+				Cell contentCell_5 = contentRow.createCell(5);
+				contentCell_5.setCellValue(String.valueOf(avgScore));//평균
+				contentCell_5.setCellStyle(tableContentStyle);
+				
+			}
+			
+			sheet.addMergedRegion(new CellRangeAddress(hearderContentRow , hearderContentRow , 0, 1 )) ; //총점
+			
+			Row tableTotalRow = sheet.createRow(hearderContentRow);
+			
+			Cell tableTotalCell_0 = tableTotalRow.createCell(0);
+			tableTotalCell_0.setCellValue("Total");
+			tableTotalCell_0.setCellStyle(tableContentStyle);
+			
+			Cell tableTotalCell_1 = tableTotalRow.createCell(1);
+			tableTotalCell_1.setCellStyle(tableContentStyle);
+			
+			Cell tableTotalCell_2 = tableTotalRow.createCell(2);
+			tableTotalCell_2.setCellValue(String.valueOf(format.format(totalScore)));
+			tableTotalCell_2.setCellStyle(tableContentStyle);
+			
+			Cell tableTotalCell_3 = tableTotalRow.createCell(3);
+			tableTotalCell_3.setCellValue(String.valueOf(format.format(maxTotalScore)));
+			tableTotalCell_3.setCellStyle(tableContentStyle);
+			
+			Cell tableTotalCell_4 = tableTotalRow.createCell(4);
+			tableTotalCell_4.setCellValue(String.valueOf(format.format(minTotalScore)));
+			tableTotalCell_4.setCellStyle(tableContentStyle);
+			
+			Cell tableTotalCell_5 = tableTotalRow.createCell(5);
+			tableTotalCell_5.setCellValue(String.valueOf(format.format(avgTotalScore)));
+			tableTotalCell_5.setCellStyle(tableContentStyle);
+			
+			for (int i=0; i<6; i++) {
+				 sheet.autoSizeColumn((short)i);
+				 sheet.setColumnWidth(i, (sheet.getColumnWidth(i))+512 );
+			}
+			
+			/*****************************************************************************/
+			/*								표지 시트 END									 */
+			/*****************************************************************************/
+			
+			
+			
+			/*****************************************************************************/
+			/*								평가지 시트 START    							 */
+			/*****************************************************************************/
+			for (HashMap<String, Object> resultEstimation : resultEstimationList) {
+				
+				int evalutionFormSeq = (Integer)resultEstimation.get("evalution_form_seq"); //평가지 시퀀스 
+				String evalutionFormName = String.valueOf(resultEstimation.get("evalution_form_name")); //평가지명
+				totalScore = Double.valueOf(String.valueOf(resultEstimation.get("total_score"))); //총점 
+				int studentSeq = (Integer)resultEstimation.get("student_seq"); //학생시퀀스
+
+				param.put("student_seq", studentSeq);
+				param.put("exam_seq", examSeq);
+				param.put("evalution_form_seq", evalutionFormSeq);
+				
+				//지문, 점수
+				List<HashMap<String, Object>> viewAnswerList = new ArrayList<HashMap<String, Object>>();
+				viewAnswerList = dao.getViewAnswerList(param);
+				
+				//시트명
+				HSSFSheet eavlutionFormSheet = workbook.createSheet(evalutionFormName);
+				
+				eavlutionFormSheet.addMergedRegion(new CellRangeAddress(0 , 1 , 0, 2)); //평가지명
+
+				//내용
+				contentsStyle = workbook.createCellStyle();
+				contentsStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+				contentsStyle.setAlignment(CellStyle.ALIGN_CENTER);
+				contentsStyle.setBorderBottom(CellStyle.BORDER_THIN);
+				contentsStyle.setBorderLeft(CellStyle.BORDER_THIN);
+				contentsStyle.setBorderTop(CellStyle.BORDER_THIN);
+				contentsStyle.setBorderRight(CellStyle.BORDER_THIN);
+				contentsStyle.setFont(defalutFont);
+				contentsStyle.setWrapText(true);
+
+				contentsStyle_2 = workbook.createCellStyle();
+				contentsStyle_2.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+				contentsStyle_2.setBorderBottom(CellStyle.BORDER_THIN);
+				contentsStyle_2.setBorderLeft(CellStyle.BORDER_THIN);
+				contentsStyle_2.setBorderTop(CellStyle.BORDER_THIN);
+				contentsStyle_2.setBorderRight(CellStyle.BORDER_THIN);
+				contentsStyle_2.setFont(defalutFont);
+				contentsStyle_2.setWrapText(true);
+				
+				//평가지명
+				Row evalutionFormNameRow = eavlutionFormSheet.createRow(0);
+				
+				Cell evalutionFormCell = evalutionFormNameRow.createCell(0);
+				evalutionFormCell.setCellValue(evalutionFormName);
+				evalutionFormCell.setCellStyle(hearderTitleStyle);
+				
+				//No, 항목, 점수
+				Row evalutionFormNameRow_2 = eavlutionFormSheet.createRow(2);
+				Cell tableHeaderCell_2_0 = evalutionFormNameRow_2.createCell(0);
+				tableHeaderCell_2_0.setCellValue("No.");
+				tableHeaderCell_2_0.setCellStyle(tableHeaderStyle);
+				
+				Cell tableHeaderCell_2_1 = evalutionFormNameRow_2.createCell(1);
+				tableHeaderCell_2_1.setCellValue("항목");
+				tableHeaderCell_2_1.setCellStyle(tableHeaderStyle);
+				
+				Cell tableHeaderCell_2_2 = evalutionFormNameRow_2.createCell(2);
+				tableHeaderCell_2_2.setCellValue("점수");
+				tableHeaderCell_2_2.setCellStyle(tableHeaderStyle);
+				
+				double totalResultScore = 0.00;
+				int rowCnt = 3;
+				for (HashMap<String, Object> viewAnswer : viewAnswerList) {
+					Row tableContentRow = eavlutionFormSheet.createRow(rowCnt);
+
+					Cell tableContentCell_0 = tableContentRow.createCell(0);
+					tableContentCell_0.setCellValue(String.valueOf(viewAnswer.get("numbering")));
+					tableContentCell_0.setCellStyle(contentsStyle);
+					
+					Cell tableContentCell_1 = tableContentRow.createCell(1);
+					String viewAnswerContent =String.valueOf(viewAnswer.get("view_answer_contents"));
+					viewAnswerContent = viewAnswerContent.replaceAll("<br>", "\r\n");
+					tableContentCell_1.setCellValue(viewAnswerContent);
+					tableContentCell_1.setCellStyle(contentsStyle_2);
+					
+					Cell tableContentCell_2 = tableContentRow.createCell(2);
+					
+					double score = Double.valueOf(String.valueOf(viewAnswer.get("score")));
+					totalResultScore += score;
+					tableContentCell_2.setCellValue(String.valueOf(format.format(score)));
+					tableContentCell_2.setCellStyle(contentsStyle);
+					
+					rowCnt++;
+				}
+				
+				//총점
+				Row evalutionFromTableTotalRow = eavlutionFormSheet.createRow(rowCnt);
+				
+				Cell tableContentTotalCell_0 = evalutionFromTableTotalRow.createCell(0);
+				tableContentTotalCell_0.setCellValue("총점");
+				tableContentTotalCell_0.setCellStyle(contentsStyle);
+				
+				Cell tableContentTotalCell_1 = evalutionFromTableTotalRow.createCell(1);
+				tableContentTotalCell_1.setCellStyle(contentsStyle);
+				
+				Cell tableContentTotalCell_2 = evalutionFromTableTotalRow.createCell(2);
+				tableContentTotalCell_2.setCellValue(String.valueOf(format.format(totalResultScore)+" / " +format.format(totalScore)));
+				tableContentTotalCell_2.setCellStyle(contentsStyle);
+				
+				eavlutionFormSheet.addMergedRegion(new CellRangeAddress(rowCnt , rowCnt , 0, 1 )); //총점 merged
+
+				for (int i=0; i<6; i++) {
+					eavlutionFormSheet.autoSizeColumn((short)i);
+					eavlutionFormSheet.setColumnWidth(i, (eavlutionFormSheet.getColumnWidth(i))+512 );
+				}
+			
+			}
+			
+			
+			/*****************************************************************************/
+			/*								평가지 시트 END	    							 */
+			/*****************************************************************************/
+			
+			
+			examStartDate = examStartDate.replaceAll("-","");
+			String fileName = examStartDate+"_"+headerExamName+"_"+headerStudentNumber+"_"+headerStudentName+".xls";
+			dirName = examStartDate+"_"+headerExamName+"_"+"학생별";
+			dirPath = RESULT_FILE_PATH + "/" + dirName + "/";
+			if (!FileUploader.evalutionFileCreate(dirPath, fileName, workbook)) {
+				throw new LogicException("EXCEL_FILE_UPLOAD_FAIL", "003");
+			}
+		}
+		ZipUtil.zip(dirPath, RESULT_FILE_PATH + "/" +dirName+".zip");
+		
+		
+	}
+	
+	
+	public ResultMap getEvalutionFomDetail(HashMap<String, Object> param) {
+		ResultMap resultMap = new ResultMap();
+		int examSeq = Integer.parseInt(String.valueOf((String)param.get("exam_seq")));
+		int currentNum = Integer.parseInt(String.valueOf((String)param.get("current_num")));
+		param.put("exam_seq", examSeq);
+		HashMap<String, Object> examInfo = new HashMap<String, Object>();
+		examInfo = dao.getExamEstimationGroupInfo(param);
+		int evalutionFormTotalCount = dao.getEvalutionFormTotalCount(param);
+		if (!(evalutionFormTotalCount > 0 && evalutionFormTotalCount >= currentNum)) {
+			currentNum = 1;
+		}
+		param.put("current_num", currentNum);
+		HashMap<String, Object> evalutionFormInfo = new HashMap<String, Object>();
+		evalutionFormInfo = dao.getEvalutionInfo(param);
+		List<HashMap<String, Object>> viewAnswerListInfo = new ArrayList<HashMap<String, Object>>();
+		param.put("evalution_form_seq", evalutionFormInfo.get("evalution_form_seq"));
+		viewAnswerListInfo = dao.getViewAnswerListInfo(param);
+		resultMap.put("examInfo", examInfo);
+		resultMap.put("evalutionFormInfo", evalutionFormInfo);
+		resultMap.put("viewAnswerList", viewAnswerListInfo);
+		resultMap.put("evalutionFormTotalCount", evalutionFormTotalCount);
+		if (currentNum > 1) {
+			HashMap<String, Object> prevEvalutionFormInfo = new HashMap<String, Object>();
+			param.put("current_num", currentNum-1);
+			prevEvalutionFormInfo = dao.getEvalutionInfo(param);
+			resultMap.put("prevEvalutionFormInfo", prevEvalutionFormInfo);
+		}
+		
+		if (currentNum < evalutionFormTotalCount) {
+			HashMap<String, Object> nextEvalutionFormInfo = new HashMap<String, Object>();
+			param.put("current_num", currentNum+1);
+			nextEvalutionFormInfo = dao.getEvalutionInfo(param);
+			resultMap.put("nextEvalutionFormInfo", nextEvalutionFormInfo);
+		}
+		
+		return resultMap;
+	}
+
+}

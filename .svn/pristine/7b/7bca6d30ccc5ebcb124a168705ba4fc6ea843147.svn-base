@@ -1,0 +1,468 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+ <!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript">
+			function getExamCreateList(page) {
+				
+				if (typeof page == "undefined") {
+					page = 1;
+				}
+				$("input[name='page']").val(page);
+				
+				$.ajax({
+			        type: "POST",
+			        url: "${HOME}/ajax/ready/examCreate/list",
+			        data: $("#frm").serialize(),
+			        dataType: "json",
+					success: function(data) {
+						var html = "";
+						$.each(data.list, function() {
+							html += '<tr>';
+							html += '	<td class="td01">' + this.row_num + '</td>';
+							html += '	<td class="td01">' + this.year + '</td>';
+							html += '	<td class="td01">' + this.round + '</td>';
+							var examStartDate =this.start_date;
+							var examEndDate =this.end_date;
+							if (examStartDate == examEndDate) {
+								examStartDate = examStartDate.substring(5,11);
+								html += '    <td class="td01">' + examStartDate + '</td>';
+							} else {
+								examStartDate = examStartDate.substring(5,11);
+								examEndDate = examEndDate.substring(5,11);
+								html += '    <td class="td01">' + examStartDate + '~' + examEndDate + '</td>';
+							}
+							html += '   <td class="td01">' + this.exam_name + '</td>';
+							html += '	<td class="td01">' + this.reg_date + '</td>';
+							html += '	<td class="td01">' + this.reg_name + '</td>';
+							html += '	<td class="td01">';
+							html += '		<button class="btn_view1" onclick="javascript:detailExam(' + this.exam_seq + '); return false;">상세보기</button>';
+							html += '		<button class="btn_delete" onclick="javascript:removeExam(' + this.exam_seq + '); return false;">삭제</button>';
+							html += '	</td>';
+							html += '</tr>';
+						});
+						
+						$("#examCreateList").html(html);
+						$(".table-list-num").html(data.pageNav);
+					}
+			    });
+			}
+			
+			function detailExam(examSeq) {
+				alert("준비중입니다.");
+			}
+			
+			function removeExam(examSeq) {
+				alert("준비중입니다.");
+			}
+			
+			function examCreatePopup() {
+				$("#examCreatePopup").show();
+			}
+			
+			function popupClose (target) {
+				$(target).hide();
+			}
+			
+			
+			function getEstimationGroupList() {
+				var year = $("#popupSYSB").attr("value");
+				var topSeq = $("#popupEGTSB").attr("value");
+				var midSeq = $("#popupEGMSB").attr("value");
+				var botSeq = $("#popupEGBSB").attr("value");
+				if (typeof year == "undefined" || year =="") {
+					alert("학생의 년도를 선택해 주세요.");
+					return false;
+				}
+				
+				$.ajax({
+			        type: "POST",
+			        url: "${HOME}/ajax/common/estimationGroup/list",
+			        data: {
+			        	"year" : year
+			        	, "top_seq" : topSeq
+			        	, "mid_seq" : midSeq
+			        	, "bot_seq" : botSeq
+			        },
+			        dataType: "json",
+					success: function(data) {
+						//TODO select class option이 5개 이상이면 height:200px;, overflow-y:scroll 아니면 height:auto;
+						groupSetting("#popupEGTSB", data.top_list);
+						groupSetting("#popupEGMSB", data.mid_list);
+						groupSetting("#popupEGBSB", data.bot_list);
+						if (botSeq != "") {
+							$("#studentCount").html('( <span class="sp01">'+data.student_count+'</span>명 )');
+						}
+					}
+			    });
+
+			}
+			
+			function groupSetting(target, list){
+				var html="";
+				$.each(list,function(idx){
+					if (idx == 0) {
+						html += '<span class="uoption firstseleted" value="'+this.estimation_group_seq+'">' + this.cate + '</span>';
+					} else {
+						html += '<span class="uoption" value="'+this.estimation_group_seq+'">' + this.cate + '</span>';
+					} 
+				});
+				
+				$(target).find('.uoptions').html(html);
+			}
+			
+			
+			$(document).on("change", "#examEndDate", function(){
+				var startDate = $("#examStartDate").val();
+				var endDate = $("#examEndDate").val();
+				var html = "";
+				var tempFlag = true;
+				if (typeof startDate == "undefined" || startDate == "") {
+					tempFlag = false;
+				}
+				
+				if (typeof endDate == "undefined" || endDate == "") {
+					tempFlag = false;
+				}
+				
+				if (tempFlag) {
+					startDate = startDate.split('/');
+					endDate = endDate.split('/');
+					var sDate = new Date(startDate[0], Number(startDate[1])-1, startDate[2]);
+					var eDate = new Date(endDate[0], Number(endDate[1])-1, endDate[2]);
+					if (eDate.getTime() >= sDate.getTime()) {
+					    var betweenDay = (eDate.getTime() - sDate.getTime())/ (1000*60*60*24) ;
+					    html = '( <span class="sp01">' + (betweenDay+1) + '</span>일 )';
+					}
+				}
+				$("#betweenDay").html(html);
+			});
+			
+			
+			$(document).ready(function(){
+				yearuSelectBoxInit("#popupYSB");
+				rounduSelectBoxInit('#popupRSB');
+				
+				enableuSelectBoxes();
+				getExamCreateList($("input[name='page']").val());
+				
+				//팝업 학생 평가체계
+				$(document).on("click", "#popupSYSB .uoption, #popupEGTSB .uoption, #popupEGMSB .uoption, #popupEGBSB .uoption", function() {
+					getEstimationGroupList();
+				});
+			});
+			
+			
+			
+		</script>
+	</head>
+	<body>
+		<!-- e_s_wrap-->   
+		<div class="s_wrap">
+			<div class="container">
+				<div class="con_tt">
+					<form id="frm" onsubmit="return false;">
+	            		<input type="hidden" name="page">
+						<a href="javascript:void(0);" class="sp01" title="시험등록" onclick="javascript:examCreatePopup(); return false;">시험등록</a>
+						<!-- s_sub_date-->
+						<div class="sub_date1">
+							<div class="wrap2_2_uselectbox">
+								<div class="uselectbox">
+									<span class="uselected">2017</span>
+									<span class="uarrow">▼</span>
+									<div class="uoptions">
+										<span class="uoption">2015</span>
+										<span class="uoption">2016</span>
+										<span class="uoption firstseleted">2017</span>
+										<span class="uoption">2018</span>
+										<span class="uoption">2019</span>
+										<span class="uoption">2020</span>
+										<span class="uoption">2021</span>
+										<span class="uoption">2022</span>
+										<span class="uoption">2023</span>
+										<span class="uoption">2024</span>
+										<span class="uoption">2025</span>
+									</div>
+								</div>
+							</div>
+							<div class="wrap2_2_uselectbox">
+								<div class="uselectbox">
+									<span class="uselected">회차</span>
+									<span class="uarrow">▼</span>
+									<div class="uoptions">
+										<span class="uoption firstseleted">회차</span>
+										<span class="uoption">1회차</span>
+										<span class="uoption">2회차</span>
+										<span class="uoption">3회차</span>
+										<span class="uoption">4회차</span>
+										<span class="uoption">5회차</span>
+										<span class="uoption">6회차</span>
+										<span class="uoption">7회차</span>
+										<span class="uoption">8회차</span>
+										<span class="uoption">9회차</span>
+										<span class="uoption">10회차</span>
+									</div>
+								</div>
+							</div>
+							<input type="text" class="dateyearpicker-input ip_date" placeholder="시작일">
+							<span class="sign">~</span>
+							<input type="text" class="dateyearpicker-input ip_date" placeholder="종료일">
+							<input type="text" class="ip_search" placeholder="시험명">
+							<button class="btn_search1"></button>
+							<button class="btn_search2"></button>
+						</div>
+						<!-- e_sub_date-->
+					</form>
+				</div>
+				<!-- s_table_wrap -->
+				<div class="table_wrap">
+					<table class="table001">
+						<thead>
+							<tr>
+								<th scope="col" class="th01 w01">No.</th>
+								<th scope="col" class="th01 w02">년도</th>
+								<th scope="col" class="th01 w01">회차</th>
+								<th scope="col" class="th01 w03">시험일</th>
+								<th scope="col" class="th01 w05">시험명</th>
+								<th scope="col" class="th01 w03">등록일</th>
+								<th scope="col" class="th01 w03">등록자</th>
+								<th scope="col" class="th01 w04">관리</th>
+							</tr>
+						</thead>
+						<tbody id="examCreateList">
+							<tr>
+								<td class="td01">1</td>
+								<td class="td01">2017</td>
+								<td class="td01">4</td>
+								<td class="td01">2017-07-04</td>
+								<td class="td01">2017년 2학년 1차 OSCE실습평가</td>
+								<td class="td01">2017-06-04</td>
+								<td class="td01">가교수</td>
+								<td class="td01">
+									<button class="btn_view1">상세보기</button>
+									<button class="btn_delete">삭제</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<!-- Pagination -->      
+					<div class="table-list-num"></div>
+					<!-- e_Pagination -->
+				</div>
+				<!-- e_table_wrap -->
+			</div>
+		</div>
+		<!-- e_s_wrap-->
+		
+		
+		
+		<!-- s_ 시험등록 popup -->
+		<div id="examCreatePopup" class="pop_up2 mo1" >
+			<div class="pop_wrap">
+				<p class="popup_title">ㆍ&nbsp;&nbsp;시험등록&nbsp;&nbsp;ㆍ</p>
+				<button class="pop_close" type="button" onclick="javascript:popupClose('#examCreatePopup'); return false;">X</button>
+				<p class="t_title">필수입력</p>
+				<!-- s_pop_table -->
+				<div class="pop_table">
+					<table class="osce_tb_pop1">
+						<tbody>
+							<tr>
+								<th scope="row" class="w1">년도</th>
+								<td class="w2">
+									<div class="wrap2_3_uselectbox uselectbox1">
+										<!-- popupYSB : popup yaer select box -->
+										<div class="uselectbox" id="popupYSB"></div>
+									</div>
+								</td>
+								<th class="w1">회차</th>
+								<td class="w2">
+									<div class="wrap2_3_uselectbox uselectbox2">
+										<!-- popupRSB : popup round select box -->
+										<div class="uselectbox" id="popupRSB"></div>
+									</div>
+								</td>
+							</tr>
+							<tr>
+							<th scope="row">시험기간</th>
+								<td colspan="3">
+									<div class="pop_date">
+										<input type="text" class="dateyearpicker-input ip_date" placeholder="시작일" readonly="readonly" id="examStartDate" name="examStartDate">
+										<span class="sign">~</span>
+										<input type="text" class="dateyearpicker-input ip_date" placeholder="종료일" readonly="readonly" id="examEndDate" name="examEndDate">
+									</div>
+									<div class="pop_date2" id="betweenDay"></div>
+								</td>
+							</tr>
+							<tr>
+							<th scope="row">학생</th>
+								<td colspan="3">
+									<div class="wrap2_3_uselectbox uselectbox3">
+										<!-- 학생 년도  popupSYSB : popup student year select box -->
+										<div class="uselectbox" id="popupSYSB">
+											<span class="uselected">년도</span>
+											<span class="uarrow">▼</span>
+											<div class="uoptions">
+												<span class="uoption firstseleted" value="">년도</span>
+												<span class="uoption" value="2017">2017</span>
+												<span class="uoption" value="2018">2018</span>
+												<span class="uoption" value="2019">2019</span>
+												<span class="uoption" value="2020">2020</span>
+												<span class="uoption" value="2021">2021</span>
+												<span class="uoption" value="2022">2022</span>
+												<span class="uoption" value="2023">2023</span>
+												<span class="uoption" value="2024">2024</span>
+												<span class="uoption" value="2025">2025</span>
+												<span class="uoption" value="2025">2026</span>
+												<span class="uoption" value="2025">2027</span>
+											</div>
+										</div>
+									</div>
+		
+									<div class="wrap2_3_uselectbox uselectbox4">
+										<!-- 대분류 popupEGTSB : popup estimation group top select box -->
+										<div class="uselectbox" id="popupEGTSB">
+											<span class="uselected">대분류</span>
+											<span class="uarrow">▼</span>
+											<div class="uoptions">
+												<span class="uoption firstseleted" value="">대분류</span>
+											</div>
+										</div>
+									</div>
+									<div class="wrap2_3_uselectbox uselectbox5">
+										<!-- 중분류 popupEGMSB : popup estimation group mid select box -->
+										<div class="uselectbox" id="popupEGMSB">
+											<span class="uselected">중분류</span>
+											<span class="uarrow">▼</span>
+											<div class="uoptions">
+												<span class="uoption firstseleted" value="">중분류</span>
+												<span class="uoption">본과</span>
+											</div>
+										</div>
+									</div>
+									<div class="wrap2_3_uselectbox uselectbox6">
+										<!-- 소분류 popupEGBSB : popup estimation group bottom select box -->
+										<div class="uselectbox" id="popupEGBSB">
+											<span class="uselected">소분류</span>
+											<span class="uarrow">▼</span>
+											<div class="uoptions">
+												<span class="uoption firstseleted" value="">소분류</span>
+												<span class="uoption" value="2">2학년</span>
+												<span class="uoption">3학년</span>
+												<span class="uoption">4학년</span>
+											</div>
+										</div>
+									</div>
+									<!-- s_20170628 추가 -->
+									<div class="pop_date2" id="studentCount"></div>
+									<!-- e_20170628 추가 -->
+								</td>
+							</tr>
+							<tr>
+								<th scope="row">시험명</th>
+								<td colspan="3">   
+									<div class="pop_date">
+										<input type="text" class="ip_search" placeholder="시험명">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th scope="row" class="w1_c">관리자코드</th>
+								<td colspan="3">
+									<div class="pop_date">
+										<input type="text" class="ip_rcode" value="">
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<p class="t_info"><i>ⓘ</i>시험등록 전, 학생명단을 학생등록 메뉴에서 등록해 주십시오.</p>
+					<div id="pop_pop2">
+						<div class="spop2_2_2_text show" id="spop2_2_3">
+							<span class="sp1">설정한 조 인원이<br>전체학생 수보다 작습니다. <br>등록하시겠습니까?</span>
+							<button onclick="myFunction4()" class="btn01">예</button>
+							<button onclick="myFunction4()" class="btn02">아니오</button>
+							<span onclick="myFunction4()" class="pop_close_s" title="닫기">X</span>
+						</div>
+					</div>
+				</div>		
+				<!-- e_pop_table -->
+		
+				<p class="t_title">선택입력 <span class="sp01">※ 조 수량과 인원을 선택하시면 조 배정하여 시험을 운영할 수 있습니다.</span></p>
+		
+				<!-- s_pop_table -->
+				<div class="pop_table">
+					<table class="osce_tb_pop1">
+						<tbody>
+							<tr>
+								<th scope="row" class="w1">조 수량</th>
+								<td class="w2">
+									<div class="wrap2_3_uselectbox uselectbox7">
+										<!-- 조수량 popupGCSB : popup group count select box -->
+										<div class="uselectbox" id="popupGCSB">
+											<span class="uselected">생성안함</span>
+											<span class="uarrow">▼</span>
+											<div class="uoptions">
+												<span class="uoption firstseleted">생성안함</span>
+												<span class="uoption" value="1">1</span>
+												<span class="uoption" value="2">2</span>
+												<span class="uoption" value="3">3</span>
+												<span class="uoption" value="4">4</span>
+												<span class="uoption" value="5">5</span>
+												<span class="uoption" value="6">6</span>
+												<span class="uoption" value="7">7</span>
+												<span class="uoption" value="8">8</span>
+												<span class="uoption" value="8">9</span>
+												<span class="uoption" value="10">10</span>
+											</div>
+										</div>
+									</div>
+								</td>
+		
+								<th class="w1">조 별인원</th>
+								<td class="w2">
+									<div class="wrap2_3_uselectbox uselectbox8">
+										<!-- 조수량 popupGPCSB : popup group people count select box -->
+										<div class="uselectbox" id="popupGPCSB">
+											<span class="uselected">선택</span>
+											<span class="uarrow">▼</span>
+											<div class="uoptions">
+												<span class="uoption firstseleted">선택</span>
+												<span class="uoption" value="1">1</span>
+												<span class="uoption" value="2">2</span>
+												<span class="uoption" value="3">3</span>
+												<span class="uoption" value="4">4</span>
+												<span class="uoption" value="5">5</span>
+												<span class="uoption" value="6">6</span>
+												<span class="uoption" value="7">7</span>
+												<span class="uoption" value="8">8</span>
+												<span class="uoption" value="8">9</span>
+												<span class="uoption" value="10">10</span>
+												<span class="uoption" value="11">11</span>
+												<span class="uoption" value="12">12</span>
+											</div>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<!-- s_t_dd --> 
+					<div class="t_dd">
+						<div class="pop_btn_wrap">
+							<button type="button" class="btn01" onclick="myFunction4()">등록</button>
+							<button class="btn02" type="button" onclick="javascript:popupClose('#examCreatePopup'); return false;">취소</button>
+						</div>
+					</div>
+					<!-- e_t_dd -->
+				</div>
+				<!-- e_pop_table -->
+			</div>
+		</div>
+		<!-- e_ 시험등록 popup -->
+		
+		
+		
+		
+		
+	</body>
+</html>

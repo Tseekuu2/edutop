@@ -1,0 +1,97 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+ <!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript">
+			function getEnforceList() {
+				$.ajax({
+			        type: "POST",
+			        url: "${HOME}/ajax/enforce/enforce/list",
+			        data: $("#frm").serialize(),
+			        dataType: "json",
+					success: function(data) {
+						if (data.status == "200") {
+							var examInfo = data.examInfo;
+							var examStudentInfo = data.examStudentInfo;
+							$("#examStartDate").html(examInfo.exam_date);
+							$("#examName").html(examInfo.name);
+							$("#studentCount").html(examInfo.full_cate + " ( " + examInfo.student_count+"명 )")
+							$("#groupCount").html(examInfo.group_count + "조")
+							$("#adminCode").html("관리자 코드 : " + examInfo.admin_code)
+							$("#applyingSituation").html('<span class="style_4 val1">' + examStudentInfo.exam_end_count + '</span>( 완료 ) / <span class="val1">' + examStudentInfo.exam_watting_count + '</span> ( 대기, 진행중 )');
+							$("#examReadyBtn").attr("onclick", "javsscript:updateExamState('ready');");
+							$("#examStartBtn").attr("onclick", "javsscript:updateExamState('start');");
+							$("#examEndBtn").attr("onclick", "javsscript:updateExamState('end');");
+						}
+					}
+			    });
+			}
+			
+			
+			function updateExamState(examFlag) {
+				$.ajax({
+			        type: "POST",
+			        url: "${HOME}/ajax/enforce/exam/"+examFlag,
+			        data: $("#frm").serialize(),
+			        dataType: "json",
+					success: function(data) {
+						if (data.status == "200") {
+							if (examFlag == "ready") {
+								alert("시험 준비가 완료 되었습니다.");
+							} else if (examFlag == "start") {
+								alert("시험이 시작 되었습니다.");
+							} else if (examFlag == "end") {
+								alert("시험이 종료 되었습니다.");
+							}
+						}
+					}
+			    });
+			}
+			
+			$(document).ready(function(){
+				getEnforceList();
+			});
+		</script>
+	</head>
+	<body>
+		<!-- e_s_wrap-->   
+		<div class="s_wrap">
+			<div class="container">   
+				<!-- s_conwrap-->          
+				<div class="conwrap">
+					<!-- s_exam_info--> 
+					<div class="exam_info">
+						<div class="wrap1">   
+							<div class="swrap1">
+								<span class="tt01" title="시험일" id="examStartDate">시험일</span>
+								<span class="tt01" title="시험명" id="examName">시험명</span>
+							</div>
+							<div class="swrap1">
+								<span class="tt01" title="응시대상 총 인원" id="studentCount">응시대상 (총 인원)</span>
+								<span class="tt01" title="조수량" id="groupCount">조 수량</span>
+							</div>
+							<div class="swrap1">
+								<span class="tt01" title="관리자코드" id="adminCode">관리자 코드</span>
+<!-- 								<span class="tt01" title="시험완료인원 대기 진행중인원"><span class="style_4 val1">2</span>( 완료 ) / <span class="val1">78</span> ( 대기, 진행중 )</span> -->
+								<span class="tt01" title="시험완료인원 대기 진행중인원" id="applyingSituation">시험 완료 인원 / 대기, 진행중인원</span>
+							</div>
+						</div>
+						<!-- s_20170628 수정 --> 
+						<div class="wrap2"> 
+							<button class="btn_001_1" type="button" id="examReadyBtn">시 험 준 비</button>
+							<button class="btn_001" type="button" id="examStartBtn">시 험 시 작</button>
+							<button class="btn_002" type="button" id="examEndBtn">시 험 종 료</button>
+						<!-- 보류 button class="btn_003" type="button">답안업로드</button -->                        
+						</div>
+						<!-- e_20170628 수정 -->
+					</div>
+					<!-- e_exam_info--> 
+					<!-- <a href="#" id="fold_01" class="close_x">접기</a> -->
+				</div>
+			</div>
+			<!-- e_table_wrap -->
+		</div>
+		<!-- e_s_wrap-->      
+				
+	</body>
+</html>

@@ -1,0 +1,225 @@
+
+String.prototype.replaceAll = function(org, dest) {
+    return this.split(org).join(dest);
+}
+
+/**
+ * is empty
+ * @param value
+ * @returns {Boolean}
+ */
+function isEmpty(value) {
+	if (value != null && value != "") {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+/**
+ * is blank
+ * @param value
+ * @returns {Boolean}
+ */
+function isBlank(value) {
+	if (value != null && value != "" && value.trim() == "") {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/* 로딩 화면 show */
+function loadProgress() {
+	$(".data-process").show();
+}
+/* 로딩 화면 hide */
+function unLoadProgress() {
+	$(".data-process").hide();
+}
+
+/**
+ * post to url
+ * @param action
+ * @param params
+ */
+function post_to_url(action, params) {
+	var form = document.createElement("form");
+	form.method = "post";
+	form.action = action;
+	
+	for (var key in params) {
+		var hiddenField = document.createElement("input");
+		hiddenField.type = "hidden";
+		hiddenField.name = key;
+		hiddenField.value = params[key];
+		
+		form.appendChild(hiddenField);
+	}
+	
+	document.body.appendChild(form);
+	form.submit();
+}
+
+function kdGNB() {
+	var _this = this;
+	var gnb = $("#gnb");
+	var gnbList = $(">ul>li", gnb);
+	var gnbListA = $(">a", gnbList);
+	var subList = $(">.sub", gnbList);
+	var allA = $("a", gnb);
+	var bgSubLayer = $(".bg-gnb-sub-layer");
+	var isFocus = false;
+	var thisIndex = null;
+	
+	function over() {
+		isFocus = true;
+	}
+	function open() {
+		isFocus = true;
+		var thisIndex = (this.nodeName == "LI") ? $(this).index() : $(this).parent().index();
+		bgSubLayer.show();
+		
+		if (thisIndex == 3) { 
+			bgSubLayer.css('height', 40);
+		} else {
+			bgSubLayer.css('height', 40);
+		}
+		subList.each(function(i) {
+			if ( i == thisIndex ) {
+				gnbListA.eq(i).addClass('active');
+				subList.eq(i).show();
+			} else {
+				gnbListA.eq(i).removeClass('active');
+				subList.eq(i).hide();
+			}
+		});
+	}
+	function out() {
+		isFocus = false;
+		setTimeout(function() {
+			if (isFocus == false) {
+				gnbListA.removeClass('active');
+				subList.hide();
+				bgSubLayer.hide();
+			}
+		},300);
+	}
+
+	gnbList.on({"mouseenter": open, "mouseleave": out});
+	bgSubLayer.on({"mouseenter": over, "mouseleave": out });
+	gnb.on({"mouseenter": over, "mouseleave": out });
+	gnbListA.on("focus", open);
+	allA.on({"focus": over, "blur": out });
+};
+
+
+//uselectbox
+function enableuSelectBoxes(){
+	$('div.uselectbox').each(function(){
+		$(this).children('span.uselected').html($(this).children('div.uoptions').children('span.firstseleted').html());
+		$(this).attr('value',$(this).children('div.uoptions').children('span.uoption:first').attr('value'));
+		$(this).children('span.uselected,span.uarrow').on("click",function(){
+			if ($(this).parent().children('div.uoptions').css('display') == 'none') {
+				$(this).parent().children('div.uoptions').css('display','block');
+			} else {
+				$(this).parent().children('div.uoptions').css('display','none');
+			}
+		});
+
+		$(document).on("click", "div.uselectbox span.uoption", function() {
+			$(this).parent().css('display','none');
+			$(this).closest('div.uselectbox').attr('value',$(this).attr('value'));
+			$(this).parent().siblings('span.uselected').html($(this).html());
+		});
+				
+	});
+}
+
+//상단으로 화면 이동 버튼 초기화
+function toTopButtonInit() {
+	if ($('#back-to-top').length) {
+	    var scrollTrigger = 100, // px
+	        backToTop = function () {
+	            var scrollTop = $(window).scrollTop();
+	            if (scrollTop > scrollTrigger) {
+	                $('#back-to-top').addClass('show');
+	            } else {
+	                $('#back-to-top').removeClass('show');
+	            }
+	        };
+	    backToTop();
+	    $(window).on('scroll', function () {
+	        backToTop();
+	    });
+	    $('#back-to-top').on('click', function (e) {
+	        e.preventDefault();
+	        $('html,body').animate({
+	            scrollTop: 0
+	        }, 700);
+	    });
+	}
+}
+
+//datetimepicker 초기화
+function datetimepickerInit() {
+	$.datetimepicker.setLocale('kr');
+	$('.dateyearpicker-input').datetimepicker({
+	    timepicker:false,
+	    datepicker:true,
+	    format:'y/m/d',
+	    formatDate:'y/m/d'
+	});
+
+	$('.btn-yearmonthpick').bind('click',function(){
+	    $(this).siblings('input').datetimepicker('show');
+	});
+}
+
+
+//회차 uselect box 초기화
+function rounduSelectBoxInit(target) {
+	var html = ""; 
+	html += '<span class="uselected">회차</span>';
+	html += '<span class="uarrow">▼</span>';
+	html += '<div class="uoptions">';
+	html += '	<span class="uoption firstseleted" value="">회차</span>';
+	html += '	<span class="uoption" value="1">1회차</span>';
+	html += '	<span class="uoption" value="2">2회차</span>';
+	html += '	<span class="uoption" value="3">3회차</span>';
+	html += '	<span class="uoption" value="4">4회차</span>';
+	html += '	<span class="uoption" value="5">5회차</span>';
+	html += '	<span class="uoption" value="6">6회차</span>';
+	html += '	<span class="uoption" value="7">7회차</span>';
+	html += '	<span class="uoption" value="8">8회차</span>';
+	html += '	<span class="uoption" value="9">9회차</span>';
+	html += '	<span class="uoption" value="10">10회차</span>';
+	html += '</div>';
+	$(target).html(html);
+}
+
+//년도 uselect box 초기화
+function yearuSelectBoxInit(target) {
+	var html = ""; 
+	html += '<span class="uselected">년도</span>';
+	html += '<span class="uarrow">▼</span>';
+	html += '<div class="uoptions">';
+	html += '	<span class="uoption firstseleted" value="">년도</span>';
+	html += '	<span class="uoption" value="2017">2017</span>';
+	html += '	<span class="uoption" value="2018">2018</span>';
+	html += '	<span class="uoption" value="2019">2019</span>';
+	html += '	<span class="uoption" value="2020">2020</span>';
+	html += '	<span class="uoption" value="2021">2021</span>';
+	html += '	<span class="uoption" value="2022">2022</span>';
+	html += '	<span class="uoption" value="2023">2023</span>';
+	html += '	<span class="uoption" value="2024">2024</span>';
+	html += '	<span class="uoption" value="2025">2025</span>';
+	html += '	<span class="uoption" value="2025">2026</span>';
+	html += '	<span class="uoption" value="2025">2027</span>';
+	html += '</div>';
+	$(target).html(html);
+}
+
+
+
+

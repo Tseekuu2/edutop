@@ -1,0 +1,14 @@
+package com.nsdevil.osce.web.enforce.dao;
+
+import java.util.HashMap;
+
+public interface EnforceDao {
+	
+	public HashMap<String, Object> getExamInfo(HashMap<String, Object> param) throws Exception;
+	public HashMap<String, Object> getExamStudentInfo(HashMap<String, Object> param) throws Exception;
+	public HashMap<String, Object> getExamRoundSeq(HashMap<String, Object> param) throws Exception;
+	public int updateExamRound(HashMap<String, Object> param) throws Exception;
+	public int updateExam(HashMap<String, Object> param) throws Exception;
+	
+	
+} 

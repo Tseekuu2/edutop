@@ -1,0 +1,19 @@
+package com.nsdevil.osce.web.result.dao;
+
+import java.util.HashMap;
+import java.util.List;
+
+public interface ResultDao {
+	public int getResultCnt(HashMap<String, Object> param);
+	public List<HashMap<String, Object>> getResultList(HashMap<String, Object> param);
+	public List<HashMap<String, Object>> getResultEstimationInfoList(HashMap<String, Object> param);
+	public List<HashMap<String, Object>> getResultEstimationList(HashMap<String, Object> param);
+	public List<HashMap<String, Object>> getViewAnswerList(HashMap<String, Object> param);
+	public HashMap<String, Object> getExamInfo(HashMap<String, Object> param);
+	public List<HashMap<String, Object>> getResultProfessorSeqList(HashMap<String, Object> param);
+	public HashMap<String, Object> getExamEstimationGroupInfo(HashMap<String, Object> param);
+	public HashMap<String, Object> getEvalutionInfo(HashMap<String, Object> param);
+	public List<HashMap<String, Object>> getViewAnswerListInfo(HashMap<String, Object> param);
+	public int getEvalutionFormTotalCount(HashMap<String, Object> param);
+	public HashMap<String, Object> getResultEstimationTotalScore(HashMap<String, Object> param);
+}

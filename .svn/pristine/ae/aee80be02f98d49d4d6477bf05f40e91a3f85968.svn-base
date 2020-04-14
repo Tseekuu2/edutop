@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nsdevil.osce.web.ready.dao.ReadyDao">
+	
+	<sql id="examCreateWhere">
+		<if test='searchParam != null and searchParam != ""'>
+			AND 1 = 1
+		</if>
+	</sql>
+
+
+	<select id="getExamCreateCnt" parameterType="hashmap" resultType="integer">
+		SELECT
+				COUNT(*)
+		FROM	"exam"
+		WHERE	use_flag = 'Y'
+		<include refid="examCreateWhere"/>
+    </select>
+
+    
+    <select id="getExamCreateList" parameterType="hashmap" resultType="hashmap">
+    	SELECT
+				(ROW_NUMBER() OVER()) AS row_num
+				, ex.exam_seq AS exam_seq
+				, ex.name AS exam_name
+				, ex.year AS year 
+				, ex.round AS round
+				, to_char(to_date(ex.start_date, 'YYYY/MM/DD'), 'YYYY/MM/DD') AS start_date
+				, to_char(to_date(ex.end_date, 'YYYY/MM/DD'), 'YYYY/MM/DD') AS end_date
+				, ad.name AS reg_name
+				, to_char(ex.reg_date, 'YYYY/MM/DD')  AS reg_date
+		FROM	"exam" AS ex
+		JOIN	"admin" AS ad
+		ON		ex.reg_admin_seq = ad.admin_seq
+		AND		ex.use_flag = 'Y'
+		WHERE	1 = 1
+		<include refid="examCreateWhere"/>
+		ORDER BY	ex.start_date DESC
+		LIMIT 	#{endRow} OFFSET #{startRow}
+	</select>
+    
+</mapper>

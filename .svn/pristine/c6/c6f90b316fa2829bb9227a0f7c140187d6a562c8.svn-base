@@ -1,0 +1,9 @@
+package com.nsdevil.osce.app.student.dao;
+
+import java.util.HashMap;
+import java.util.List;
+
+public interface StudentAppDao {
+	public List<HashMap<String, Object>> getStudentAttendList(HashMap<String, Object> param) throws Exception;
+	public int modifyStudentExamFlag(HashMap<String, Object> param) throws Exception;
+}

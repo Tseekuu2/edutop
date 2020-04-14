@@ -1,0 +1,73 @@
+package com.nsdevil.osce.web.enforce.service;
+
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.nsdevil.osce.common.bean.ResultMap;
+import com.nsdevil.osce.common.exception.LogicException;
+import com.nsdevil.osce.common.exception.ResourceNotFoundException;
+import com.nsdevil.osce.web.enforce.dao.EnforceDao;
+
+@Service
+public class EnforceService {
+	
+	@Autowired
+	private EnforceDao dao;
+
+	public ResultMap getEnforceInfo() throws Exception {
+		ResultMap resultMap = new ResultMap();
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		param.put("exam_date", sdf.format(new java.util.Date()));
+		
+		HashMap<String, Object> examInfo = new HashMap<String, Object>();
+		examInfo = dao.getExamInfo(param);
+		
+		if (examInfo == null || examInfo.isEmpty()) {
+			throw new ResourceNotFoundException("NOT_FOUND_EXAM_INFO", "001");
+		}
+		param.put("exam_round_seq", examInfo.get("exam_round_seq"));
+		
+		HashMap<String, Object> examStudentInfo = new HashMap<String, Object>();
+		examStudentInfo = dao.getExamStudentInfo(param);
+		
+		sdf = new SimpleDateFormat("yyyy/MM/dd ( E )");
+		examInfo.put("exam_date", sdf.format(new java.util.Date()));
+		
+		resultMap.put("examInfo", examInfo);
+		resultMap.put("examStudentInfo", examStudentInfo);
+		
+		return resultMap;
+	}
+	
+	public ResultMap modifyExamFlag(HashMap<String, Object> param) throws Exception {
+		ResultMap resultMap = new ResultMap();
+		String examFlag = String.valueOf(param.get("exam_flag"));
+		HashMap<String, Object> examRoundInfo = new HashMap<String, Object>();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		param.put("exam_date", sdf.format(new java.util.Date()));
+		examRoundInfo = dao.getExamRoundSeq(param);
+		if (examFlag.equals("ready")) { //시험준비
+			examRoundInfo.put("exam_flag", "READY");
+			dao.updateExamRound(examRoundInfo);
+			examRoundInfo.put("exam_flag", "START");
+			dao.updateExam(examRoundInfo);
+		} else if (examFlag.equals("start")) { //시험시작
+			examRoundInfo.put("exam_flag", "START");
+			dao.updateExamRound(examRoundInfo);
+		} else if (examFlag.equals("end")) { //시험종료
+			examRoundInfo.put("exam_flag", "END");
+			dao.updateExamRound(examRoundInfo);
+			dao.updateExam(examRoundInfo);
+		} else {
+			throw new LogicException("NOT_INBALID_DATA_EXAM_FLAG", "001");
+		}
+		
+		return resultMap;
+	}
+	
+}

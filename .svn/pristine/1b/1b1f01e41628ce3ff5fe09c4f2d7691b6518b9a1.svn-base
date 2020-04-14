@@ -1,0 +1,37 @@
+package com.nsdevil.osce.web.ready.controller;
+
+import java.util.HashMap;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.nsdevil.osce.common.controller.CommonController;
+import com.nsdevil.osce.web.ready.service.ReadyService;
+
+@Controller
+public class ReadyController extends CommonController {
+
+	@Autowired
+	private ReadyService service;
+	
+	
+	//시험등록
+	@RequestMapping(value="/ready/examCreat/list", method = RequestMethod.GET)
+	public String examCreateListView(HttpServletRequest request, @RequestParam HashMap<String, Object> param, Model model) throws Exception {
+		return "/ready/examCreateList";
+	}
+	
+	@RequestMapping(value="/ajax/ready/examCreate/list", method = RequestMethod.POST)
+	public String examCreateList(HttpServletRequest request, @RequestParam HashMap<String, Object> param, Model model) throws Exception {
+		param.put("listFunctionName", "getExamCreateList");
+		model.addAllAttributes(service.getExamCreateList(param));
+		return JSON_VIEW;
+	}
+
+}

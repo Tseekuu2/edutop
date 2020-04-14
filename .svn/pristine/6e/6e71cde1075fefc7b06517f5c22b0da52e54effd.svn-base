@@ -1,0 +1,91 @@
+package com.nsdevil.osce.app.estimation.service;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.nsdevil.osce.app.estimation.dao.EstimationAppDao;
+import com.nsdevil.osce.common.bean.ResultMap;
+import com.nsdevil.osce.common.exception.LogicException;
+import com.nsdevil.osce.common.exception.ResourceNotFoundException;
+
+@Service
+public class EstimationAppService {
+
+	@Autowired
+	private EstimationAppDao dao;
+	
+	public ResultMap getEstimationState(HashMap<String, Object> param) throws Exception {
+		ResultMap resultMap = new ResultMap();
+		String finishFlag  = dao.getEstimationState(param);
+		resultMap.put("exam_flag", finishFlag);
+		return resultMap;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public ResultMap modifyEstimation(HashMap<String, Object> param) throws Exception {
+		ResultMap resultMap = new ResultMap();
+		
+		HashMap<String, Object> resultEstimationParam = new HashMap<String, Object>();
+		resultEstimationParam = dao.getREsultEstimationInfo(param);
+		if (resultEstimationParam == null || resultEstimationParam.isEmpty()) {
+			throw new ResourceNotFoundException("NOT_FOUND_ESTIMATION_INFO", "001");
+		}
+		resultEstimationParam.put("student_seq", param.get("student_seq"));
+		resultEstimationParam.put("result_total_score", param.get("result_total_score"));
+		resultEstimationParam.put("estimation_flag", param.get("estimation_flag"));
+		
+		String reEstimationItem = (String) param.get("re_estimation_item");
+		String reEstimationContents = (String) param.get("re_estimation_contents");
+		
+		//재평가시
+		if (reEstimationItem != null && !reEstimationItem.equals("")) {
+			resultEstimationParam.put("re_estimation_item", reEstimationItem);
+		}
+		
+		if (reEstimationContents != null && !reEstimationContents.equals("")) {
+			resultEstimationParam.put("re_estimation_contents", reEstimationContents);
+		}
+		
+		if (dao.upsertResultEstimation(resultEstimationParam) != 1) {
+			throw new ResourceNotFoundException("NOT_FOUND_RESULT_ESTIMATION_INFO", "001");
+		}
+		
+		List<HashMap<String, Object>> answerList = new ArrayList<HashMap<String, Object>>();
+		answerList = (List<HashMap<String, Object>>) param.get("answer_list");
+		if (answerList == null || answerList.isEmpty()) {
+			throw new LogicException("ANSWER_LIST_EMPTY", "001");
+		}
+		
+		for (HashMap<String, Object> answerInfo : answerList) {
+			resultEstimationParam.put("view_answer_seq", answerInfo.get("view_answer_seq"));
+			resultEstimationParam.put("score", answerInfo.get("score"));
+			dao.upsertResultScore(resultEstimationParam);
+		}
+		
+		return resultMap;
+	}
+	
+	public ResultMap getEstimationResult(HashMap<String, Object> param) throws Exception {
+		ResultMap resultMap = new ResultMap();
+		List<HashMap<String, Object>> resultScroeList = new ArrayList<HashMap<String, Object>>();
+		resultScroeList = dao.getEstimationResult(param);
+		
+		DecimalFormat format = new DecimalFormat("###.##");
+		double totalScore = 0.0;
+		for (HashMap<String, Object> map : resultScroeList) {
+			String scoreStr = String.valueOf(map.get("score"));
+			totalScore += Double.parseDouble(scoreStr);
+		}
+		resultMap.put("result_score_list", resultScroeList);
+		resultMap.put("total_score", format.format(totalScore));
+		return resultMap;
+	}
+	
+}

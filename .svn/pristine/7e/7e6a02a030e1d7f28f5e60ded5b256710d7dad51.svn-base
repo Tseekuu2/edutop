@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nsdevil.osce.app.estimation.dao.EstimationAppDao">
+
+	<select id="getEstimationState" parameterType="hashmap" resultType="string">
+		SELECT
+				er.exam_flag
+		FROM	"assign_exam" AS ae
+		JOIN	"exam_round" AS er
+		ON	ae.exam_round_seq = er.exam_round_seq
+		AND	ae.use_flag = 'Y'
+		AND	er.use_flag = 'Y'
+		AND	ae.exam_code = #{exam_code}
+	</select>
+	
+	
+	<select id="getREsultEstimationInfo" parameterType="hashmap" resultType="hashmap">
+		SELECT
+				ae.professor_seq
+				, er.exam_seq
+				, er.exam_round_seq
+				, erm.evalution_form_seq
+		FROM 	"exam_round" AS er
+		JOIN	"assign_exam" AS ae
+		ON		er.exam_round_seq = ae.exam_round_seq
+		AND		er.use_flag = 'Y'
+		AND		ae.use_flag = 'Y'
+		AND		ae.exam_code = #{exam_code}
+		JOIN	"exam_round_mapping" AS erm
+		ON		er.exam_round_seq = erm.exam_round_seq
+		AND		erm.use_flag = 'Y'
+		AND		erm.exam_code = #{exam_code}
+	</select>
+	
+	
+	<insert id="upsertResultEstimation" parameterType="hashmap">
+		INSERT INTO "result_estimation" AS re 
+			(
+				exam_seq
+				, exam_round_seq
+				, student_seq
+				, professor_seq
+				, evalution_form_seq
+				, re_estimation_item
+				, re_estimation_contents
+				, result_total_score
+				, use_flag
+				, reg_date
+				, estimation_flag
+			)
+		VALUES (
+			#{exam_seq}
+			, #{exam_round_seq}
+			, #{student_seq}
+			, #{professor_seq}
+			, #{evalution_form_seq}
+			, #{re_estimation_item}
+			, #{re_estimation_contents}
+			, #{result_total_score}::numeric
+			, 'Y'
+			, NOW()
+			, #{estimation_flag}
+		)
+		ON CONFLICT(exam_seq, exam_round_seq, student_seq, professor_seq, evalution_form_seq)
+		DO UPDATE
+			SET 
+				result_total_score = #{result_total_score}::numeric
+				, estimation_flag = #{estimation_flag}
+				, upt_date = NOW()
+		WHERE 	re.exam_seq= #{exam_seq}
+		AND 	re.exam_round_seq= #{exam_round_seq}
+		AND 	re.student_seq= #{student_seq}
+		AND 	re.professor_seq= #{professor_seq}
+		AND 	re.evalution_form_seq= #{evalution_form_seq}
+	</insert>
+	
+	<insert id="upsertResultScore" parameterType="hashmap">
+		INSERT INTO "result_score" AS rs
+			(
+				exam_seq
+				, exam_round_seq
+				, student_seq
+				, evalution_form_seq
+				, view_answer_seq
+				, score
+				, use_flag
+			)
+		VALUES (
+				#{exam_seq}
+				, #{exam_round_seq}
+				, #{student_seq}
+				, #{evalution_form_seq}
+				, #{view_answer_seq}
+				, #{score}::numeric
+				, 'Y'
+			)
+		ON CONFLICT(exam_seq, exam_round_seq, student_seq, evalution_form_seq, view_answer_seq)
+		DO UPDATE
+			SET 
+				score = #{score}::numeric
+		WHERE 	rs.exam_seq= #{exam_seq}
+		AND 	rs.exam_round_seq= #{exam_round_seq}
+		AND 	rs.student_seq= #{student_seq}
+		AND 	rs.evalution_form_seq= #{evalution_form_seq}
+		AND 	rs.view_answer_seq= #{view_answer_seq}
+	</insert>
+	
+	<select id="getEstimationResult" parameterType="hashmap" resultType="hashmap">
+		SELECT
+				(ROW_NUMBER() OVER()) AS numbering
+				, tempRe.score
+		FROM (
+				SELECT
+						rs.score
+				FROM 	"result_estimation" AS re
+				JOIN	"result_score" AS rs
+				ON		re.exam_round_seq = rs.exam_round_seq
+				AND		re.use_flag = 'Y'
+				AND		rs.use_flag = 'Y'
+				AND		re.student_seq = #{student_seq}
+				AND		re.evalution_form_seq = #{evalution_form_seq}
+				AND		re.exam_round_seq = #{exam_round_seq}
+				AND		rs.evalution_form_seq = #{evalution_form_seq}
+				AND		rs.student_seq = #{student_seq}
+				ORDER BY	rs.view_answer_seq ASC) as tempRe
+	</select>
+	
+</mapper>

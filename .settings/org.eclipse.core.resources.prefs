@@ -1,0 +1,12 @@
+eclipse.preferences.version=1
+encoding//src/main/java/com/nsdevil/keris/app/estimation/controller/EstimationAppController.java=UTF-8
+encoding//src/main/java/com/nsdevil/keris/app/estimation/service/EstimationAppService.java=UTF-8
+encoding//src/main/java/com/nsdevil/keris/app/evalutionform/controller/EvalutionFormAppController.java=UTF-8
+encoding//src/main/java/com/nsdevil/keris/app/student/controller/StudentAppController.java=UTF-8
+encoding//src/main/java/com/nsdevil/keris/common/util/FileUploader.java=UTF-8
+encoding//src/main/java/com/nsdevil/keris/common/util/PagingHelper.java=UTF-8
+encoding//src/main/java/com/nsdevil/keris/web/enforce/controller/EnforceController.java=UTF-8
+encoding//src/main/java/com/nsdevil/keris/web/enforce/service/EnforceService.java=UTF-8
+encoding//src/main/java/com/nsdevil/keris/web/ready/controller/ReadyController.java=UTF-8
+encoding//src/main/webapp/resources/smarteditor_v2.3/SmartEditorCustomSkin.jsp=UTF-8
+encoding/<project>=UTF-8

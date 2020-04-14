@@ -1,0 +1,52 @@
+package com.nsdevil.osce.web.common.controller;
+
+import java.util.HashMap;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.nsdevil.osce.common.controller.CommonController;
+import com.nsdevil.osce.web.common.service.CommonWebService;
+
+@Controller
+public class CommonWebController extends CommonController {
+
+	@Autowired
+	private CommonWebService service;
+	
+	//TODO 작업중
+	@RequestMapping(value="/ajax/common/estimationGroup/list", method = RequestMethod.POST)
+	public String estimationGroupList(HttpServletRequest request, @RequestParam HashMap<String, Object> param, Model model) throws Exception {
+		
+		String topSeq = String.valueOf(param.get("top_seq"));
+		String midSeq = String.valueOf(param.get("mid_seq"));
+		String botSeq = String.valueOf(param.get("bot_seq"));
+		
+		if (topSeq != null && !topSeq.equals("")) {
+			param.put("top_seq", Integer.parseInt(topSeq));
+		} else {
+			param.put("top_seq", 0);
+		}
+		
+		if (midSeq != null && !midSeq.equals("")) {
+			param.put("mid_seq", Integer.parseInt(midSeq));
+		} else {
+			param.put("mid_seq", 0);
+		}
+		
+		if (botSeq != null && !botSeq.equals("")) {
+			param.put("bot_seq", Integer.parseInt(botSeq));
+		} else {
+			param.put("bot_seq", 0);
+		}
+		System.out.println(param);
+		model.addAllAttributes(service.getEstimationGroupList(param));
+		return JSON_VIEW;
+	}
+}

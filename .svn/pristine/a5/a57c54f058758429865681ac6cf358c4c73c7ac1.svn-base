@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nsdevil.osce.web.enforce.dao.EnforceDao">
+
+	<select id="getExamInfo" resultType="hashmap" parameterType="hashmap">
+		SELECT
+				tempExam.exam_round_seq
+				, tempExam.name
+				, to_char(to_date(tempExam.exam_date, 'YYYY/MM/DD'), 'YYYY/MM/DD') AS exam_date
+				, tempExam.full_cate
+				, gr.group_count
+				, gr.student_count
+				, tempExam.admin_code
+		FROM
+			(
+				SELECT
+						er.exam_round_seq
+						, exam.name
+						, exam.admin_code
+						, er.exam_date
+						, (	
+								SELECT 
+										(top.cate || ' > ' || mid.cate || ' > ' || bot.cate) AS cate
+								FROM 	(SELECT estimation_group_seq, cate FROM "estimation_group" WHERE top_group_seq is null AND mid_group_seq is NULL AND use_flag = 'Y') top
+								JOIN 	(SELECT estimation_group_seq, top_group_seq, cate FROM "estimation_group" WHERE top_group_seq is not null AND mid_group_seq is NULL AND use_flag = 'Y') mid
+								ON 		top.estimation_group_seq = mid.top_group_seq
+								JOIN 	(SELECT estimation_group_seq, mid_group_seq, cate FROM "estimation_group" WHERE top_group_seq is not null AND mid_group_seq is not NULL AND use_flag = 'Y') bot
+								ON 		mid.estimation_group_seq = bot.mid_group_seq
+								WHERE	bot.estimation_group_seq = exam.estimation_group_seq
+						) AS full_cate
+				FROM 	"exam_round" AS er
+				JOIN	"exam" AS exam
+				ON		er.exam_seq = exam.exam_seq
+				AND		er.exam_date = #{exam_date}
+				AND		er.use_flag = 'Y'
+				AND		er.exam_readiness_flag = 'Y'
+				AND		er.group_readiness_flag = 'Y'
+			) AS tempExam
+		JOIN 
+			(
+				SELECT
+						exam_round_seq
+						, (MAX(CAST(group_number AS integer)) - MIN(CAST(group_number AS integer)) + 1) AS group_count
+						, COUNT(*) AS student_count
+				FROM 	"group_readiness"
+				WHERE 	exam_round_seq = (SELECT exam_round_seq FROM "exam_round" WHERE exam_date = #{exam_date})
+				AND		use_flag = 'Y'
+				GROUP BY exam_round_seq
+			) AS gr
+		ON	tempExam.exam_round_seq = gr.exam_round_seq
+	</select>
+	
+	<select id="getExamStudentInfo" resultType="hashmap" parameterType="hashmap">
+		SELECT 
+			(
+				SELECT
+						COUNT(*)
+				FROM	"group_readiness"
+				WHERE	use_flag = 'Y'
+				AND		exam_flag = 'END'
+				AND		exam_round_seq = #{exam_round_seq}
+			) AS exam_end_count
+			, (
+				SELECT
+						COUNT(*)
+				FROM	"group_readiness"
+				WHERE	use_flag = 'Y'
+				AND		(exam_flag = 'START' OR exam_flag = 'WAIT' OR exam_flag = 'ATTEND')
+				AND		exam_round_seq = #{exam_round_seq}
+			) AS exam_watting_count
+	</select>
+	
+	<select id="getExamRoundSeq" parameterType="hashmap" resultType="hashmap">
+		SELECT
+				exam_round_seq
+		FROM	"exam_round"
+		WHERE	exam_date = #{exam_date}
+		AND		use_flag = 'Y'
+		AND		exam_readiness_flag = 'Y'
+		AND		group_readiness_flag = 'Y'
+	</select>
+	
+	<update id="updateExamRound" parameterType="hashmap">
+		UPDATE	"exam_round"
+		SET
+				exam_flag = #{exam_flag}
+				, upt_date = NOW()
+		WHERE	exam_round_seq = #{exam_round_seq}
+	</update>
+	
+	<update id="updateExam" parameterType="hashmap">
+		UPDATE	"exam"
+		SET
+				exam_flag = #{exam_flag}
+				, upt_date = NOW()
+		WHERE	exam_seq = (
+								SELECT 
+										exam_seq 
+								FROM 	"exam_round"
+								WHERE 	exam_round_seq = #{exam_round_seq}
+							)
+		AND		use_flag = 'Y'
+	</update>
+	
+</mapper>

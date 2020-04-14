@@ -1,0 +1,7 @@
+package com.nsdevil.osce.web.login.dao;
+
+import java.util.HashMap;
+
+public interface LoginDao {
+	public HashMap<String, Object> getAdminInfo(HashMap<String, Object> param) throws Exception;
+}

@@ -1,0 +1,23 @@
+package com.nsdevil.osce.web.sample.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.nsdevil.osce.common.bean.ResultMap;
+import com.nsdevil.osce.web.sample.dao.SampleDao;
+
+@Service
+public class SampleService {
+	
+	@Autowired
+	private SampleDao dao;
+	
+	public ResultMap getSampleList() throws Exception {
+		ResultMap resultMap = new ResultMap();
+		
+		resultMap.put("list", dao.getSampleList());
+		
+		return resultMap;
+	}
+
+}

@@ -1,0 +1,115 @@
+.checkBtn{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 1px solid #8f8f8f;
+    margin-top: -3px;
+    padding-left: 0px;
+}
+.changed{
+    background-color: #fffedc;
+}
+.like:hover{
+    background-color: #fffedc;
+}
+.answerFlag{
+    color: #fff;
+    background: #fb5f33 !important;
+    border-color: #fb5f33;
+}
+.questionOptionNumber{
+    margin-top: 20px;
+}
+.selectColorName{
+    font-size: 18px;
+}
+.colorModify1{
+    width: 50px;
+    height: 50px;
+    background: rgb(13, 135, 249);
+}
+.colorModify2{
+    width: 50px;
+    height: 50px;
+    background: #ff9d35;
+}
+.colorModify3{
+    width: 50px;
+    height: 50px;
+    background: #3bd660;
+}
+.pencilMobile{
+    width: 50px;
+}
+.signature-pad {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: #0bb7b2;
+    width:400px;
+    height:200px;
+}
+
+.tabnew{
+    height: 38px;
+    text-align: center;
+    display: block;
+    color: #888;
+    line-height: 38px;
+    font-size: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px 10px 0 0;
+    border-bottom: 0;
+    width: 80px;
+    padding-left: 0px;
+}
+.uk-tab>.uk-active>a {
+    color: white;
+    background-color: #fb8833;
+    border-color: #fff;
+    height: 38px;
+    text-align: center;
+    display: block;
+    line-height: 38px;
+    font-size: 12px;
+    /* border: 1px solid #ddd; */
+    border-radius: 10px 10px 0 0;
+    border-bottom: 0;
+    width: 80px;
+    padding: 0 0 0 0px;
+    text-transform: none;
+}
+.mobileCheck{
+    background: #0ca2fa;
+}
+.mobileNumber{
+    color: white;
+}
+@media all and (max-width:720px) {
+    .questionOptionNumber{
+        margin-top: 40px;
+    }
+    .selectColorName{
+        font-size: 14px;
+    }
+    .colorModify1{
+         width: 30px;
+         height: 30px;
+         background: rgb(13, 135, 249);
+     }
+    .colorModify2{
+        width: 30px;
+        height: 30px;
+        background: #ff9d35;
+    }
+    .colorModify3{
+        width: 30px;
+        height: 30px;
+        background: #3bd660;
+    }
+    .pencilMobile{
+        width: 30px;
+    }
+
+}

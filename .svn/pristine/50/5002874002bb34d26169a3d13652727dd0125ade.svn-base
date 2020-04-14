@@ -1,0 +1,114 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+ <!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="Publisher" content="NSDevil">
+		<meta name="Keywords" content="NSDevil OSCE">
+		<meta name="Description" content="NSDevil OSCE (관리자용)">
+		<meta name="format-detection" content="telephone=no,date=no,address=no,email=no,url=no">
+		<meta name="viewport" content="user-scalable=no, width=1200">
+
+		<title>NSDevil OSCE</title>
+
+		<link rel="icon" type="image/png" href="${IMG}/favicon.png">
+		<link rel="shortcut icon" href="${IMG}/favicon.png">
+		<link rel="icon" href="${IMG}/favicon.ico">
+		<link rel="apple-touch-icon" href="${IMG}/favicon.ico"> 
+		<link rel="stylesheet" href="${CSS}/login.css" type="text/css" >
+		
+		<script src="${JS}/jquery-1.11.1.js"></script>
+		<script src="${JS}/common.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				
+				
+			});
+			
+			function loginSubmit() {
+				var id = $("#id").val();
+				var pwd = $("#pwd").val();
+				
+				if (isEmpty(id) || isBlank(id)) {
+					alert("아이디를 입력하세요.");
+					$("#id").focus();
+					return false;
+				}
+				
+				if (isEmpty(pwd) || isBlank(pwd)) {
+					alert("비밀번호를 입력하세요.");
+					$("#pwd").focus();
+					return false;
+				}
+				
+				$.ajax({
+			        type: "POST",
+			        url: "${HOME}/ajax/login",
+			        data: $("#loginFrm").serialize(),
+			        dataType: "json",
+					success: function(data) {
+						if (data.status == "200") {
+							location.href="${HOME}/result/list";
+						} else if (data.status == "007") {
+							alert("입력한 아이디와 비밀번호가 일치하는 정보가 없습니다.");
+						} else if (data.status == "008") {
+							alert("사용자 정보가 없습니다. 관리자에게 문의해주세요.");
+						alert("로그인 성공");
+						}
+					}
+			    });
+			}
+		</script>
+	</head>
+	<body>
+	
+		<noscript title="브라우저 자바스크립트 차단 해제 안내">
+			<p>사용하시는 브라우저가 자바스크립트를 차단하지 않도록 설정을 바꾸어 주시면 편리하게 이용하실 수 있습니다.</p>
+		</noscript>
+		
+		<div class="header">
+			<div class="logo-div">
+				<img src="${IMG}/nsdevil_logo.png" alt="NSDevil 로고 이미지" class="logo" >
+				<img src="${IMG}/osce_logo.png" alt="대학 로고 이미지" class="logo_u" >
+				<h1>OSCE 실습평가 관리시스템</h1> 
+			</div>
+		</div>
+		
+		<div id="wrap">
+			<div class="container">
+				<div class="formwrap">
+					<div class="form_contents">
+						<!-- form -->           
+						<form class="login-form" id="loginFrm" onsubmit="return false;">
+							<fieldset>
+								<div class="inputbutton-div">
+									<div class="login-input-div">
+										<p><input type="text" id="id" name="id" required="required" placeholder="아이디" onkeypress="javascript:if(event.keyCode==13){loginSubmit(); return false;}" value="admin"></p>
+										<p><input type="password" id="pwd" name="pwd" required="required" placeholder="패스워드" onkeypress="javascript:if(event.keyCode==13){loginSubmit(); return false;}" value="nsdevil"></p>
+									</div>
+									<div class="login-button-div">
+										<button type="button" onclick="loginSubmit();">로그인</button>
+									</div>		
+								</div>
+							</fieldset>
+						</form>			
+						<!-- e_form -->  		
+					</div>	   
+				</div>
+			</div>
+			<!-- e_container -->
+		</div>
+		<!-- e_wrap -->
+
+		<!-- footer -->   
+	    <footer id="footer">
+	        <div class="footer_contents">
+	            <div class="footer_address">
+                	<p class="guide_call">이용문의 :  (주)엔에스데블 운영지원팀 <i class="phone">☎</i> <span class="call">02-1661-1878</span> 평일 10:00~18:00 (12:00~13:00 점심시간)  |  osce@nsdevil.com</p>
+	            </div>
+	        </div>
+	    </footer>
+		<!-- e_footer -->   
+	</body>
+</html>

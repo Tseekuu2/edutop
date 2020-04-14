@@ -1,0 +1,99 @@
+@charset "UTF-8";
+@import url("style.css");
+@import url("common.css");
+
+
+/* 로그인 */
+.login-back {width:100%; background:url(../img/login/login-back.png) no-repeat center; height:100vh; max-width:1920px; padding:15vh /*7vh*/ 0;}/* 2020-03-07 */
+.login-wrap {width:1080px /*1600px*/; overflow: hidden; margin:0 auto;}/* 2020-03-07 */
+
+
+/* 폼 (왼쪽) */
+.login-form {width:755px /*1200px*/; height:755px; float: left; border-radius: 10px; background:#fff; text-align: center; padding:60px 0;}/* 2020-03-07 */
+.login-form:before {content:""; background:url(../img/login/icon-login-top.png) no-repeat; width:125px /*175px*/; height:75px /*105px*/; margin:0 auto; display:block; background-size:100%;}/* 2020-03-07 */
+.login-form > .lg-title {color:#333; font-size: 30px /*50px*/; line-height:30px; margin:18px /*25px*/ 0; font-weight: 400;}/* 2020-03-07 */
+.login-form > .lg-txt {color:#333; font-size: 16px /*22px*/; font-weight: 400;}
+.login-form > .lg-form-wrap {margin:25px /*55px*/ auto 45px; position: relative; width:500px /*568px*/;}/* 2020-03-07 */
+.login-form > .lg-form-wrap > .loginId,
+.login-form > .lg-form-wrap > .loginPw {width:100%; height:50px /*70px*/; border:2px solid #979797; border-radius: 10px; font-size: 20px; padding:0 30px; color:#555; display:block; margin-bottom:15px; font-weight: 500;}
+.login-form > .lg-form-wrap > .loginId::placeholder,
+.login-form > .lg-form-wrap > .loginPw::placeholder {color:#979797; font-weight: 300;}
+.login-form > .lg-form-wrap > .login-btn {color:#fff; font-size: 18px /*28px*/; border-radius: 10px; background:#fb5f33; height:50px /*60px*/; width:100%; font-weight: 500;}/* 2020-03-07 */
+.login-form > .lg-form-wrap .find-menu > li {display:inline-block; padding-top:12px;}
+.login-form > .lg-form-wrap .find-menu > li > a {color:#666; font-size:14px /*18px*/; font-weight: 300;}/* 2020-03-07 */
+.login-form > .lg-form-wrap .find-menu > li:first-child > a:after {content:""; width:1px; height:16px /*20px*/; background:#666; margin:0 16px /*20px*/; display:inline-block; position: relative; top:3px;}/* 2020-03-07 */
+.login-form > .lg-form-wrap .join-btn {width:200px /*220px*/; height:40px /*50px*/; border-radius: 10px; background:#f3f3f3; color:#666; line-height: 40px /*48px*/; font-size: 14px /*18px*/; background:#ffe149;}/* 2020-03-07 */
+.login-form > .sns-login > li {display:inline-block; margin:0 12px /*15px*/;}
+.login-form > .sns-login > li img {width:55px;}/* 2020-03-07 */
+
+    /* 체크박스 */
+.login-check {display:block; position:relative; vertical-align:middle;margin:0 0 10px /*30px*/ 0; line-height:1; text-align:left;}/* 2020-03-07 */
+.login-check input {display:block; overflow:hidden; position:absolute; left:0; top:0; width:12px /*30px*/; height:12px /*30px*/; background:transparent; border:0;}/* 2020-03-07 */
+.login-check label {display:inline-block; position:relative; min-width:26px;min-height:26px; line-height:22px /*28px*/; vertical-align:top; cursor: pointer;}/* 2020-03-07 */
+.login-check label span {display:inline-block; padding-left:22px /*42px*/; vertical-align:middle; font-size:14px /*18px*/; color:#979797; font-weight: 300;}/* 2020-03-07 */
+.login-check label:before, .login-check label:after {content:''; position:absolute; top:0;}
+.login-check label:before {left:0; top:0; width:12px /*26px*/; height:12px /*26px*/; border:2px solid #979797; background:#fff;}/* 2020-03-07 */
+.login-check input:checked + label:before {background-color:#fff;}
+.login-check input:checked + label:after {left:2px /*6px*/; top:4px /*7px*/; width:10px /*14px*/; height:4px /*8px*/; background:none; border-left:2px /*3px*/ solid #fb5f33; border-bottom:2px /*3px*/ solid #fb5f33; transform:rotate(-45deg);}/* 2020-03-09 */
+
+
+/* 링크 (오른쪽) */
+.login-link {width:325px /*400px*/; float:right; padding-top:76px /*120px*/;}/* 2020-03-07 */
+.lg-link-wrap {/*height:180px 195px*/; position: relative; padding-left:60px /*90px*/; margin-left:-22px /*-35px*/; margin-bottom:50px;}/* 2020-03-07 */
+.lg-link-wrap::before {content:""; background:url(../img/login/icon-link.png) no-repeat; background-size:100%; width:44px /*70px*/; height:46px /*72px*/; display:inline-block; position: absolute; top:0; left:0;}/* 2020-03-07 */
+.lg-link-wrap > dt {overflow:hidden; margin:0 0 10px;}
+.lg-link-wrap > dt > p {font-size: 18px /*24px*/; color:#000; float:left; padding-top:11px;}/* 2020-03-07 */
+.lg-link-wrap > dt > a {float:right; display:inline-block; width:85px; height:30px; border-radius:50px; border:1px solid #000; font-size: 18px; text-align: center; line-height: 30px /*28px*/; color:#000; transition:.1s; margin-top:4px;}/* 2020-03-07 */
+.lg-link-wrap > dt > a:hover {background:#ff5f33; color:#fff; border-color: #ff5f33;}
+.lg-link-wrap > dd {font-size: 14px /*16px*/; color:#000; line-height: 22px /*1.5*/;}/* 2020-03-07 */
+
+
+/* 카피라이트 */
+.lg-copyright {/*width:1200px;*/ text-align:center; padding-top:42px /*3vh*/; overflow: hidden;}/* 2020-03-07 */
+.lg-copyright > p {font-size: 15px; color:#686868;}
+
+
+
+
+/* 2020-02-17 login 추가 */
+.ft_login {display:none;}
+
+@media all and (max-width:720px) {
+.ft_login {display:block;}
+
+.login-back {background:none; padding-top:0;}
+
+#login-wrapper {width:100%; min-width:100%;}
+.login-wrap {width:100%;}
+
+.login-form {float:none; width:100%; padding:7px 0 0 0;}
+.login-form:before {display:none;}
+.login-form > .lg-title {display:none;}
+.login-form > .lg-form-wrap {width:293px; margin:15px auto 0 auto;}
+.login-form > .lg-form-wrap > .loginId, .login-form > .lg-form-wrap > .loginPw {height:41px; font-size:14px; line-height:41px; margin-bottom:8px; border:1px solid #d2d2d2; border-radius:4px;}
+.login-form > .lg-form-wrap > .loginPw {margin-bottom:5px;}
+.login-form > .lg-txt {font-size:15px;}
+.login-form > .lg-form-wrap > .login-btn {height:42px; font-size:17px; border-radius:4px;}
+.login-form > .lg-form-wrap .find-menu > li {padding-top:0;}
+.login-form > .lg-form-wrap .find-menu > li > a {font-size:13px;}
+.login-form > .lg-form-wrap .find-menu > li:first-child > a:after {height:14px; margin:0 7px;}
+.login-form > .lg-form-wrap .join-btn {display:inline-block; width:auto; height:auto; font-size:13px; line-height:21px; background:none;}
+.login-form .of-hd.mgt20 {margin-top:6px !important; margin-bottom:40px;}
+.login-form > .sns-login img {width:49px;}
+.login-form > .sns-login > li {margin:0 10px;}
+
+.login-check input {width:21px; height:21px; margin-top:2px;}
+.login-check label {min-width:21px; min-height:21px;}
+.login-check label:before {width:21px; height:21px; border:1px solid #d2d2d2; border-radius:4px; margin-top:2px;}
+.login-check label span {font-size:13px; padding-left:30px;}
+
+.login-link {float:none; width:100%; margin-top:45px; padding-top:35px; background:#f8f8f8;}
+.lg-link-wrap {width:293px; height:auto; padding:0 0 27px 0; margin:0 auto;}
+.lg-link-wrap::before {display:none;}
+.lg-link-wrap > dt {margin-bottom:5px;}
+.lg-link-wrap > dt > p {font-size:14px;}
+.lg-link-wrap > dt > a {float:left; width:6px; height:10px; margin:2px 0 0 6px; background:transparent url('../img/common/arr_go_n.png') no-repeat left top; background-size:6px 10px; border:none; text-indent:-9999px;}
+.lg-link-wrap > dd {font-size:13px; color:#666666;}
+
+.lg-copyright {display:none;}
+}

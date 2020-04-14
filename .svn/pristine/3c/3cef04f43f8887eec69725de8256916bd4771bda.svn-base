@@ -1,0 +1,20 @@
+package com.nsdevil.osce.common.controller;
+
+import java.util.HashMap;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.nsdevil.osce.common.util.Util;
+
+@Controller
+public class DownloadController extends CommonController {
+	@RequestMapping(value = "/download")
+	public String downloadFile(@RequestParam HashMap<String, Object> param, Model model) throws Exception {
+		Util.requiredCheck(param, new String[]{"filePath", "fileName"});
+		model.addAllAttributes(param);
+		return "downloadView";
+	}
+}

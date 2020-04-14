@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nsdevil.osce.web.result.dao.ResultDao">
+	
+	<sql id="resultWhere">
+		<if test='searchParam != null and searchParam != ""'>
+			AND 1 = 1
+		</if>
+	</sql>
+
+
+	<select id="getResultCnt" parameterType="hashmap" resultType="integer">
+		SELECT
+				COUNT(*)
+		FROM	"exam"
+		WHERE	exam_flag = 'END'
+		AND		use_flag = 'Y'
+		<include refid="resultWhere"/>
+    </select>
+
+    
+    <select id="getResultList" parameterType="hashmap" resultType="hashmap">
+    	SELECT
+				(ROW_NUMBER() OVER()) AS row_num
+				, exam_seq
+				, name
+				, year
+				, round
+				, start_date
+				, end_date
+		FROM	"exam"
+		WHERE	exam_flag = 'END'
+		AND		use_flag = 'Y'
+		<include refid="resultWhere"/>
+    	ORDER BY start_date DESC
+		LIMIT #{endRow} OFFSET #{startRow}
+    </select>
+
+    
+    <select id="getResultEstimationInfoList" parameterType="hashmap" resultType="hashmap">
+    	<choose>
+    		<when test='type == "evalution_form"'>
+		    	SELECT 
+		    			evalution_form_seq
+		    	FROM	"result_estimation"
+		    	WHERE	use_flag = 'Y'
+		    	AND		exam_seq = #{exam_seq}
+		    	AND		(estimation_flag = 'END' OR estimation_flag = 'RE')
+		    	GROUP BY	evalution_form_seq
+    		</when>
+    		<when test='type == "professor"'>
+    			SELECT 
+		    			professor_seq
+		    	FROM	"result_estimation"
+		    	WHERE	use_flag = 'Y'
+		    	AND		exam_seq = #{exam_seq}
+		    	AND		(estimation_flag = 'END' OR estimation_flag = 'RE')
+		    	GROUP BY	professor_seq
+    		</when>
+    		<otherwise>
+    			SELECT 
+		    			student_seq
+		    	FROM	"result_estimation"
+		    	WHERE	use_flag = 'Y'
+		    	AND		exam_seq = #{exam_seq}
+		    	AND		(estimation_flag = 'END' OR estimation_flag = 'RE')
+		    	GROUP BY	student_seq
+    		</otherwise>
+    	</choose>
+    	
+    </select>
+    
+    <select id="getResultEstimationList" parameterType="hashmap" resultType="hashmap">
+    	SELECT
+    			re.exam_seq
+    			, re.exam_round_seq
+    			, re.student_seq
+    			, re.evalution_form_seq 
+    			, st.student_seq AS student_seq
+    			, st.name AS student_name
+    			, st.number AS student_number
+    			, st.student_seq AS student_seq
+    			, (	SELECT 
+						(top.cate || ' > ' || mid.cate || ' > ' || bot.cate) AS cate
+					FROM (SELECT estimation_group_seq, cate FROM "estimation_group" WHERE top_group_seq is null AND mid_group_seq is NULL AND use_flag = 'Y') top
+					JOIN (SELECT estimation_group_seq, top_group_seq, cate FROM "estimation_group" WHERE top_group_seq is not null AND mid_group_seq is NULL AND use_flag = 'Y') mid
+					ON top.estimation_group_seq = mid.top_group_seq
+					JOIN (SELECT estimation_group_seq, mid_group_seq, cate FROM "estimation_group" WHERE top_group_seq is not null AND mid_group_seq is not NULL AND use_flag = 'Y') bot
+					ON mid.estimation_group_seq = bot.mid_group_seq
+					WHERE bot.estimation_group_seq = exam.estimation_group_seq
+				) AS full_cate
+				, ef.name AS evalution_form_name
+				, exam.name AS exam_name
+				, exam.start_date
+				, ef.total_score AS total_score
+				, pf.name AS professor_name
+				, pf.responsibility_subject AS responsibility_subject
+    	FROM	"result_estimation" AS re
+    	JOIN	"student" AS st
+    	ON		re.student_seq = st.student_seq
+    	AND		re.exam_seq = #{exam_seq}
+    	AND		(re.estimation_flag = 'END' OR re.estimation_flag = 'RE')
+    	<choose>
+    		<when test='type == "evalution_form"'>
+		    	AND 	re.evalution_form_seq = #{evalution_form_seq}
+    		</when>
+    		<when test='type == "professor"'>
+    			AND 	re.professor_seq = #{professor_seq}
+    		</when>
+    		<otherwise>
+    		AND 	re.student_seq = #{student_seq}
+    		</otherwise>
+    	</choose>
+    	AND		re.use_flag = 'Y'
+    	JOIN	"evalution_form" AS ef
+    	ON		re.evalution_form_seq = ef.evalution_form_seq
+    	AND		ef.use_flag = 'Y'
+    	JOIN	"exam" AS exam
+    	ON		re.exam_seq = exam.exam_seq
+    	AND		exam.use_flag = 'Y'
+    	JOIN	"professor" AS pf
+    	ON		re.professor_seq = pf.professor_seq
+    	AND		pf.use_flag = 'Y'
+    	ORDER BY	st.name
+    </select>
+    
+    <select id="getResultEstimationTotalScore" parameterType="hashmap" resultType="hashmap">
+    	SELECT
+				ROUND((tempTb.max_total_score/ef.total_score*100),2) AS max_total_score
+				, ROUND((tempTb.min_total_score/ef.total_score*100),2) AS min_total_score
+				, ROUND((tempTb.avg_total_score/ef.total_score*100),2) AS avg_total_score
+				, (
+						SELECT 
+								ROUND(re.result_total_score/ef.total_score*100,2) 
+						FROM	"result_estimation" AS re 
+						WHERE	re.exam_seq = #{exam_seq}
+    					AND		re.evalution_form_seq = #{evalution_form_seq}
+						AND 	re.use_flag = 'Y' 
+						AND 	re.student_seq = #{student_seq}
+						AND		(re.estimation_flag = 'END' OR re.estimation_flag = 'RE')
+				) AS total_score
+		FROM	(
+					SELECT
+							tempRe.evalution_form_seq AS evalution_form_seq
+							,MAX(tempRe.result_total_score) AS max_total_score
+							,MIN(tempRe.result_total_score) AS min_total_score
+							,AVG(tempRe.result_total_score) AS avg_total_score
+					FROM 	"result_estimation" AS tempRe
+					JOIN	"evalution_form" AS tempEf
+					ON 		tempRe.evalution_form_seq = tempEf.evalution_form_seq
+					AND		tempRe.evalution_form_seq = #{evalution_form_seq}
+					AND		(tempRe.estimation_flag = 'END' OR tempRe.estimation_flag = 'RE')
+					AND		tempRe.use_flag = 'Y'
+					GROUP BY tempRe.evalution_form_seq
+				) AS tempTb
+		JOIN 	"evalution_form" as ef
+		ON		tempTb.evalution_form_seq = ef.evalution_form_seq
+    </select>
+    
+    <select id="getViewAnswerList" parameterType="hashmap" resultType="hashmap">
+    	<![CDATA[
+    	SELECT 
+				va.numbering
+				, va.view_answer_contents
+				, rs.score
+		FROM	"result_score" AS rs
+		JOIN	"view_answer" AS va
+		ON		rs.view_answer_seq = va.view_answer_seq
+		AND		rs.use_flag = 'Y'
+		AND		rs.exam_seq = #{exam_seq}
+		AND		rs.student_seq = #{student_seq}
+		AND		rs.evalution_form_seq = #{evalution_form_seq}
+		AND		va.use_flag = 'Y'
+    	ORDER BY	va.numbering ASC
+    	]]>
+    </select>
+    
+    
+    <select id="getExamInfo" parameterType="hashmap" resultType="hashmap">
+    	SELECT
+    			exam.name AS exam_name
+    			, exam.start_date
+    			, exam.exam_seq
+    	FROM 	"exam" AS exam
+    	WHERE	exam_seq = #{exam_seq}
+    	AND		exam.use_flag = 'Y'
+    </select>
+    
+    <select id="getExamEstimationGroupInfo" parameterType="hashmap" resultType="hashmap">
+    	SELECT
+    			exam_seq
+    			, name AS exam_name
+    			, (	SELECT 
+						(top.cate || ' > ' || mid.cate || ' > ' || bot.cate) AS cate
+					FROM (SELECT estimation_group_seq, cate FROM "estimation_group" WHERE top_group_seq is null AND mid_group_seq is NULL AND use_flag = 'Y') top
+					JOIN (SELECT estimation_group_seq, top_group_seq, cate FROM "estimation_group" WHERE top_group_seq is not null AND mid_group_seq is NULL AND use_flag = 'Y') mid
+					ON top.estimation_group_seq = mid.top_group_seq
+					JOIN (SELECT estimation_group_seq, mid_group_seq, cate FROM "estimation_group" WHERE top_group_seq is not null AND mid_group_seq is not NULL AND use_flag = 'Y') bot
+					ON mid.estimation_group_seq = bot.mid_group_seq
+					WHERE bot.estimation_group_seq = exam.estimation_group_seq
+				) AS full_cate
+    	FROM	"exam" AS exam
+    	WHERE	exam_seq  = #{exam_seq}
+    	AND		exam.use_flag = 'Y'
+    </select>
+    
+    
+    <select id="getEvalutionInfo" parameterType="hashmap" resultType="hashmap">
+    	SELECT 
+				temp.evalution_form_seq
+				, temp.evalution_form_name
+				, temp.professor_name
+				, temp.row_num AS current_num
+				, temp.total_score AS total_score
+		FROM 	(
+					SELECT
+							(ROW_NUMBER() OVER()) AS row_num
+							, pf.name AS professor_name
+							, ef.name AS evalution_form_name
+							, ef.evalution_form_seq As evalution_form_seq
+							, ef.total_score AS total_score
+					FROM	"exam_round" AS er
+					JOIN	"exam_round_mapping" AS erm
+					ON		er.exam_round_seq = erm.exam_round_seq
+					AND		er.use_flag = 'Y'
+					AND		erm.use_flag = 'Y'
+					AND		er.current_round = 1
+					JOIN	"evalution_form" AS ef
+					ON		erm.evalution_form_seq = ef.evalution_form_seq
+					JOIN	"professor" AS pf
+					ON		ef.professor_seq = pf.professor_seq
+					AND		pf.use_flag = 'Y'
+					ORDER BY	er.current_round ASC, erm.evalution_form_seq ASC
+				) AS temp
+		WHERE temp.row_num = #{current_num}
+    </select>
+    
+    <select id="getEvalutionFormTotalCount" parameterType="hashmap" resultType="integer">
+		SELECT
+				COUNT(*)
+		FROM	"exam_round" AS er
+		JOIN	"exam_round_mapping" AS erm
+		ON		er.exam_round_seq = erm.exam_round_seq
+		AND		er.use_flag = 'Y'
+		AND		erm.use_flag='Y'
+		AND		er.current_round = 1
+		JOIN	"evalution_form" AS ef
+		ON		erm.evalution_form_seq = ef.evalution_form_seq
+		AND		ef.use_flag = 'Y'
+		JOIN	"professor" AS pf
+		ON		ef.professor_seq = pf.professor_seq
+		AND		pf.use_flag = 'Y'
+    </select>
+    
+    <select id="getViewAnswerListInfo" parameterType="hashmap" resultType="hashmap">
+    	SELECT
+    			va.numbering
+				, va.view_answer_contents
+				, sc.score
+		FROM	"view_answer" AS va
+		JOIN 	(
+					SELECT 
+					 	view_answer_seq
+						, ARRAY_TO_STRING(ARRAY_AGG(score),'/') AS score
+					FROM	"score"
+					WHERE	use_flag='Y'
+					GROUP BY view_answer_seq
+				) AS sc
+		ON		va.view_answer_seq = sc.view_answer_seq
+		AND		va.use_flag = 'Y'
+		JOIN	"evalution_form"	AS ef
+		ON		va.evalution_form_seq = ef.evalution_form_seq
+		AND		ef.use_flag = 'Y'
+		WHERE	va.evalution_form_seq = #{evalution_form_seq}
+		ORDER BY	va.numbering ASC	
+    </select>
+    
+</mapper>

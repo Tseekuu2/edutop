@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nsdevil.osce.app.professor.dao.ProfessorAppDao">
+
+	<select id="getLoginInfo" resultType="hashmap">
+		SELECT
+		ae.exam_code
+		,ex.name AS exam_name
+		,exam_date
+		,er.exam_round_seq
+		,current_round
+		,admin_code
+		,picture
+		,pr.professor_seq
+		,pr.name AS professor_name
+		,responsibility_subject
+		,er.exam_flag
+		,ef.evalution_form_seq
+		,ef.name evalution_form_name
+		,ef.total_score
+		FROM exam ex
+		INNER JOIN exam_round er
+		ON er.exam_seq = ex.exam_seq
+		INNER JOIN assign_exam ae
+		ON ae.exam_round_seq = er.exam_round_seq
+		INNER JOIN professor pr
+		ON pr.professor_seq = ae.professor_seq
+		INNER JOIN exam_round_mapping erm
+		ON erm.exam_code = ae.exam_code
+		AND erm.exam_round_seq = ae.exam_round_seq
+		INNER JOIN evalution_form ef
+		ON ef.evalution_form_seq = erm.evalution_form_seq
+		WHERE ex.use_flag = 'Y'
+		AND er.use_flag = 'Y'
+		AND ae.use_flag = 'Y'
+		AND erm.use_flag = 'Y'
+		AND ef.use_flag = 'Y'
+		AND ae.exam_code = #{examCode}
+		AND replace(pr.name, ' ', '') = #{loginName}
+		LIMIT 1
+	</select>
+</mapper>

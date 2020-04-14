@@ -1,0 +1,25 @@
+package com.nsdevil.osce.app.professor.service;
+
+import java.util.HashMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.nsdevil.osce.app.professor.dao.ProfessorAppDao;
+import com.nsdevil.osce.common.bean.ResultMap;
+
+@Service
+public class ProfessorAppService {
+	
+	@Autowired
+	private ProfessorAppDao professorAppDao;
+	
+	public ResultMap getLoginInfo(HashMap<String, Object> param) throws Exception {
+		ResultMap resultMap = new ResultMap();
+		
+		resultMap.put("result", professorAppDao.getLoginInfo(param));
+		
+		return resultMap;
+	}
+
+}

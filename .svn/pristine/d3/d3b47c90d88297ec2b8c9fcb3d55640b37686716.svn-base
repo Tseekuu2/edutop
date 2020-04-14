@@ -1,0 +1,5 @@
+jdbc.datasource=jdbc/DataSource
+jdbc.driverClass=org.postgresql.Driver
+jdbc.url=jdbc:postgresql://210.127.211.110:5432/rnd_osce
+jdbc.username=rnd_osce
+jdbc.password=osce1234

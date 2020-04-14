@@ -1,0 +1,44 @@
+package com.nsdevil.osce.web.common.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.nsdevil.osce.common.bean.ResultMap;
+import com.nsdevil.osce.web.common.dao.CommonWebDao;
+
+@Service
+public class CommonWebService {
+	
+	@Autowired
+	private CommonWebDao dao;
+	
+	public ResultMap getEstimationGroupList(HashMap<String, Object> param) throws Exception {
+		ResultMap resultMap = new ResultMap();
+
+		List<HashMap<String, Object>> estimationGroupTopList = new ArrayList<HashMap<String, Object>>();
+		List<HashMap<String, Object>> estimationGroupMidList = new ArrayList<HashMap<String, Object>>();
+		List<HashMap<String, Object>> estimationGroupBotList = new ArrayList<HashMap<String, Object>>();
+		
+		//대분류
+		estimationGroupTopList = dao.getEstimationGroupTopList(param);
+		//중분류
+		estimationGroupMidList = dao.getEstimationGroupMidList(param);
+		//소분류
+		estimationGroupBotList = dao.getEstimationGroupBotList(param);
+		
+		String year = String.valueOf((String)param.get("year"));
+		
+		if ((int)param.get("bot_seq") > 0 && year != null && !year.equals("")) {
+			resultMap.put("student_count", dao.getStudentCount(param));
+		}
+		
+		resultMap.put("top_list", estimationGroupTopList);
+		resultMap.put("mid_list", estimationGroupMidList);
+		resultMap.put("bot_list", estimationGroupBotList);
+		return resultMap;
+	} 
+}

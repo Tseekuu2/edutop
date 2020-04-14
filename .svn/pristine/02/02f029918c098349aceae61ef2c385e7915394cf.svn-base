@@ -1,0 +1,121 @@
+package com.nsdevil.osce.app.estimation.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nsdevil.osce.app.estimation.service.EstimationAppService;
+import com.nsdevil.osce.common.controller.CommonController;
+import com.nsdevil.osce.common.util.Util;
+
+
+@Controller
+public class EstimationAppController extends CommonController{
+	
+	@Autowired
+	private EstimationAppService service;
+	
+	//시험일차의 시험상태가져오기
+	@RequestMapping(value = "/app/estimation/state", method = RequestMethod.POST)
+	public String getEstimationState(HttpServletRequest reuqest, @RequestParam HashMap<String, Object> param, Model model) throws Exception {
+		Util.requiredCheck(param, new String[] {"exam_code"});
+		model.addAllAttributes(service.getEstimationState(param));		
+		return JSON_VIEW;
+	}
+	
+	//평가 결과 업데이트 result_estimation, result_score 
+	@RequestMapping(value = "/app/estimation/modify", method = RequestMethod.POST)
+	public String modifyEstimation(HttpServletRequest reuqest, @RequestParam HashMap<String, Object> param, Model model) throws Exception {
+		//TODO TEST CODE
+//		List<HashMap<String, Object>> answerList = new ArrayList<HashMap<String, Object>>();
+//		
+//		HashMap<String, Object> map1 = new HashMap<String, Object>();
+//		map1.put("view_answer_seq", 1);
+//		map1.put("score", 4.00);
+//		
+//		HashMap<String, Object> map2 = new HashMap<String, Object>();
+//		map2.put("view_answer_seq", 2);
+//		map2.put("score", 4.00);
+//		
+//		HashMap<String, Object> map3 = new HashMap<String, Object>();
+//		map3.put("view_answer_seq", 3);
+//		map3.put("score", 4.00);
+//		
+//		HashMap<String, Object> map4 = new HashMap<String, Object>();
+//		map4.put("view_answer_seq", 4);
+//		map4.put("score", 4.00);
+//		
+//		HashMap<String, Object> map5 = new HashMap<String, Object>();
+//		map5.put("view_answer_seq", 5);
+//		map5.put("score", 4.00);
+//		
+//		HashMap<String, Object> map6 = new HashMap<String, Object>();
+//		map6.put("view_answer_seq", 6);
+//		map6.put("score", 4.00);
+//		
+//		HashMap<String, Object> map7 = new HashMap<String, Object>();
+//		map7.put("view_answer_seq", 7);
+//		map7.put("score", 4.00);
+//		
+//		HashMap<String, Object> map8 = new HashMap<String, Object>();
+//		map8.put("view_answer_seq", 8);
+//		map8.put("score", 4.00);
+//		
+//		HashMap<String, Object> map9 = new HashMap<String, Object>();
+//		map9.put("view_answer_seq", 9);
+//		map9.put("score", 4.00);
+//		
+//		HashMap<String, Object> map10 = new HashMap<String, Object>();
+//		map10.put("view_answer_seq", 10);
+//		map10.put("score", 4.00);
+//		
+//		answerList.add(map1);
+//		answerList.add(map2);
+//		answerList.add(map3);
+//		answerList.add(map4);
+//		answerList.add(map5);
+//		answerList.add(map6);
+//		answerList.add(map7);
+//		answerList.add(map8);
+//		answerList.add(map9);
+//		answerList.add(map10);
+//		
+//		param.put("exam_code", "10011001");
+//		param.put("student_seq", 4);
+//		param.put("answer_list", answerList);
+//		param.put("result_total_score", 50.0);
+		Util.requiredCheck(param, new String[] {"exam_code", "student_seq", "answer_list", "estimation_flag", "result_total_score"});
+		
+		//JSONArray를 ArrayList로 변환
+		ObjectMapper mapper = new ObjectMapper();
+		ArrayList<HashMap<String, Object>> answerList = mapper.readValue((String)param.get("answer_list"), new TypeReference<ArrayList<HashMap<String, Object>>>(){});
+		param.put("answer_list", answerList);
+		
+		param.put("student_seq", Integer.parseInt(String.valueOf(param.get("student_seq"))));
+		model.addAllAttributes(service.modifyEstimation(param));
+		return JSON_VIEW;
+	}
+	
+	@RequestMapping(value="/app/estimation/result", method = RequestMethod.POST)
+	public String estimationResult (HttpServletRequest reuqest, @RequestParam HashMap<String, Object> param, Model model) throws Exception {
+		Util.requiredCheck(param, new String[] {"exam_round_seq", "student_seq", "evalution_form_seq"});
+		param.put("student_seq", Integer.parseInt(String.valueOf(param.get("student_seq"))));
+		param.put("exam_round_seq", Integer.parseInt(String.valueOf(param.get("exam_round_seq"))));
+		param.put("evalution_form_seq", Integer.parseInt(String.valueOf(param.get("evalution_form_seq"))));
+		model.addAllAttributes(service.getEstimationResult(param));
+		return JSON_VIEW;
+	}
+	
+	
+	
+}

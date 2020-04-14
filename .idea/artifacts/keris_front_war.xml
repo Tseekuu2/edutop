@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="keris_front:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>keris_front</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="kerisfront.war">
+      <element id="artifact" artifact-name="keris_front:war exploded" />
+    </root>
+  </artifact>
+</component>

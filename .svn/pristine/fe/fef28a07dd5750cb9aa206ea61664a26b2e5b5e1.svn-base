@@ -1,0 +1,11 @@
+package com.nsdevil.osce.web.common.dao;
+
+import java.util.HashMap;
+import java.util.List;
+
+public interface CommonWebDao {
+	public List<HashMap<String, Object>> getEstimationGroupTopList(HashMap<String, Object> param) throws Exception;
+	public List<HashMap<String, Object>> getEstimationGroupMidList(HashMap<String, Object> param) throws Exception;
+	public List<HashMap<String, Object>> getEstimationGroupBotList(HashMap<String, Object> param) throws Exception;
+	public int getStudentCount(HashMap<String, Object> param) throws Exception;
+}

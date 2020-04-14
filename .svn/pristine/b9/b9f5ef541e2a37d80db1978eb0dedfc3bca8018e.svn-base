@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nsdevil.osce.app.evalutionform.dao.EvalutionFormAppDao">
+
+	<select id="getEvalutionFormInfo" parameterType="hashmap" resultType="hashmap">
+		SELECT
+				ef.name
+				, ef.evalution_form_seq
+				, ef.total_score
+				, ef.professor_seq
+		FROM 	"evalution_form" AS ef
+		WHERE 	ef.evalution_form_seq = #{evalution_form_seq}
+		AND		ef.use_flag = 'Y' 
+	
+	</select>
+
+	<select id="getViewAnswerList" resultType="hashmap" parameterType="hashmap" >
+		SELECT
+				va.view_answer_seq
+				, va.numbering
+				, va.view_answer_contents
+				, sc.score
+		FROM	"view_answer" AS va
+		JOIN	(
+					SELECT
+						view_answer_seq
+						, ARRAY_TO_STRING(ARRAY_AGG(score ORDER BY score), '|ns|') AS score
+					FROM 	"score"
+					WHERE	use_flag = 'Y'
+					GROUP BY	view_answer_seq
+				) AS sc
+		ON		va.view_answer_seq = sc.view_answer_seq
+		WHERE	va.evalution_form_seq = #{evalution_form_seq}
+		AND		va.use_flag = 'Y'
+		ORDER BY	va.numbering ASC
+	</select>
+</mapper>

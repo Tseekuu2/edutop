@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/keris_front.iml" filepath="$PROJECT_DIR$/keris_front.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kerisexam.iml" filepath="$PROJECT_DIR$/kerisexam.iml" />
+    </modules>
+  </component>
+</project>

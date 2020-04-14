@@ -1,0 +1,49 @@
+package com.nsdevil.osce.web.enforce.controller;
+
+import java.util.HashMap;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.nsdevil.osce.common.controller.CommonController;
+import com.nsdevil.osce.common.exception.LogicException;
+import com.nsdevil.osce.web.enforce.service.EnforceService;
+
+@Controller
+public class EnforceController extends CommonController {
+	
+	@Autowired
+	private EnforceService service;
+	
+	//시험시행 > 모니터링
+	@RequestMapping(value = "/enforce/enforce/list", method = RequestMethod.GET)
+	public String enforceListView(HttpServletRequest request, @RequestParam HashMap<String, Object> param, Model model) throws Exception {
+		return "enforce/enforceList";
+	}
+	
+	@RequestMapping(value = "/ajax/enforce/enforce/list", method = RequestMethod.POST)
+	public String enforceList(HttpServletRequest request, @RequestParam HashMap<String, Object> param, Model model) throws Exception {
+		model.addAllAttributes(service.getEnforceInfo());
+		return JSON_VIEW;
+	}
+	
+	@RequestMapping(value = "/ajax/enforce/exam/{examFlag}", method = RequestMethod.POST)
+	public String modifyExamFlag(@PathVariable("examFlag") String examFlag, @RequestParam HashMap<String, Object> param, Model model) throws Exception {
+		if (examFlag == null || (!examFlag.equals("ready") && !examFlag.equals("start") && !examFlag.equals("end"))) {
+			throw new LogicException("NOT_INBALID_DATA_EXAM_FLAG", "001");
+		}
+		param.put("exam_flag", examFlag);
+		model.addAllAttributes(service.modifyExamFlag(param));
+		return JSON_VIEW;
+	}
+	
+	
+	
+}

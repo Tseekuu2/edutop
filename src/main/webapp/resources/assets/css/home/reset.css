@@ -1,0 +1,72 @@
+@charset "UTF-8";
+
+@font-face {
+    font-family: 'Noto Sans KR';
+    font-weight: 700;
+    src:
+    url('font/NotoSansKR-Bold-Hestia.eot'),
+	url('font/NotoSansKR-Bold-Hestia.eot?#iefix') format('embedded-opentype'),
+    url('font/NotoSansKR-Bold-Hestia.woff') format('woff'),
+    url('font/NotoSansKR-Bold-Hestia.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Noto Sans KR';
+    font-weight: 600;
+    src:
+    url('font/NotoSansKR-Medium-Hestia.eot'),
+	url('font/NotoSansKR-Medium-Hestia.eot?#iefix') format('embedded-opentype'),
+    url('font/NotoSansKR-Medium-Hestia.woff') format('woff'),
+    url('font/NotoSansKR-Medium-Hestia.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Noto Sans KR';
+    font-weight: 400;
+    src:
+    url('font/NotoSansKR-Regular-Hestia.eot'),
+	url('font/NotoSansKR-Regular-Hestia.eot?#iefix') format('embedded-opentype'),
+    url('font/NotoSansKR-Regular-Hestia.woff') format('woff'),
+    url('font/NotoSansKR-Regular-Hestia.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Noto Sans KR';
+    font-weight: 300;
+    src:
+    url('font/NotoSansKR-Light-Hestia.eot'),
+	url('font/NotoSansKR-Light-Hestia.eot?#iefix') format('embedded-opentype'),
+    url('font/NotoSansKR-Light-Hestia.woff') format('woff'),
+    url('font/NotoSansKR-Light-Hestia.otf') format('opentype');
+}
+
+/* default */
+body,html {margin:0; padding:0; background:#fff; -webkit-text-size-adjust:none}
+html {}
+body {font-family:'Noto Sans KR', 'Apple SD Gothic Neo', '맑은고딕', 'Malgun Gothic', '돋움', Dotum, Verdana, Arial, sans-serif; font-size:14px; color:#000; letter-spacing:-0.025em; /*-webkit-font-smoothing:antialiased;*/ -webkit-text-size-adjust:none; /*-moz-osx-font-smoothing:grayscale;*/}
+body, p, h1, h2, h3, h4, h5, h6, ul, ol, li, dl, dt, dd, div, table, th, td, form, fieldset, legend, input, textarea, button, select, pre, code {margin:0; padding:0; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; -o-box-sizing:border-box; -ms-box-sizing:border-box; box-sizing:border-box}
+input, textarea, select, button, table {font-family:'Noto Sans KR', 'Apple SD Gothic Neo', '맑은고딕', 'Malgun Gothic', '돋움', Dotum, Verdana, Arial, sans-serif; font-size:14px; color:#000; letter-spacing:-0.025em}
+input, textarea, select, button {-webkit-box-sizing:border-box; -moz-box-sizing:border-box; -o-box-sizing:border-box; -ms-box-sizing:border-box; box-sizing:border-box}
+a, p, span, strong, em, h1, h2, h3, h4, h5, h6, ul, ol, li, dl, dt, dd, div {line-height:1em}
+article, aside, details, figcaption, figure, footer, header, hgroup, nav, section, summary {display:block; margin:0; padding:0; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; -o-box-sizing:border-box; -ms-box-sizing:border-box; box-sizing:border-box}
+img, fieldset {border:0; vertical-align:middle}
+iframe, button {border:0}
+ul, ol {list-style:none}
+caption, hr {display:none}
+legend {position:absolute; top:0; left:0; width:0; height:0; overflow:hidden; visibility:hidden; font-size:0; line-height:0}
+table {border-spacing:0; width:100%}
+a {text-decoration:none; font-family:'Noto Sans KR', 'Apple SD Gothic Neo', '맑은고딕', 'Malgun Gothic', '돋움', Dotum, Verdana, Arial, sans-serif; color:#000; letter-spacing:-0.025em}
+a:link,
+a:visited,
+a:hover,
+a:active,
+a:focus {/*text-decoration:underline*/}
+*:focus {outline:0}
+
+/* input */
+input:not([type=checkbox]):not([type=radio]) {-webkit-appearance:none; appearance:none; display:inline-block; font-family:'Noto Sans KR', 'Apple SD Gothic Neo', '맑은고딕', 'Malgun Gothic', '돋움', Dotum, Verdana, Arial, sans-serif; border:none}
+input:not([type=checkbox]):not([type=radio]):focus {outline:none; border:none}
+input:not([type=checkbox]):not([type=radio])::-ms-clear {display:none}
+select {-webkit-appearance:none; appearance:none}
+select::-ms-expand {display:none}
+select:focus::-ms-value {background:none}

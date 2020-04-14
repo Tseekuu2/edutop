@@ -1,0 +1,26 @@
+package com.nsdevil.osce.app.professor.controller;
+
+import java.util.HashMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.nsdevil.osce.app.professor.service.ProfessorAppService;
+import com.nsdevil.osce.common.controller.CommonController;
+
+@Controller
+public class ProfessorAppController extends CommonController {
+
+	@Autowired
+	private ProfessorAppService professorAppService;
+	
+	@RequestMapping(value="/app/professor/login", method = RequestMethod.POST)
+	public String sampleList (@RequestParam HashMap<String, Object> param, Model model) throws Exception {
+		model.addAllAttributes(professorAppService.getLoginInfo(param));
+		return JSON_VIEW;
+	}
+}

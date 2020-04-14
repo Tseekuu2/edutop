@@ -1,0 +1,42 @@
+package com.nsdevil.osce.app.evalutionform.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.nsdevil.osce.app.evalutionform.dao.EvalutionFormAppDao;
+import com.nsdevil.osce.common.bean.ResultMap;
+import com.nsdevil.osce.common.exception.ResourceNotFoundException;
+
+@Service
+public class EvalutionFormAppService {
+
+	@Autowired
+	private EvalutionFormAppDao dao;
+
+	
+	public ResultMap getEvalutionFormList(HashMap<String, Object> param) throws Exception {
+		ResultMap resultMap = new ResultMap();
+		
+		HashMap<String, Object> evalutionFormInfo = new HashMap<String, Object>();
+		evalutionFormInfo = dao.getEvalutionFormInfo(param);
+		
+		if (evalutionFormInfo == null || evalutionFormInfo.isEmpty()) {
+			throw new ResourceNotFoundException("NOT_FOUND_EVALUTION_FORM_INFO", "001");
+		}
+		
+		List<HashMap<String, Object>> viewAnswerList = new ArrayList<HashMap<String, Object>>();
+		viewAnswerList = dao.getViewAnswerList(param);
+
+		if (viewAnswerList == null || viewAnswerList.isEmpty()) {
+			throw new ResourceNotFoundException("NOT_FOUND_VIEW_ANSWER_LIST_INFO", "001");
+		}
+		
+		resultMap.put("evalution_form_info", evalutionFormInfo);
+		resultMap.put("view_answer_list", viewAnswerList);
+		return resultMap;
+	}
+}

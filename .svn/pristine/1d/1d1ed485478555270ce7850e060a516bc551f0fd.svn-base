@@ -1,0 +1,7 @@
+package com.nsdevil.osce.app.professor.dao;
+
+import java.util.HashMap;
+
+public interface ProfessorAppDao {
+	public HashMap<String, Object> getLoginInfo(HashMap<String, Object> param) throws Exception;
+}

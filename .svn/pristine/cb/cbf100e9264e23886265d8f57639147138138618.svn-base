@@ -1,0 +1,3 @@
+#local
+root_path=D:/Tomcat7/webapps
+result_file_path=D:/Tomcat7/webapps/osce_res

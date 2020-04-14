@@ -1,0 +1,9 @@
+package com.nsdevil.osce.app.evalutionform.dao;
+
+import java.util.HashMap;
+import java.util.List;
+
+public interface EvalutionFormAppDao {
+	public List<HashMap<String, Object>> getViewAnswerList(HashMap<String, Object> param) throws Exception;
+	public HashMap<String, Object> getEvalutionFormInfo(HashMap<String, Object> param) throws Exception;
+}

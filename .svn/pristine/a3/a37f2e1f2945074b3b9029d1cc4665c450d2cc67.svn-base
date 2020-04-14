@@ -1,0 +1,339 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+ <!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript">
+			function getResultList(page) {
+				
+				if (typeof page == "undefined") {
+					page = 1;
+				}
+				$("input[name='page']").val(page);
+				
+				$.ajax({
+			        type: "POST",
+			        url: "${HOME}/ajax/result/list",
+			        data: $("#frm").serialize(),
+			        dataType: "json",
+					success: function(data) {
+						var html = "";
+						$.each(data.list, function() {
+							html += '<tr>';
+							html += '    <td class="td01">'+this.row_num+'</td>';
+							html += '    <td class="td01">'+this.year+'</td>';
+							html += '    <td class="td01">'+this.round+'</td>';
+							
+							var examStartDate =this.start_date;
+							var examEndDate =this.end_date;
+							examStartDate = examStartDate.replaceAll("-", "/");
+							examEndDate = examEndDate.replaceAll("-", "/");
+							if (examStartDate == examEndDate) {
+								examStartDate = examStartDate.substring(5,13);
+								html += '    <td class="td01">' + examStartDate + '</td>';
+							} else {
+								examStartDate = examStartDate.substring(5,13);
+								examEndDate = examEndDate.substring(5,13);
+								html += '    <td class="td01">' + examStartDate + '~' + examEndDate + '</td>';
+							}
+							
+							html += '   <td class="td01">';
+							html += '		<a href="javascript:void(0);" class="tt5" onclick="javascript:evalutionFormPopup('+this.exam_seq+', 1); return false;">' + this.name + '</a>';
+							html += '	</td>';
+							html += '   <td class="td01 tt01 bl_1">'; //평가지별
+							html += '   	<button class="btn_pdf" onclick="javascript:downloadPDFType(\'student\','+ this.exam_seq+');">양식</button>';
+							html += '    	<button class="btn_exls" onclick="javascript:downloadExcelType(\'evalution_form\','+ this.exam_seq+');">데이터</button>';
+							html += '   </td>';
+							html += '   <td class="td01 tt01 bl_1">'; //평가자별
+							html += '    	<button class="btn_pdf" onclick="javascript:downloadPDFType(\'student\','+ this.exam_seq+');">양식</button>';
+							html += '    	<button class="btn_exls" onclick="javascript:downloadExcelType(\'professor\','+ this.exam_seq+');">데이터</button>';
+							html += '   </td>';
+							html += '   <td class="td01 bl_1">';//성적표
+							html += '    	<button class="btn_exls" onclick="javascript:downloadExcelType(\'student\','+ this.exam_seq+');">데이터</button>';
+							html += '   </td>';
+							html += '</tr>  ';
+						});
+						
+						if (data.list.length > 0) {
+							$("#resultList").html(html);
+							$(".table-list-num").html(data.pageNav);
+						} else {
+							html = '<tr><td class="td01" colspan="8">데이터가 없습니다.</td></tr>';
+							$("#resultList").html(html);
+						}
+						
+					}
+			    });
+			}
+			
+			function downloadExcelType(type, examSeq) {
+				$.ajax({
+			        type: "POST",
+			        url: "${HOME}/ajax/result/download/check",
+			        data: {
+			        	"type" : type
+			        	, "exam_seq" : examSeq
+			        },
+			        dataType: "json",
+					success: function(data) {
+						if (data.status == "200") {
+							download(data.zipPath, data.zipName);
+						}
+					}
+			    });
+			}
+			
+			function downloadPDFType(type, examSeq) {
+				alert("준비중입니다.");
+			}
+			
+			function download(filePath, fileName){
+				post_to_url("${HOME}/download", {'filePath':filePath,'fileName':fileName});
+			}
+			
+			function evalutionFormPopup(examSeq, currentNum) {
+				
+				$.ajax({
+			        type: "POST",
+			        url: "${HOME}/ajax/result/evalutionForm/detail",
+			        data: {
+			        	"exam_seq" : examSeq
+			        	, "current_num" : currentNum
+			        },
+			        dataType: "json",
+					success: function(data) {
+						if (data.status == "200") {
+							$("#evalutionFormName").html("ㆍ&nbsp;&nbsp;" + data.evalutionFormInfo.evalution_form_name + "&nbsp;&nbsp;ㆍ");
+							var popupHeader = '';
+							var cateArr = data.examInfo.full_cate.split(' > ');
+							popupHeader += '<span class="sp_wrap">';
+							popupHeader += '	<span>'+cateArr[0]+'</span>';
+							popupHeader += '	<span class="sign">&gt;</span>';
+							popupHeader += '	<span>'+cateArr[1]+'</span>';
+							popupHeader += '	<span class="sign">&gt;</span>';
+							popupHeader += '	<span>'+cateArr[2]+' : '+data.examInfo.exam_name+'</span>';
+							popupHeader += '</span>';
+							popupHeader += '<span class="sp_wrap"><span>책임교수 : </span><span>'+data.evalutionFormInfo.professor_name+'</span></span>';
+							
+							$("#popupHeader").html(popupHeader);
+							var viewAnswerContentsHtml = '';
+							$.each(data.viewAnswerList, function(){
+								var scoreArr =  this.score.split("/");
+								viewAnswerContentsHtml += '<tr class="tr_1">';
+								viewAnswerContentsHtml += '	<td class="bd01 bd02 w1">' + this.numbering + '</td>';
+								viewAnswerContentsHtml += '	<td class="bd01 bd02 w4 tt3_2">' + this.view_answer_contents + '</td>';
+								viewAnswerContentsHtml += '	<td class="bd01 bd02 w2">';
+								for (var i=0; i<scoreArr.length; i++) {
+									viewAnswerContentsHtml +='<span class="sp_n">' + scoreArr[i] + '</span>';
+									if (scoreArr.length-1 > i) {
+										viewAnswerContentsHtml +='<span class="sign">/</span>';
+									}
+								}
+								viewAnswerContentsHtml += '	</td>';
+								viewAnswerContentsHtml += '</tr>';
+							});
+							
+	                    	$("#viewAnswerContents").html(viewAnswerContentsHtml);
+	                    	var popupNextPrevArea = '';
+	                    	
+							if (typeof data.prevEvalutionFormInfo != "undefined") {
+								popupNextPrevArea += '<div class="a_wrap">';
+								popupNextPrevArea += '<a href="#" class="arrow02" onclick="javascript:evalutionFormPopup('+data.examInfo.exam_seq+', '+data.prevEvalutionFormInfo.current_num+'); return false;">◀</a>';
+								popupNextPrevArea += '<div class="pop_btn_wrap1">';
+								popupNextPrevArea += '<span class="sp01">이전 ( <span>' + data.prevEvalutionFormInfo.current_num + '</span> / <span>'+data.evalutionFormTotalCount+'</span> )</span>';
+								popupNextPrevArea += '<br>';
+								popupNextPrevArea += '<span class="sp01">( '+data.prevEvalutionFormInfo.evalution_form_name+' )</span>';            
+								popupNextPrevArea += '</div>';
+								popupNextPrevArea += '</div>'; 
+							}
+							
+							
+							if (typeof data.nextEvalutionFormInfo != "undefined") {
+								popupNextPrevArea += '<div class="a_wrap">';    
+								popupNextPrevArea += '<a href="#" class="arrow01" onclick="javascript:evalutionFormPopup('+data.examInfo.exam_seq+', '+data.nextEvalutionFormInfo.current_num+'); return false;">▶</a>';
+								popupNextPrevArea += '<div class="pop_btn_wrap2">';
+								popupNextPrevArea += '<span class="sp01">다음 ( <span>' + data.nextEvalutionFormInfo.current_num + '</span> / <span>'+data.evalutionFormTotalCount+'</span> )</span>';
+								popupNextPrevArea += '<br>';
+								popupNextPrevArea += '<span class="sp01">( '+data.nextEvalutionFormInfo.evalution_form_name+' )</span>';           
+								popupNextPrevArea += '</div>';
+								popupNextPrevArea += '</div>';
+							}
+	                    	$("#popupNextPrevArea").html(popupNextPrevArea);
+							$("#evalutionFormPopup").show();
+						}
+					}
+			    });
+			}
+			
+			$(document).on("click", ".pop_close", function(){
+				$("#evalutionFormPopup").hide();
+			});
+			
+			$(document).ready(function(){
+				enableuSelectBoxes();
+				getResultList($("input[name='page']").val());
+			});
+		</script>
+	</head>
+	<body>
+		<!-- e_s_wrap-->
+	    <div class="s_wrap">
+	        <div class="container">
+	            <div class="con_tt">
+	            	<form id="frm" onsubmit="return false;">
+	            		<input type="hidden" name="page">
+		                <!-- s_sub_date-->          
+		                <div class="sub_date2">
+		                    <div class="wrap2_2_uselectbox">
+		                        <div class="uselectbox">
+		                            <span class="uselected">년도</span>
+		                            <span class="uarrow">▼</span>
+		                            <div class="uoptions">
+		                                <span class="uoption firstseleted">년도</span>
+		                                <span class="uoption">2018</span>
+		                                <span class="uoption">2019</span>
+		                                <span class="uoption">2020</span>
+		                                <span class="uoption">2021</span>
+		                                <span class="uoption">2022</span>
+		                                <span class="uoption">2023</span>
+		                                <span class="uoption">2024</span>
+		                                <span class="uoption">2025</span>
+		                            </div>
+		                        </div>                                  
+		                    </div>
+		
+		                    <div class="wrap2_2_uselectbox">
+		                        <div class="uselectbox">
+		                            <span class="uselected">회차</span>
+		                            <span class="uarrow">▼</span>
+		                            <div class="uoptions">
+		                                <span class="uoption firstseleted">회차</span>
+		                                <span class="uoption">1회차</span>
+		                                <span class="uoption">2회차</span>
+		                                <span class="uoption">3회차</span>
+		                                <span class="uoption">4회차</span>
+		                                <span class="uoption">5회차</span>
+		                                <span class="uoption">6회차</span>
+		                                <span class="uoption">7회차</span>
+		                                <span class="uoption">8회차</span>
+		                                <span class="uoption">9회차</span>
+		                                <span class="uoption">10회차</span>
+		                            </div>
+		                        </div>                                  
+		                    </div>
+		
+		                    <input type="text" class="dateyearpicker-input ip_date" value="시작일" readonly="readonly">
+		                    <span class="sign">~</span>                       
+		                    <input type="text" class="dateyearpicker-input ip_date" value="종료일" readonly="readonly">
+		
+		                    <div class="swrap3">
+		                        <input type="text" class="ip_search" value="시험명">
+		                        <button class="btn_search1" ></button>
+		                        <button class="btn_search2" ></button>
+		                    </div>
+		
+		                </div>
+		                <!-- e_sub_date--> 
+					</form>       
+	            </div>
+	
+	            <!-- s_table_wrap -->
+	            <div class="table_wrap">
+	                <table class="table001">
+	                	<thead>
+	                		<tr>
+	                            <th scope="col" class="th01 w501">No.</th>
+					            <th scope="col" class="th01 w502">년도</th>
+					            <th scope="col" class="th01 w501">회차</th>
+					            <th scope="col" class="th01 w503">시험일</th>
+					            <th scope="col" class="th01 w505_6">시험명(평가지 조회)</th>
+					            <th scope="col" class="th01 w504_5 bl_1">평가지별</th>
+					            <th scope="col" class="th01 w504_5 bl_1">평가자별</th>
+					            <th scope="col" class="th01 w504_5 bl_1">학생별</th>
+	                        </tr>
+	                	</thead>
+	                    <tbody id="resultList">
+	                        
+	                    </tbody>
+	                </table>
+	                <!-- Pagination -->      
+	                <div class="table-list-num"></div>
+	                <!-- e_Pagination -->
+	            </div>
+	            <!-- e_table_wrap -->
+	        </div>
+	    </div>
+	    <!-- e_s_wrap-->
+		<!-- s_ 평가지 팝업 -->
+		<div id="evalutionFormPopup" class="pop_up5" >
+		    <div class="pop_wrap">
+		        <p class="popup_title" id="evalutionFormName"></p>
+		 		<button class="pop_close" type="button">X</button>	               
+		        <div class="t_title" id="popupHeader"></div>       
+		        <div class="table5_wrap"> 
+		            <!-- s_pop_table3_2 -->	   
+		            <div class="pop_table3_2">	
+		                <table class="osce_tb_pop4">
+		                      <tbody>
+		                        <tr>
+		                            <th scope="col" class="w1">No.</th>
+		                            <th scope="col" class="w4">항목</th>
+		                            <th scope="col" class="w2">점수</th>        
+		                        </tr>        
+		                    </tbody>
+		                </table>
+		                <!-- s_pop_twrap4 -->
+		                <div class="pop_twrap5">
+		                    <table class="osce_tb_pop5 bd02" >
+		                        <tbody id="viewAnswerContents"></tbody>
+		                    </table>
+		                </div> 
+		                <!-- e_pop_twrap4 -->
+		            </div>
+		            <!-- e_pop_table3_2 -->		 		 
+		
+		            <!-- s_t_dd --> 
+		            <div class="t_dd" id="popupNextPrevArea">
+		                <a href="#" class="arrow02">◀</a>
+		                <div class="pop_btn_wrap">
+		                    <span class="sp01">다음 ( <span>1</span> / <span>9</span> )</span>
+		                    <span class="sp01">( 정맥혈 채혈 )</span>            
+		                </div>
+		                <a href="#" class="arrow01">▶</a>
+		            </div>
+		            <!-- e_t_dd -->                   
+		        </div>
+		    </div>   
+		</div>
+		<!-- e_ 평가지 팝업 -->
+		
+		
+		<!-- s_ 엑셀 일괄 등록 팝업 -->
+		<div id="m_pop2" class="pop_up_ex mo2" >
+		
+		    <div class="pop_wrap">
+		        <p class="popup_title">ㆍ&nbsp;&nbsp;엑셀 일괄 등록&nbsp;&nbsp;ㆍ</p>
+		        <button class="pop_close close2" type="button">X</button>
+		        <button class="btn_exls_down">학생 100점 환산점수 입력 엑셀등록양식</button>               
+		        <div class="t_title">
+		            <span class="sp_wrap">2017년 2학년 1차 OSCE실습평가 엑셀양식을 먼저 다운로드 받으신 뒤, <br>100점 환산점수를 입력하여 엑셀파일을 등록하시면 점수 등록이 완료됩니다.</span>
+		        </div>       
+		        <div class="table5_wrap"> 
+		            <div class="sub_fwrap_ex">   
+		                <span class="tt1">엑셀파일 :</span>                    
+		                <input type="text" class="ip_sort1" value="">
+		                <button class="btn_r1">등록</button>
+		            </div>
+		            <!-- s_t_dd --> 
+		            <div class="t_dd">
+		                <div class="pop_btn_wrap">
+		                    <button type="button" class="btn01">등록</button>
+		                    <button class="btn02" type="button">취소</button>                    
+		                </div>
+		            </div>
+		            <!-- e_t_dd -->                   
+		        </div>
+		    </div>   
+		</div>
+		<!-- e_ 엑셀 일괄 등록 팝업 -->
+	</body>
+</html>

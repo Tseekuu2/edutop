@@ -1,0 +1,97 @@
+.popup-dim {width:100%; height:100%; position: fixed; left:0; top:0; background:rgba(0, 0, 0, .59); z-index:150; display:none;}
+.popup-dim > .popup-layout {position:absolute; top:100px; left:50%; z-index:200; width:640px; background:#fff; border-radius: 10px; padding:35px 40px; margin-left:-320px;}/* 2020-02-29 */
+.popup-dim > .popup-layout .pop-title {color:#333; font-size: 20px; font-weight: 600; padding-bottom:15px; border-bottom:1px solid #222; text-align: center;}/* 2020-03-04 */
+.popup-dim > .popup-layout .popup-close {position: absolute; top:35px; right:40px;}/* 2020-03-04 */
+.popup-scroll {overflow-y:auto;}
+.popup-scroll.type01 {max-height:550px;}
+.popup-scroll::-webkit-scrollbar {width: 6px; height: 20px;}
+.popup-scroll::-webkit-scrollbar-track {background-color: #e7e7e7;}
+.popup-scroll::-webkit-scrollbar-track-piece {background-color: #e7e7e7;}
+.popup-scroll::-webkit-scrollbar-thumb {border-radius: 8px; background-color: #d1d1d1;}
+.popup-scroll::-webkit-scrollbar-button {background-color: #e7e7e7; width: 20px; height: 10px;}
+/* URL 팝업 */
+.url-popup-wrap {text-align: center; margin:22px 0 0;}
+.url-popup-wrap > .url-input {width:360px; height:33px; border:1px solid #e7e7e7; padding:0 10px; color:#c0c0c0; border-radius: 3px;}
+.url-popup-wrap > button {height:32px; margin-left:10px;}
+@media all and (max-width:720px) {
+    .popup-dim > .popup-layout {width:calc(100% - 30px); margin-left:0; left:15px;}
+    .popup-dim > .popup-layout > .popup-close {top:15px; right:15px;}
+    .url-popup-wrap > .url-input {width:calc(100% - 100px);}
+}
+
+
+
+.popup-dim.ty01 > .popup-layout {position:relative; left:0; width:auto; padding:27px 20px 56px 20px; margin:0 10px;}
+.popup-dim.ty01 > .popup-layout > .pop-title {font-size:17px; border-bottom:1px solid #fb8833;}
+.popup-dim.ty01 > .popup-layout > .popup-close {top:26px; right:20px;}
+
+.popup-dim.ty02 > .popup-layout {position:fixed;  top:0; left:0; right:0; bottom:0; width:auto; height:auto; padding:27px 0 56px 0; margin:0; border-radius:0; overflow-y:scroll;}/* 2020-03-04 */
+.popup-dim.ty02 > .popup-layout > .pop-title {font-size:17px; border-bottom:1px solid #e9e9e9;}
+.popup-dim.ty02 > .popup-layout > .popup-close {top:26px; right:20px;}
+
+
+
+.popup-dim {/*position:relative;*/}/* 2020-02-28 */
+.popup-dim > .popup-layout {position:relative;}/* 2020-02-28 */
+
+.popup-dim > .popup-layout {margin-left:0;}/* 2020-02-29 */
+
+
+/* 2020-02-29 */
+.wedo-popup02 .popup-layout {width:440px; margin-left:-220px;}
+.wedo-popup02 .popup-layout p.tx01 {font-size:18px; padding-bottom:30px;}
+
+.wedo-popup .form-wrap .calendarWrap {display:inline-block;}
+.wedo-popup .form-wrap .inputblock {border:1px solid #ddd; width:220px; height:40px; border-radius: 5px; padding:0 10px; font-size: 15px; color:#333;}
+.wedo-popup .form-wrap .inputblock::placeholder {color:#999;}
+.wedo-popup .form-wrap .calendar > i {display:inline-block; width:24px; background:url(src/main/webapp/resources/img/common/icon-date.jpg) no-repeat center;}
+.wedo-popup .form-wrap > .bar {color:#ddd; margin:0 10px;}
+.wedo-popup p.p_s_tit {font-size:18px; line-height:18px; padding:0 0 10px 0; border-bottom:1px solid #666;}
+.wedo-popup .in_bx01 {padding:8px 0 40px 0;}
+.wedo-popup .in_bx01 li {position:relative; height:36px; padding:3px 0 3px 100px;}
+.wedo-popup .in_bx01 li:after {display:block;clear:both;content:""}
+.wedo-popup .in_bx01 li p.ck_wp {position:absolute; top:7px; left:0;}
+.wedo-popup .in_bx01 li p.ck_wp label {font-size:16px; padding:2px 0 0 25px;}
+.wedo-popup .in_bx01 li select.sel_ty01 {float:left; width:78px; height:30px; font-size:16px; padding:0 0 0 5px; margin:0 3px 0 0; background:#fbfbfb; border:1px solid #dedede; border-radius:3px; box-sizing:border-box;}
+.wedo-popup .in_bx01 li select.sel_ty02 {float:left; width:58px; height:30px; font-size:16px; padding:0 0 0 5px; margin:0 3px 0 0; background:#fbfbfb; border:1px solid #dedede; border-radius:3px; box-sizing:border-box;}
+.wedo-popup .in_bx01 li span.tx_n01 {display:inline-block; float:left; font-size:16px; line-height:30px; margin:0 8px 0 0;}
+.wedo-popup .in_bx01 li span.tx_n01.last {margin-right:0;}
+.wedo-popup .in_bx01 li span.line {float:left; display:inline-block; color:#e0e0e0; padding:5px 11px 0 4px;}
+.wedo-popup .in_bx02 {padding:0 0 15px 0;}
+.wedo-popup .in_bx02 li {clear:both; width:100%; padding:17px 0; border-bottom:1px solid #e7e7e7;}
+.wedo-popup .in_bx02 li:after {display:block;clear:both;content:""}
+.wedo-popup .in_bx02 li label {font-size:16px; padding:2px 0 0 25px;}
+.wedo-popup .in_bx03 {padding:20px 0 40px 0;}
+.wedo-popup .btm_btns_n {padding:40px 0 0 0; text-align:center;}
+
+@media all and (max-width:720px) {
+    .wedo-popup .popup-layout {position:fixed; top:15px; left:15px; right:15px; bottom:15px; overflow-y:scroll;}
+    .wedo-popup .in_bx01 li {height:auto; min-height:36px; padding-left:0;}
+    .wedo-popup .in_bx01 li p.ck_wp {position:relative; top:0; left:0; width:100%; min-height:30px;}
+    .wedo-popup .in_bx01 li p.ck_wp label {font-size:16px; padding:2px 0 0 25px;}
+    .wedo-popup .in_bx01 li select.sel_ty01 {width:68px; margin-bottom:10px;}
+    .wedo-popup .in_bx01 li select.sel_ty02 {width:48px; margin-bottom:10px;}
+
+    .wedo-popup02 .popup-layout {width:calc(100% - 30px); margin-left:0;}
+    .wedo-popup02 .popup-layout p.tx01 {font-size:16px; padding-bottom:30px;}
+}
+
+/* 2020-03-02 */
+.wedo-popup .popup-layout {top:5%; padding-right:25px; height:85%; /*overflow-y:auto;*/}/* 2020-03-04 */
+.wedo-popup .popup-layout .in_scrl {position:relative; height:95%; padding-right:10px; overflow-y:auto;}/* 2020-03-04 */
+.wedo-popup .popup-layout .in_scrl a.popup-close {top:0; right:10px;}/* 2020-03-04 */
+
+@media all and (max-width:720px) {
+    .wedo-popup .in_bx01 li .sepa {float:left; clear:both;}
+}
+
+/* 2020-03-04 */
+.sev-check label span img {width:60px;}
+
+.popup-dim.ty02 > .popup-layout {position:fixed; top:7%; bottom:6%; height:auto; border-radius:0; overflow-y:auto;}/* 2020-03-04 */
+
+@media all and (max-width:720px) {
+    .wedo-popup .popup-layout {padding-left:20px; padding-right:20px; overflow-y:auto;}
+    .wedo-popup .popup-layout .in_scrl {position:relative; height:auto; padding-right:0; overflow-y:unset;}/* 2020-03-04 */
+    .wedo-popup .popup-layout .in_scrl a.popup-close {top:0; right:0;}/* 2020-03-04 */
+}

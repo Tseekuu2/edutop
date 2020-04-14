@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nsdevil.osce.app.student.dao.StudentAppDao">
+	
+	<select id="getStudentAttendList" parameterType="hashmap" resultType="hashmap">
+		SELECT
+				stTemp.exam_round_seq
+				, stTemp.student_seq
+				, stTemp.name
+				, stTemp.number
+				, stTemp.leader_flag
+				, stTemp.picture
+				, stTemp.group_number
+				, stTemp.exam_flag
+				, (	
+						SELECT 
+								(top.cate || ' > ' || mid.cate || ' > ' || bot.cate) AS cate
+						FROM 	(SELECT estimation_group_seq, cate FROM "estimation_group" WHERE top_group_seq is null AND mid_group_seq is NULL AND use_flag = 'Y') top
+						JOIN 	(SELECT estimation_group_seq, top_group_seq, cate FROM "estimation_group" WHERE top_group_seq is not null AND mid_group_seq is NULL AND use_flag = 'Y') mid
+						ON 		top.estimation_group_seq = mid.top_group_seq
+						JOIN 	(SELECT estimation_group_seq, mid_group_seq, cate FROM "estimation_group" WHERE top_group_seq is not null AND mid_group_seq is not NULL AND use_flag = 'Y') bot
+						ON 		mid.estimation_group_seq = bot.mid_group_seq
+						WHERE	bot.estimation_group_seq = exTemp.estimation_group_seq
+				) AS full_cate
+		FROM
+				(
+					SELECT
+							er.exam_round_seq
+							, exam.estimation_group_seq
+					FROM	"exam_round" AS er
+					JOIN	"assign_exam" AS ae
+					ON		er.exam_round_seq = ae.exam_round_seq
+					AND		er.exam_readiness_flag = 'Y'
+					AND		er.use_flag = 'Y'
+					AND		ae.use_flag = 'Y'
+					AND		ae.exam_round_seq = #{exam_round_seq}
+					AND		ae.exam_code = #{exam_code}
+					JOIN	"exam" AS exam
+					ON		er.exam_seq = exam.exam_seq
+					AND		exam.use_flag = 'Y'
+				) AS exTemp
+		JOIN
+				(
+					SELECT 
+							st.student_seq
+							, st.name
+							, st.number
+							, st.leader_flag
+							, coalesce(st.picture, '') AS picture
+							, coalesce(gr.group_number, '') AS group_number
+							, gr.exam_flag
+							, gr.exam_round_seq
+					FROM	"student" AS st
+					JOIN	"group_readiness" AS gr
+					ON		st.student_seq = gr.student_seq
+					AND		st.use_flag = 'Y'
+					AND		gr.use_flag = 'Y'
+				) AS stTemp
+		ON 		exTemp.exam_round_seq = stTemp.exam_round_seq
+		ORDER BY	stTemp.group_number ASC, stTemp.name ASC
+	</select>
+	
+	
+	<update id="modifyStudentExamFlag" parameterType="hashmap">
+		UPDATE	"group_readiness"
+		SET		exam_flag = #{exam_flag}
+		WHERE	use_flag = 'Y'
+		AND		exam_round_seq = (	SELECT
+											er.exam_round_seq
+									FROM 	"assign_exam" AS ae
+									JOIN	"exam_round" AS er
+									ON		ae.exam_round_seq = er.exam_round_seq
+									AND		ae.use_flag = 'Y'
+									AND		er.use_flag = 'Y'
+									WHERE 	ae.exam_code = #{exam_code})
+		AND 	student_seq = #{student_seq}
+	</update>
+	
+</mapper>

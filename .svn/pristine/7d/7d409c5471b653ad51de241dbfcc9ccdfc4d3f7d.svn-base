@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nsdevil.osce.web.common.dao.CommonWebDao">
+
+	<select id="getEstimationGroupTopList" parameterType="hashmap" resultType="hashmap">
+		SELECT
+				estimation_group_seq
+				, cate
+		FROM	"estimation_group" AS eg
+		WHERE 	eg.use_flag = 'Y'
+		AND		eg.top_group_seq is null
+		AND		eg.mid_group_seq is null
+	</select>
+	
+	<select id="getEstimationGroupMidList" parameterType="hashmap" resultType="hashmap">
+		SELECT
+				estimation_group_seq
+				, cate
+		FROM	"estimation_group" AS eg
+		WHERE 	eg.use_flag = 'Y'
+		AND		eg.top_group_seq = #{top_seq}
+		AND		eg.mid_group_seq is null
+	</select>
+	
+	<select id="getEstimationGroupBotList" parameterType="hashmap" resultType="hashmap">
+		SELECT
+				estimation_group_seq
+				, cate
+		FROM	"estimation_group" AS eg
+		WHERE 	eg.use_flag = 'Y'
+		AND		eg.mid_group_seq = #{mid_seq}
+	</select>
+	
+	<select id="getStudentCount" parameterType="hashmap" resultType="integer">
+		SELECT
+				count(*)
+		FROM	"student" AS st
+		JOIN	"estimation_group" AS eg
+		ON		st.estimation_group_seq = eg.estimation_group_seq
+		AND		st.use_flag = 'Y'
+		AND		st.attend_flag = 'Y'
+		AND		eg.use_flag = 'Y'
+		AND		st.estimation_group_seq = #{bot_seq}
+		AND		st.year = #{year}
+	</select>
+	
+	
+</mapper>

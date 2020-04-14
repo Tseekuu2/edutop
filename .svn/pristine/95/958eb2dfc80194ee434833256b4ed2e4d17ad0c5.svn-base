@@ -1,0 +1,150 @@
+package com.nsdevil.osce.common.util;
+
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * 페이징 클래스
+ * @author Choi
+ *
+ */
+public class PagingHelper {
+	
+	/** 한 페이지 글 갯수 */
+	private int pageSize;
+	
+	/** 페이지 그룹 갯수 */
+	private int pageGroup;
+	
+	/** 현재 페이지 번호 */
+	private int pageNumber;
+	
+	/** 시작 페이지 */
+	private int startPage;
+	
+	/** 종료 페이지 */
+	private int endPage;
+	
+	/** 총 페이지 수 */
+	private int totalPageCount;
+	
+	/**
+	 * 기본 페이지/그룹 사이즈로 생성
+	 */
+	public PagingHelper() {
+		pageSize = 10;
+		pageGroup = 10;
+	}
+	
+	/**
+	 * 페이지 페이지/그룹 사이즈 변경하여 생성
+	 * @param pageSize
+	 * @param pageGroup
+	 */
+	public PagingHelper(int pageSize, int pageGroup) {
+		this.pageSize = pageSize;
+		this.pageGroup = pageGroup;
+	}
+	
+	/**
+	 * 파라메터로 받은 검색용 맵에 페이징용 변수를 추가하여 리턴
+	 * @param pagingParam
+	 * @param totalCount
+	 * @param aPageNumber
+	 * @return
+	 */
+	public HashMap<String, Object> getPagingParam(HashMap<String, Object> pagingParam, int totalCount) {
+		
+		//페이지 변수가 널이거나 공백이면 1로 변경
+		if (pagingParam.get("page") == null || pagingParam.get("page").equals("")) {
+			pagingParam.put("page", "1");
+		}
+		
+		pageNumber = Integer.parseInt((String)pagingParam.get("page"));
+		
+		//페이지 번호가 0보다 작으면 1로 고정
+		if (pageNumber <= 0) {
+			pageNumber = 1;
+		}
+		
+		int totalPageCount = totalCount / pageSize;
+		
+		//페이지가 0으로 나누어 떨어지지 않으면 총 페이지 수에 1을 더한다
+		if (totalCount % pageSize != 0) {
+			totalPageCount++;
+		}
+		
+		this.totalPageCount = totalPageCount;
+		
+		//페이지 번호가 총 페이지 수보다 크면 마지막 페이지 번호로 변경
+		if (totalPageCount < pageNumber) {
+			pageNumber = totalPageCount;
+		}
+		
+		this.startPage = (pageNumber - 1) / pageGroup * pageGroup + 1;
+		int endPage = startPage + (pageGroup - 1);
+		
+		//마지막 페이지가 총 페이지 수보다 크면 마지막 페이지 번호로 변경
+		if (endPage > totalPageCount) {
+			endPage = totalPageCount;
+		}
+		
+		this.endPage = endPage;
+		
+		int endRow = pageSize * pageNumber;
+		int startRow = endRow - pageSize;
+		
+		if (startRow < 0) startRow = 0;
+		
+		pagingParam.put("startRow", startRow);
+		pagingParam.put("endRow", pageSize);
+		
+		return pagingParam;
+	}
+	
+	/**
+	 * 리스트에 네비게이터 변수 추가
+	 * @return
+	 */
+	public HashMap<String, Object> getPageList(List<HashMap<String, Object>> list, String functionName, int totalCnt) {
+		
+		int prevPage = pageNumber - 1;
+		int nextPage = pageNumber + 1;
+		
+		//이전 페이지가 1보다 작으면 1로 설정
+		if (prevPage < 1) {
+			prevPage = 1;
+		}
+		
+		//다음페이지가 마지막 페이지보다 높으면 마지막 페이지 번호로 설정
+		if (nextPage > totalPageCount) {
+			nextPage = totalPageCount;
+		}
+		
+		HashMap<String, Object> pagingList = new HashMap<String, Object>();
+
+		String navString = "<ul><li><a href=\"javascript:" + functionName + "(1);\"title=\"처음\" class=\"arrow bba\"></a></li>";
+		
+		navString += "<li><a href=\"javascript:" + functionName +"("+prevPage+");" + "\" title=\"이전\" class=\"arrow ba\"></a></li>";
+		
+		for (int page = startPage; page <= endPage; page++) {
+			if (page == pageNumber) {
+				//현재 페이지일때
+				navString +="<li><a href=\"javascript:"+functionName+"("+page+");\" class=\"active\">"+page+"</a></li>";
+				pagingList.put("page", page);
+			} else {
+				navString +="<li><a href=\"javascript:"+functionName+"("+page+");\">"+page+"</a></li>";
+			}
+		}
+		
+		navString += "<li><a href=\"javascript:" + functionName +"("+nextPage+");" + "\" title=\"다음\" class=\"arrow na\"></a></li>";
+		
+		navString += "<li><a href=\"javascript:"+functionName+"("+totalPageCount+");\" title=\"맨끝\" class=\"arrow nna\"></a></li>";
+		
+		pagingList.put("list", list);
+		pagingList.put("pageNav", navString);
+		pagingList.put("totalCnt", totalCnt);
+		
+		return pagingList;
+	}
+}

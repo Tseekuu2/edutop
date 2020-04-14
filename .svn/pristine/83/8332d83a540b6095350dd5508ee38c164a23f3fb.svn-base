@@ -1,0 +1,25 @@
+package com.nsdevil.osce.web.ready.service;
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.nsdevil.osce.common.util.PagingHelper;
+import com.nsdevil.osce.web.ready.dao.ReadyDao;
+
+@Service
+public class ReadyService {
+	
+	@Autowired
+	private ReadyDao dao;
+	
+	public HashMap<String, Object> getExamCreateList(HashMap<String, Object> param) throws Exception {
+		int totalCount = dao.getExamCreateCnt(param);
+		PagingHelper pagingHelper = new PagingHelper();
+		List<HashMap<String, Object>> ContentsList = dao.getExamCreateList(pagingHelper.getPagingParam(param, totalCount));
+		return pagingHelper.getPageList(ContentsList, (String)param.get("listFunctionName"), totalCount);
+	}
+	
+}
