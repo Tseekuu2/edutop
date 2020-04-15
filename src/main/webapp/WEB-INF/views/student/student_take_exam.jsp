@@ -50,7 +50,7 @@
 									</p>
 								</div>
 								<div class="question-area mgb0" v-if="item.datas.length > 0">
-									<template v-for="(apps, mindex) in item.datas">
+									<template v-for="(apps, mindex) in item.datas" :key="mindex">
 										<div v-if="apps.media != null">
 											<p v-if=" apps.media.mediaType == 'image' ">
 												<img :src="'http://103.41.247.45:80/webapps/uploadingDir/examquestion/' + apps.media.fileName"
@@ -81,7 +81,7 @@
 								</div>
 								<div class="example-list" v-if="item.questionType == '1'">
 									<div class="example-wrap" v-for="(aItem,index) in item.answers" :key="index">
-										<template v-if="item.answerType == 'math' ">
+										<template v-if="item.answerType == 'math' " :key="index">
 											<div class="" style="display: inline-flex">
 												<input type="button" name="numRadio" class="checkBtn uk-margin-remove"
 													   style="padding-left: 0px;" @click="activeanswers(aItem, item)"
@@ -126,7 +126,7 @@
 								<div class="example-list" v-else-if="item.questionType == '3'">
 									<div class="example-wrap" v-for="(aItem,index) in item.answers" :key="index"
 										 style="display: flex">
-										<template v-if="item.answerType == 'math' ">
+										<template v-if="item.answerType == 'math' " :key="index">
 											<div style="display: inline-flex">
 												<input type="button" name="numRadio" class="checkBtn uk-margin-remove"
 													   style="padding-left: 0px; margin-right: 20px !important;"
@@ -591,7 +591,7 @@
             },
 			saveLast(){
                 console.log(this.questions.length)
-                if (this.currentQuestion > this.questions.length - 1){
+                // if (this.currentQuestion > this.questions.length - 1){
                 // 	if (this.leavedQuestion <= 1) {
                         this.isLast = 'last'
                         this.nextQuestion()
@@ -602,8 +602,8 @@
                 // }
                 // else{
                 // 	alert(" This is not last question!!! ")
-                }
-			},
+                // }
+				},
             mobileBack() {
                 this.isPopup = false
             },
@@ -721,22 +721,13 @@
             },
             bigLike(item) {
                 if (this.questions[item].like == '0') {
-                    this.questions[item].like = '1'
+                    // this.questions[item].like = '1';
                     this.bigheartlike = true
                 } else {
-                    this.questions[item].like = '0'
+                    // this.questions[item].like = '0';
                     this.bigheartlike = false
                 }
             },
-            // drawing() {
-            //     this.pencil2 = !this.pencil2
-            //     // this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].answerData);
-            //     if (this.pencil2 == true) {
-            //         const {isEmpty, data} = this.$refs.signaturePad.saveSignature();
-            //         this.questions[this.currentQuestion].paint = data
-            //         this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
-            //     }
-            // },
             options2Eraser() {
                 alert("working on it ")
                 // this.$refs.qcanvas[0].undoSignature();
@@ -971,18 +962,18 @@
                                     item.width = '370px'
                                     item.height = '370px'
 						
-                                    let img = new Image();
+                                    // let img = new Image();
 						
                                     // img.src = active.answers[0].drawingData
                                     // img.src = _this.imgPath + 'examanswer/' + active.answers[0].drawingData
 						
-                                    console.log(img.src);
-						
-                                    img.onload = () => {
-                                        item.width = img.width + ""
-                                        item.height = img.height + ""
-                                        <%--console.log(`the image dimensions are ${img.width}x${img.height} ${active.id}`);--%>
-                                    }
+                                    <%--console.log(img.src);--%>
+									
+                                    <%--img.onload = () => {--%>
+                                    <%--    item.width = img.width + ""--%>
+                                    <%--    item.height = img.height + ""--%>
+                                    <%--    console.log(`the image dimensions are ${img.width}x${img.height} ${active.id}`);--%>
+                                    <%--}--%>
                                 }
                                 // for(let r = 0; r < response.data.result.result.results; r++ ){
                                 //     let res = response.data.result.result.results[r]
@@ -1165,7 +1156,7 @@
                 ]);
             },
             setIt: function (event) {
-                this.formula = 'x=-b\\pm \\frac {\\sqrt{b^2-4ac}}{2a}';
+                this.formula = 'x=-b\\pm \\frac {\\sqrt{b^2-4ac}}{2a}'
             },
             ping: function () {
                 console.log('ping');
@@ -1183,9 +1174,19 @@
                         )) ||
                     ''
                 );
-            },
+            }
+
+            // drawing() {
+            //     this.pencil2 = !this.pencil2
+            //     // this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].answerData);
+            //     if (this.pencil2 == true) {
+            //         const {isEmpty, data} = this.$refs.signaturePad.saveSignature();
+            //         this.questions[this.currentQuestion].paint = data
+            //         this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
+            //     }
+            // },
         }
-    });
+    })
 </script>
 
 </body>

@@ -39,7 +39,7 @@
     </div>
 </div>
 <script type="text/javascript">
-    import Chart from '${ASSETS}/script/chart/Chart.js';
+    <%--import Chart from '${ASSETS}/script/chart/Chart.js';--%>
     <%--Vue.use(Chart)--%>
     
     let router = new VueRouter({
