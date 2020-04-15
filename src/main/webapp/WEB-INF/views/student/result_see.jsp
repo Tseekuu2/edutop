@@ -37,10 +37,10 @@
         <!--// 시작하기 -->
     </div>
 </div>
-<script>
-    import Chart from '${ASSETS}/script/chart/Chart.js'
+<script type="text/javascript">
+    <%--import Chart from '${ASSETS}/script/chart/Chart.js'; --%>
+    <%--Vue.use(Chart)--%>
     
-    Vue.use(Chart)
     let router = new VueRouter({
         mode: 'history',
         routes: []

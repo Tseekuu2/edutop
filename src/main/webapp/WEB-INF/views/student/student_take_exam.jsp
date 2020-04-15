@@ -6,9 +6,9 @@
 	<link rel="stylesheet" type="text/css" href="${ASSETS}/css/studentTakeExam.css">
 	<link rel="stylesheet" type="text/css" href="${ASSETS}/script/mathlive/dist/mathlive.core.css">
 	<link rel="stylesheet" type="text/css" href="${ASSETS}/script/mathlive/dist/mathlive.css">
-	<script type="text/javascript" src="${ASSETS}/script/vue/signature_pad.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
-	<script type="text/javascript" src="${ASSETS}/script/vue/drawing.js"></script>
+<%--	<script type="text/javascript" src="${ASSETS}/script/vue/signature_pad.min.js"></script>--%>
+<%--	<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>--%>
+<%--	<script type="text/javascript" src="${ASSETS}/script/vue/drawing.js"></script>--%>
 </head>
 
 <body>
@@ -30,6 +30,14 @@
                                         <b class="col-orange02">{{questions.length}}</b></span>
 							</p>
 						</div>
+<%--						:class="{ 'showCanvas' : pencil2}"--%>
+<%--						<VueSignaturePad--%>
+<%--								style="width: 74.5%; height: 100%;  position:absolute;--%>
+<%--                                top:0; left: 0px; padding: 0; z-index:1.5; background: #ccc;"--%>
+<%--								ref="signaturePad"--%>
+<%--								class="signature-pad"--%>
+<%--								:options="options">--%>
+<%--						</VueSignaturePad>--%>
 						<div class="class-area popup-scroll">
 <%--							<canvas id="signature-pad" class="signature-pad" style="width: 100%; height: 100%"></canvas>--%>
 							<div class="pdl60" v-for="(item,examIndex) in questions" :key="examIndex"
@@ -61,7 +69,7 @@
 												</mathlive-mathfield>
 											</p>
 											<p v-else>
-											
+												<span>{{apps.dataText}}</span>
 											</p>
 										</div>
 										<p v-else>
@@ -83,7 +91,7 @@
 											<mathlive-mathfield
 													:id="'mf'+index"
 													:ref="'mathfield'+index"
-													:config="{smartMode:true}, virtualKeyboardMode:'manual'"
+													:config="{smartMode:true , virtualKeyboardMode:'manual'}"
 													@focus="ping"
 													:on-keystroke="displayKeystroke"
 													v-model="aItem.answer"
@@ -128,7 +136,7 @@
 											<mathlive-mathfield
 													:id="'mf'+index"
 													:ref="'mathfield'+index"
-													:config="{smartMode:true}, virtualKeyboardMode:'manual'"
+													:config="{smartMode:true, virtualKeyboardMode:'manual'}"
 													@focus="ping"
 													:on-keystroke="displayKeystroke"
 													v-model="aItem.answer"
@@ -471,10 +479,13 @@
 	</div>
 </section>
 <script type="module">
+    // import VueSignaturePad from 'vue-signature-pad';
+    // import Vue from 'vue';
 
     import MathLive from '${ASSETS}/script/mathlive/dist/src/mathlive.js';
     import Mathfield from '${ASSETS}/script/mathlive/dist/vue-mathlive.js';
-
+    // import VueSignaturePad from '../../../../../../node_modules/vue-signature-pad/dist/vue-signature-pad.js';
+    // Vue.use(VueSignaturePad);
     Vue.use(Mathfield, MathLive);
 
     var router = new VueRouter({
@@ -485,6 +496,9 @@
     var app = new Vue({
         el: '#takeexam',
         router,
+		components:{
+            // VueSignaturePad
+		},
         data: {
             formula: 'x=-b\\pm \\frac {\\sqrt{b^2-4ac}}{2a}',
             keystroke: '',
@@ -561,16 +575,18 @@
                 };
             },
 			saveLast(){
-                // if (this.leavedQuestion == 1) {
-                    
-                    // this.isLast = 'last'
-                    // this.nextQuestion()
-				let url = this.localPath + "/result_see" + "?examId=" + this.examId + "&userId=" + this.userId
-				
-				window.location.href = url
+                console.log(this.questions.length)
+                // if (this.currentQuestion > this.questions.length - 1){
+                	if (this.leavedQuestion <= 1) {
+                        this.isLast = 'last'
+                        this.nextQuestion()
+					}
+                    else{
+                        alert(" You should finish all your question.")
+					}
                 // }
                 // else{
-                // 	alert(" This is not last question!!!  You should finish all your question.")
+                // 	alert(" This is not last question!!! ")
                 // }
 			},
             mobileBack() {
@@ -720,8 +736,6 @@
                     let question = {}
                     let sendAnswer = []
 					let typeBool = false
-                    console.log("question log next question")
-                    console.log(this.questions[this.currentQuestion])
 
                     if (this.pencil2 == false) {
                         alert("펜쓰기 저장 버튼을 눌러주세요.")
@@ -804,7 +818,8 @@
                                 }
                             }
                         }
-
+                        var loginId = '${sessionScope.loginId}';
+                        
                         question.questionId = this.questions[this.currentQuestion].id
                         question.examId = this.examId
                         question.paint = this.questions[this.currentQuestion].paint
@@ -812,10 +827,9 @@
                         question.memo = this.questions[this.currentQuestion].memo
                         question.time = this.questions[this.currentQuestion].time
                         question.answers = sendAnswer
-						question.userId = this.userId
+						question.loginId = loginId
 						question.islast = this.isLast
-
-                        var loginId = '${sessionScope.loginId}';
+						question.classId = 'demoClass'
                         
                         const headers = {
                             'Content-Type': 'application/json'
@@ -823,8 +837,9 @@
                         
                         axios.post('${BASEURL}/exam/result/put',
 							question,
-							loginId,
-							{headers: headers}).then((response)=> {
+							{
+							    headers: headers
+							}).then((response)=> {
 
                             console.log("question result put response ")
                             console.log(response)
@@ -832,8 +847,16 @@
 							
 						if(response.status == 200) {
                             if (this.currentQuestion >= this.questions.length-1) {
-                                alert("마지막 문제입니다. 다음 문제가 없습니다.")
-                                return
+                                if (this.isLast == 'last')
+								{
+                                    let url = this.localPath + "/result_see" + "?examId=" + this.examId + "&userId=" + loginId
+
+                                    window.location.href = url
+								}
+                                else{
+                                    alert("마지막 문제입니다. 다음 문제가 없습니다.")
+                                    return
+								}
                             }
                             else{
 
@@ -921,15 +944,17 @@
 							active.answerWrite = ''
                             
                             // if(active.resultData != null || active.resultData === 'undefined' ){
-								// if( active.resultData.islike == 1){
-                                //     active.like = '1'
-								// }
-								// else{
-                                //     active.like = '0'
-								// 	}
-                                //
-                                // active.memo = active.resultData.memo
-                                // active.paint = active.resultData.paint
+							// 	if( active.resultData.islike == 1){
+                            //         active.like = '1'
+							// 		// this.bigheartlike = true
+							// 	}
+							// 	else{
+                            //         active.like = '0'
+                            //         // this.bigheartlike = false
+							// 		}
+							//
+                            //     active.memo = active.resultData.memo
+                            //     active.paint = active.resultData.paint
                             // }
                             
                             for (let a = 0; a < active.answers.length; a++) {

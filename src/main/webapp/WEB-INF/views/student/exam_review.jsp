@@ -17,26 +17,202 @@
             <div class="explain-wrap">
                 <div class="explain-area left w358">
                     <div class="top-area">
+                        <p class="ftr pdt5 mgr10 font-size16">
+                            <span class="col-darkgray">전체 문제 : <b class="col-orange02">{{question.length}}</b></span>
+                        </p>
                     </div>
-                    <div class="class-area">
+                    <div class="class-area" v-for="(item,Index) in questions" :key="Index"
+                         v-show="currentQuestion === Index"
+                         :class="{'activeQuestion': currentQuestion === Index}" >
                         <div class="">
-                            <p class="txt-type01 mgt20">
-                                1. 각도를 구하시오.
-                                <span class="right-wrong"><img src="${ASSETS}/img/viewer/icon-o-big.png" alt=""></span>
-                            </p>
-                            <div class="question-area mgb0">
-                                <div><img src="${ASSETS}/img/viewer/img-sample.jpg" /><p class="tal col-darkgray mgt10 mgl25">각도의 단위는 10도씩 표기되어 있다. 이러 저러한 부분을 계산하여 파란색으로 표기하였다.</p></div><!--// 예시 -->
+                            <div class="txt-type01 mgt20" >
+                                <div class="uk-subnav">
+                                    <span>{{Index+1}}</span>
+                                    <p v-html="item.question"></p>
+                                </div>
+                                <span class="right-wrong" v-if="item.answerFlag == true">
+                                    <img src="${ASSETS}/img/viewer/icon-o-big.png" alt="">
+                                </span>
+                                <span class="right-wrong" v-else>
+                                    <img src="${ASSETS}/img/viewer/icon-x-big.png" alt="">
+                                </span>
+                            </div>
+                            <div class="question-area mgb0" v-if="item.datas.length > 0" >
+                                <div v-for="(apps, mindex) in item.datas" >
+                                    <div v-if="apps.media != null">
+                                        <p v-if=" apps.media.mediaType == 'image' ">
+                                            <img :src="'http://103.41.247.45:80/webapps/uploadingDir/examquestion/' + apps.media.fileName"
+                                                 :alt="apps.media.fileName"  :key="mindex" style="width: 100%" />
+                                        </p>
+<%--                                    <p class="tal col-darkgray mgt10 mgl25">--%>
+<%--                                        각도의 단위는 10도씩 표기되어 있다. 이러 저러한 부분을 계산하여 파란색으로 표기하였다.--%>
+<%--                                    </p>--%>
+                                        <p v-else-if="apps.media.mediaType == 'math' ">
+                                            <mathlive-mathfield
+                                                    :id="'mf'+mindex"
+                                                    :ref="'mathfield'+mindex"
+                                                    @focus="ping"
+                                                    :on-keystroke="displayKeystroke"
+                                                    :config=" {smartMode:true, readOnly: true}"
+                                                    v-model="apps.dataText"
+                                                    style="font-size: 16px; font-weight: 400;" >
+                                                {{apps.dataText}}
+                                            </mathlive-mathfield>
+                                        </p>
+                                        <p v-else class="tal col-darkgray mgt10 mgl25" v-html="apps.dataText">
+                                        </p>
+                                    </div>
+                                </div><!--// 예시 -->
+                            </div>
+                        </div>
+                        <div class="example-list"  v-if="item.questionType == '1'">
+                            <div class="example-wrap" v-for="(aItem,index) in item.answers" :key="index"
+                                 style="display: flex">
+                                <template v-if="item.answerType == 'math' " >
+                                    <input type="button" name="numRadio" class="checkBtn uk-margin-remove"
+                                           style="padding-left: 0px;  margin-right: 15px !important;"
+                                           :value="aItem.optionNumber"
+                                           :class="{'answerFlag': aItem.selectedAnswer}"/>
+                                    <mathlive-mathfield
+                                            :id="'mf'+index"
+                                            :ref="'mathfield'+index"
+                                            :config="{smartMode:true, readOnly: true}"
+                                            @focus="ping"
+                                            :on-keystroke="displayKeystroke"
+                                            v-model="aItem.answer"
+                                    >{{aItem.answer}}
+                                    </mathlive-mathfield>
+                                </template>
+                                <span  v-else-if="item.answerType == 'image' " >
+                                                <input type="button" name="numRadio" class="checkBtn uk-margin-remove"
+                                                       style="padding-left: 0px;"
+                                                       :value="aItem.optionNumber"   :class="{'answerFlag': aItem.selectedAnswer}"/>
+                                                <img  :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + aItem.media.fileName"
+                                                      :alt="aItem.media.fileName"  style="width: 300px !important;"
+                                                      class="uk-margin-top uk-margin-left"/>
+                                            </span>
+                                <div class="radio-numbers " v-else>
+                                    <div class="uk-subnav" style="flex-wrap: unset; padding-left: 0px;">
+                                        <input type="button" name="numRadio"
+                                               class="checkBtn" style="padding-left: 0px;"
+                                               :value="aItem.optionNumber"
+                                               :class="{'answerFlag': aItem.selectedAnswer}"/>
+                                        <span class="answerMargin uk-margin-remove"  name="numRadio"
+                                              style="width: 90% !important;"
+                                              :class="{'answerTrue': aItem.selectedAnswer}"
+                                              v-html="aItem.answer"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="example-list"  v-else-if="item.questionType == '3'">
+                            <div class="example-wrap" v-for="(aItem,index) in item.answers" :key="index" style="display: flex;">
+                                <template v-if="item.answerType == 'math' " >
+                                    <input type="button" name="numRadio" class="checkBtn uk-margin-remove"
+                                           style="padding-left: 0px; margin-right: 15px !important;"
+                                           :value="aItem.optionNumber" :class="{'answerFlag': aItem.selectedAnswer}"/>
+                                    <mathlive-mathfield
+                                            :id="'mf'+index"
+                                            :ref="'mathfield'+index"
+                                            :config="{smartMode:true, readOnly: true}"
+                                            @focus="ping"
+                                            :on-keystroke="displayKeystroke"
+                                            v-model="aItem.answer"
+                                    >{{aItem.answer}}
+                                    </mathlive-mathfield>
+                                </template>
+                                <span  v-else-if="item.answerType == 'image' " >
+                                                <input type="button" name="numRadio" class="checkBtn uk-margin-remove"
+                                                       style="padding-left: 0px;"
+                                                       :value="aItem.optionNumber"   :class="{'answerFlag': aItem.selectedAnswer}"/>
+                                                <img  :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + aItem.media.fileName"
+                                                      :alt="aItem.media.fileName"  style="width: 300px !important;"
+                                                      class="uk-margin-top uk-margin-left"/>
+                                            </span>
+                                <div class="radio-numbers " v-else>
+                                    <div class="uk-subnav" style="flex-wrap: unset; padding-left: 0px;">
+                                        <input type="button" name="numRadio"
+                                               class="checkBtn" style="padding-left: 0px;"
+                                               :value="aItem.optionNumber"
+                                               :class="{'answerFlag': aItem.selectedAnswer}"/>
+                                        <span class="answerMargin uk-margin-remove"  name="numRadio"
+                                              style="width: 90% !important;"
+                                              :class="{'answerTrue': aItem.selectedAnswer}"
+                                              v-html="aItem.answer"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else-if="item.questionType == '4'" class="uk-margin-bottom">
+                            <div class="uk-width-1-1" uk-grid v-for="(aItem,index) in item.answers" :key="index">
+                                <div class="uk-width-1-2 uk-text-center">
+                                    <p class="" style="border: 1px solid #080808; padding: 8px;">
+                                        정답지 - 펜을 눌러 쓰세요.</p>
+                                    <img
+                                            :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + aItem.drawingData"
+                                            class="uk-flex uk-flex-center" style="width:100% !important;
+                                                 margin: 0 !important"/>
+                                </div>
+                                <div class="uk-width-1-2 uk-text-center">
+                                    <p class="" style="border: 1px solid #080808; padding: 8px;">
+                                        채점지 – 정답을 보고 채점하세요.
+                                    </p>
+                                    <img
+                                            :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/'+aItem.trueData"
+                                            class="uk-flex uk-flex-center"
+                                            style="width:100% !important; margin: 0 !important"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="answers-exp mgt60" v-else>
+                            <div v-for="(aItem,index) in item.answers"  :key="index">
+                                <div v-if="aItem.answerFlag == 'math'">
+                                    <div class="uk-flex uk-margin-bottom">
+                                        <b>Guide text: </b>
+                                        <p class="uk-margin-remove" style="padding-left: 15px;">
+                                            {{aItem.answer}} </p>
+                                    </div>
+                                    <mathlive-mathfield
+                                            :id="'mf'+index"
+                                            :ref="'mathfield'+index"
+                                            :config="{smartMode:true, virtualKeyboardMode:'manual'}"
+                                            @focus="ping"
+                                            :on-keystroke="displayKeystroke"
+                                            v-model="item.answerInputedData"
+                                            style="border: 1px solid #ccc;padding: 10px;font-size: 17px;" >
+                                        {{item.answerInputedData}}
+                                    </mathlive-mathfield>
+                                </div>
+                                <div v-if="aItem.answerFlag == true || aItem.answerFlag == 'text' ">
+                                    <div class="uk-flex uk-margin-bottom">
+                                        <b>Guide text: </b>
+                                        <p class="uk-margin-remove" style="padding-left: 15px;">
+                                            {{aItem.answer}} </p>
+                                    </div>
+                
+                                    <input type="text" class="txt-input" placeholder="정답을 입력해 주세요"
+                                           v-model="questions[currentQuestion].answerInputedData"
+                                           class="uk-width1-1" style="font-size: 16px; width: 100%;
+													border: 1px solid #ccc;
+													border-radius: 15px;
+													padding: 8px;"/>
+                                </div>
                             </div>
                         </div>
                         <div class="answers-exp small">
                             <h2 class="title none mgb0">90도</h2>
                         </div>
                         <div class="answers-exp">
-                            <h2 class="title none">
-                                <span class="col-orange02">[정답]</span>90도
-                            </h2>
+<%--                            <h2 class="title none">--%>
+<%--                                <span class="col-orange02">[정답]</span>--%>
+<%--                                <div v-if="item.incorrectNote != null">--%>
+<%--                                    --%>
+<%--                                </div>--%>
+<%--                            </h2>--%>
                             <p class="txt-exp">[해설]</p>
-                            <p class="txt-subject">0부터 10도씩 90도까지 파란색선으로 표기하였고 직각은 90도 입니다.</p>
+                            <p class="txt-subject" v-if="item.incorrectNote != null">
+                                wrong answer note here
+                            </p>
                         </div>
                     </div>
                 </div><!--// 문제 -->
@@ -45,16 +221,72 @@
                     <div class="list-area on">
                         <div class="popup-scroll height-type01 mgt15">
                             <ul class="list-basic">
-                                <li class="like">
-                                    <span class="num-default">1</span>
-                                    <span class="num-default">90º</span>
-                                    <span class="ftr"><img src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
-                                </li>
-                                <li class="like none">
-                                    <span class="num-default">3</span>
-                                    <span class="number-txt">4</span>
-                                    <span class="ftr"><img src="${ASSETS}/img/viewer/icon-o.png" alt="" /></span>
-                                </li>
+                                <template v-for="(asuult,seuq) in questions">
+                                    <li class="like" v-if="ques.like == '1' " @click="webIndex(seuq)">
+                                        <span class="num-default">{{seuq+1}}</span>
+                                        <div v-if="asuult.questionType == 1">
+                                            <span class="num-default"
+                                                  v-for="(hariult,xedni) in asuult.answers"
+                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}
+                                            </span>
+                                        </div>
+<%--                                        check again !!!!--%>
+                                        <div v-else-if="asuult.questionType == 2">
+                                            <span class="num-default"
+                                                  v-for="(hariult,xedni) in asuult.answers"
+                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{asuult.answerInputedData}}
+                                            </span>
+                                        </div>
+                                        <div v-else-if="asuult.questionType == 3">
+                                            <span class="num-default"
+                                                  v-for="(hariult,xedni) in asuult.answers"
+                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}
+                                            </span>
+                                        </div>
+                                        <div v-else>
+                                            <span class="num-default"
+                                                  v-for="(hariult,xedni) in asuult.answers"
+                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}
+                                            </span>
+                                        </div>
+                                        <span class="ftr" v-if="asuult.answerFlag == true"><img
+                                                src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
+                                        <span class="ftr"
+                                              v-else><img src="${ASSETS}/img/viewer/icon-o.png" alt="" /></span>
+                                    </li>
+                                    <li class="like none" v-else>
+                                        <span class="num-default">{{seuq+1}}</span>
+                                        <div v-if="asuult.questionType == 1">
+                                            <span class="num-default"
+                                                  v-for="(hariult,xedni) in asuult.answers"
+                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}
+                                            </span>
+                                        </div>
+                                        <%--                                        check again !!!!--%>
+                                        <div v-else-if="asuult.questionType == 2">
+                                            <span class="num-default"
+                                                  v-for="(hariult,xedni) in asuult.answers"
+                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{asuult.answerInputedData}}
+                                            </span>
+                                        </div>
+                                        <div v-else-if="asuult.questionType == 3">
+                                            <span class="num-default"
+                                                  v-for="(hariult,xedni) in asuult.answers"
+                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}
+                                            </span>
+                                        </div>
+                                        <div v-else>
+                                            <span class="num-default"
+                                                  v-for="(hariult,xedni) in asuult.answers"
+                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}
+                                            </span>
+                                        </div>
+                                        <span class="ftr" v-if="asuult.answerFlag == true"><img
+                                                src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
+                                        <span class="ftr"
+                                              v-else><img src="${ASSETS}/img/viewer/icon-o.png" alt="" /></span>
+                                    </li>
+                                </template>
                             </ul>
                         </div>
                     </div>
@@ -128,15 +360,16 @@
             
             <div class="next-area of-hd mgt15">
                 <div class="solving-nav tac">
-                    <button class="prev mobile-view">이전문제</button>
+                    <button class="prev mobile-view" @click="prevQuestion">이전문제</button>
                     <button class="qs-list n_ty02" >문항목록</button>
-                    <button class="clip mobile-view none">찜하기</button>
-                    <button class="pen_n mobile-blind">펜쓰기</button>
-                    <button class="memo popup-open mobile-view">메모</button>
-                    <button class="next mobile-view">다음문제</button>
+                    <button class="clip mobile-view none" >찜하기</button>
+                    <button class="pen_n mobile-blind" >펜쓰기</button>
+                    <button class="memo popup-open mobile-view" >메모</button>
+                    <button class="next mobile-view" @click="nextQuestion">다음문제</button>
                 </div>
             </div>
         </div>
+<%--        check again !!!!--%>
         <div id="mobileSolving" v-else>
             <section class="solving-wrap">
                 <h1 class="title" style="margin:0px">
@@ -148,7 +381,7 @@
                         <div class="explain-area left">
                             <div class="top-area" style="overflow:visible;">
                                 <p class="take ftl">
-                                    전체문제 : <em>10</em>
+                                    전체문제 : <em>{{questions.length}}</em>
                                 </p>
                             </div>
                         </div>
@@ -157,8 +390,9 @@
                             <div class="list-area on">
                                 <div class="popup-scroll height-type01 mgt15">
                                     <ul class="list-basic mob">
-                                        <li class="solved_n">
-                                            <a href="#" class="num-default">4</a>
+                                        <li class="" v-for="(qqqq,aaa) in questions"
+                                            :class="{'solved_n': qqqq.answerFlag}" @click="chooseQuestion(aaa)">
+                                            <a href="#" class="num-default">{{aaa+1}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -167,8 +401,8 @@
                             <div class="list-area">
                                 <div class="popup-scroll height-type01 mgt15">
                                     <ul class="list-basic mob">
-                                        <li class="solved_n">
-                                            <a href="#" class="num-default">4</a>
+                                        <li class=""  v-for="(qqqq,aaa) in questions" @click="chooseQuestion(aaa)">
+                                            <a href="#" class="num-default"  v-if="qqqq.answerFlag == false">{{aaa+1}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -177,8 +411,9 @@
                             <div class="list-area">
                                 <div class="popup-scroll height-type03 mgt15">
                                     <ul class="list-basic mob">
-                                        <li class="solved_n">
-                                            <a href="#" class="num-default">4</a>
+                                        <li class="" v-for="(qqqq,aaa) in questions" :class="{'solved_n': qqqq.answerFlag}"
+                                            @click="chooseQuestion(aaa)">
+                                            <a href="#" class="num-default" v-if="qqqq.answerFlag == true">{{aaa+1}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -187,19 +422,19 @@
                             <div class="list-area">
                                 <div class="popup-scroll height-type01 mgt15">
                                     <ul class="list-basic mob">
-                                        <li class="solved_n">
-                                            <a href="#" class="num-default">4</a>
+<%--                                        check it again !!!!--%>
+                                        <li class="solved_n" v-for="(qqqq,aaa) in questions"
+                                            :class="{'solved_n': qqqq.like == '1'}" @click="chooseQuestion(aaa)">
+                                            <a href="#" class="num-default" v-if="qqqq.like == '1'">{{aaa+1}}</a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
-                
-                   
                     <div class="next-area mgt15">
                         <div class="solving-nav tac mobile-view" style="overflow:visible;">
-                            <button class="mobile-view btn_view_end">학습 종료</button>
+                            <button class="mobile-view btn_view_end" @click="closeWindow()">학습 종료</button>
                         </div>
                     </div>
                 </div>
@@ -274,11 +509,15 @@
                     window.close()
                 },
                 nextQuestion(){
-                    this.currentQuestion++
-                    this.empty= ''
-                    if (this.currentQuestion > this.questions.length-1) {
-                        window.close()
+                    if(this.currentQuestion > this.questions.length -1)
+                    {
+                        alert("마지막 문제입니다. 다음 문제가 없습니다")
                     }
+                    this.currentQuestion++
+                    // this.empty= ''
+                    // if (this.currentQuestion > this.questions.length-1) {
+                    //     window.close()
+                    // }
                 },
                 prevQuestion(){
                     if (this.currentQuestion > 0) {

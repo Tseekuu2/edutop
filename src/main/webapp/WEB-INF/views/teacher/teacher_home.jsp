@@ -795,6 +795,7 @@
 
                     var loginId = '${sessionScope.loginId}';
                     console.log(loginId)
+					
                     const headers = {
                         'Content-Type': 'application/json'
                     }

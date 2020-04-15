@@ -138,8 +138,8 @@
     <script type="text/javascript">
         var app = new Vue({
             data: {
-                email: "demo@gmail.com",
-                password: "123456"
+                email: "",
+                password: ""
             },
             
             watch: {},
@@ -150,6 +150,14 @@
             
             mounted: function () {
                 console.log("Login page is running")
+                for (let i=0; i>1; i++){
+                    for (let q=0; q>2; q++) {
+                        for (let s=0; s>2; s++){
+                            console.log("*")
+                        }
+                    }
+                }
+                console.log("end")
             },
             methods: {
                 login: function () {
