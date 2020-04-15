@@ -179,12 +179,12 @@
                                             :config="{smartMode:true, virtualKeyboardMode:'manual'}"
                                             @focus="ping"
                                             :on-keystroke="displayKeystroke"
-                                            v-model="item.answerInputedData"
+                                            v-model="aItem.answerWrite"
                                             style="border: 1px solid #ccc;padding: 10px;font-size: 17px;" >
-                                        {{item.answerInputedData}}
+                                        {{aItem.answerWrite}}
                                     </mathlive-mathfield>
                                 </div>
-                                <div v-if="aItem.answerFlag == true || aItem.answerFlag == 'text' ">
+                                <div v-if="aItem.answerFlag == 'text' ">
                                     <div class="uk-flex uk-margin-bottom">
                                         <b>Guide text: </b>
                                         <p class="uk-margin-remove" style="padding-left: 15px;">
@@ -192,7 +192,7 @@
                                     </div>
                 
                                     <input type="text" class="txt-input" placeholder="정답을 입력해 주세요"
-                                           v-model="questions[currentQuestion].answerInputedData"
+                                           v-model="aItem.answerWrite"
                                            class="uk-width1-1" style="font-size: 16px; width: 100%;
 													border: 1px solid #ccc;
 													border-radius: 15px;
