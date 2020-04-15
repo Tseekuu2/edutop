@@ -61,33 +61,33 @@
                 <div class="of-hd mgt20">
                     <ul class="find-menu tal ftl">
                         <li>
-                            <a href="https://st4.edunet.net/member/findPwd?in_div=nedu" target="_blank" title="에듀넷 아이디 찾기">에듀넷 아이디 찾기</a>
+                            <a href="#" target="_blank" title="에듀넷 아이디 찾기">에듀넷 아이디 찾기</a>
                         </li>
                         <li>
-                            <a href="https://st4.edunet.net/member/memberJoin?in_div=nedu" target="_blank" title="비밀번호 찾기">비밀번호 찾기</a>
+                            <a href="#" target="_blank" title="비밀번호 찾기">비밀번호 찾기</a>
                         </li>
                     </ul>
-                    <a href="https://st4.edunet.net/member/findMyId?in_div=nedu" class="join-btn ftr" target="_blank" title="에듀넷 회원가입">에듀넷 회원가입</a>
+                    <a href="#" class="join-btn ftr" target="_blank" title="에듀넷 회원가입">에듀넷 회원가입</a>
                 </div>
             </form>
-<%--            <ul class="sns-login">--%>
-<%--                <li>--%>
-<%--                    <a href="#" target="_blank" title="네이버"><img src="${ASSETS}/img/login/icon-sns-naver.png" alt="네이버" /></a>--%>
-<%--                </li>--%>
-<%--                <li>--%>
-<%--                    <a href="#" target="_blank" title="구글"><img src="${ASSETS}/img/login/icon-sns-google.png" alt="구글" /></a>--%>
-<%--                </li>--%>
-<%--                <li>--%>
-<%--                    <a href="#" target="_blank" title="카카오"><img src="${ASSETS}/img/login/icon-sns-kakao.png" alt="카카오" /></a>--%>
-<%--                </li>--%>
-<%--            </ul>--%>
+            <ul class="sns-login">
+                <li>
+                    <a href="#" target="_blank" title="네이버"><img src="${ASSETS}/img/login/icon-sns-naver.png" alt="네이버" /></a>
+                </li>
+                <li>
+                    <a href="#" target="_blank" title="구글"><img src="${ASSETS}/img/login/icon-sns-google.png" alt="구글" /></a>
+                </li>
+                <li>
+                    <a href="#" target="_blank" title="카카오"><img src="${ASSETS}/img/login/icon-sns-kakao.png" alt="카카오" /></a>
+                </li>
+            </ul>
         </div><!--// 폼 -->
         
         <div class="login-link">
             <dl class="lg-link-wrap">
                 <dt>
                     <p>에듀넷 회원가입</p>
-                    <a href="https://st4.edunet.net/member/findMyId?in_div=nedu" target="_blank" title="에듀넷 회원가입">GO</a>
+                    <a href="#" target="_blank" title="에듀넷 회원가입">GO</a>
                 </dt>
                 <dd>
                     회원가입 시 교과학습 자료, 멀티미디어 자료, 학습<br>
@@ -99,7 +99,7 @@
             <dl class="lg-link-wrap">
                 <dt>
                     <p>에듀넷 아이디 찾기</p>
-                    <a href="https://st4.edunet.net/member/findPwd?in_div=nedu" target="_blank" title="에듀넷 아이디 찾기">GO</a>
+                    <a href="#" target="_blank" title="에듀넷 아이디 찾기">GO</a>
                 </dt>
                 <dd>
                     기본 정보를 입력하시면 아이디를 찾을 수 있으며,<br>
@@ -110,7 +110,7 @@
             <dl class="lg-link-wrap">
                 <dt>
                     <p>에듀넷 비밀번호 찾기</p>
-                    <a href="https://st4.edunet.net/member/memberJoin?in_div=nedu" target="_blank" title="에듀넷 비밀번호 찾기">GO</a>
+                    <a href="#" target="_blank" title="에듀넷 비밀번호 찾기">GO</a>
                 </dt>
                 <dd>
                     회원님의 아이디와 이름을 입력하시면 비밀번호를<br>
@@ -118,16 +118,16 @@
                     으로 확인 가능 합니다.
                 </dd>
             </dl>
-<%--            <dl class="lg-link-wrap">--%>
-<%--                <dt>--%>
-<%--                    <p>에듀넷 소셜 로그인</p>--%>
-<%--                    <a href="#" target="_blank" title="에듀넷 소셜 로그인">GO</a>--%>
-<%--                </dt>--%>
-<%--                <dd>--%>
-<%--                    네이버, 구글, 카카오톡 아이디로 로그인 하실 수<br>--%>
-<%--                    있습니다.--%>
-<%--                </dd>--%>
-<%--            </dl>--%>
+            <dl class="lg-link-wrap">
+                <dt>
+                    <p>에듀넷 소셜 로그인</p>
+                    <a href="#" target="_blank" title="에듀넷 소셜 로그인">GO</a>
+                </dt>
+                <dd>
+                    네이버, 구글, 카카오톡 아이디로 로그인 하실 수<br>
+                    있습니다.
+                </dd>
+            </dl>
         </div><!--// 링크 -->
         
         <div class="lg-copyright">
