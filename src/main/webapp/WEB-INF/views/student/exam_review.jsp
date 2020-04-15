@@ -199,16 +199,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="answers-exp small uk-margin-top uk-margin-botton" >
-                            <div v-for="(qqitem,qqindex) in item.answers" :key="qqindex">
-                                <h3>True answer : </h3><p v-if="qqitem.answerFlag == true" class="uk-padding-left">
-                                {{qqitem.answer}}</p>
-                            </div>
+                        <div class="answers-exp small " >
                             <h2 class="title none mgb0" >
                             
                             </h2>
                         </div>
-                        <div class="answers-exp">
+                        <div class="answers-exp uk-margin-top">
 <%--                            <h2 class="title none">--%>
 <%--                                <span class="col-orange02">[정답]</span>--%>
 <%--                                <div v-if="item.incorrectNote != null">--%>
@@ -228,9 +224,12 @@
                         <div class="popup-scroll height-type01 mgt15">
                             <ul class="list-basic">
                                 <template v-for="(asuult,seuq) in questions">
-                                    <li>
-                                        <span class="like" v-if="asuult.like == 1 " @click="webIndex(seuq)"> </span>
-                                        <span class="like none" > </span>
+                                    <li @click="webIndex(seuq)">
+                                        <div class="like" v-if="asuult.like == 1 " ></div>
+                                        <div class="like none"  v-else></div>
+<%--                                        <img src="${ASSETS}/img/viewer/icon-like-over.jpg" >--%>
+<%--                                        <img src="${ASSETS}/img/viewer/icon-like-off.jpg">--%>
+                                        
                                         <span class="num-default">{{seuq+1}}</span>
                                         <div v-if="asuult.questionType == 1">
                                             <span class="num-default"
@@ -303,7 +302,7 @@
                         <div class="popup-scroll height-type01 mgt15">
                             <ul class="list-basic">
 <%--                                v-for="(wwitem,wwindex) in questions" :key="wwindex"--%>
-                                <li class="like" >
+                                <li class="like" v-for="(wwitem,wwindex) in questions" :key="wwindex">
                                     <span class="num-default">1</span>
                                     <span class="num-default">90º</span>
                                     <span class="ftr"><img src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>

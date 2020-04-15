@@ -532,7 +532,8 @@
             imgPath: '',
             empty: '',
 			isLast: 'notlast',
-			localPath: 'http://localhost:8084/exam/student'
+			// localPath: 'http://localhost:8084/exam/student',
+            localPath: 'http://devasse.edunet.net:8000/exam',
         },
         mounted() {
             let parameters = this.$route.query

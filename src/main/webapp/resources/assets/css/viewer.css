@@ -340,6 +340,8 @@
 .list-area .list-basic > li > span {display:inline-block; vertical-align: middle;}
 .list-area .list-basic > li.like {background:url(../img/viewer/icon-like-over.png) no-repeat center left 10px;}
 .list-area .list-basic > li.like.none {background-image:url(../img/viewer/icon-like-off.png);}
+.list-area .list-basic > div.like {background:url(../img/viewer/icon-like-over.png) no-repeat center left 10px; position: absolute}
+.list-area .list-basic > div.like.none {background-image:url(../img/viewer/icon-like-off.png); position: absolute}
 .list-area .list-basic > li.disabled {opacity: .6;}
 .list-area .list-basic > li > .num-default {font-size: 20px; color:#666; margin-right:10px;}
 .list-area .list-basic > li.this {background-color:#fff9db;}
@@ -604,6 +606,7 @@ button.btn_view_end {width:100%; height:43px; color:#fff; padding:0; margin:-20p
 .explain-area.right > .ex-listTab.nth-4 {right:238px;}
 
 .list-area .list-basic > li.like {position:relative;}
+.list-area .list-basic > div.like {position:relative;}
 .list-area .list-basic > li > span.ftr {position:absolute; top:14px; left:41px;}
 .list-area .list-basic > li > span.ftr img {width:25px;}
 .list-area .height-type03 > ul > li {position:relative;}
