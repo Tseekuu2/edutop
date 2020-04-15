@@ -5,7 +5,7 @@
 <c:set var="HOME" value="${pageContext.request.contextPath}"/>
 <c:set var="ASSETS" value="${HOME}/resources/assets"/>
 <%--<c:set var="BASEURL" value="http://103.41.247.45/api"/>--%>
-<c:set var="BASEURL" value="http://192.168.1.6:5003/api"/>
-<%--<c:set var="BASEURL" value="http://devasse.edunet.net:8000/back"/>--%>
+<%--<c:set var="BASEURL" value="http://192.168.1.6:5003/api"/>--%>
+<c:set var="BASEURL" value="http://devasse.edunet.net:8000/back/api"/>
 <%--<spring:url var="HOME" value="${pageContext.request.contextPath}"/>--%>
 <%--<spring:url var="ASSETS" value="${HOME}/resources/assets"/>--%>

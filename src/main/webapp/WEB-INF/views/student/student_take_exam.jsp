@@ -91,7 +91,7 @@
 											<mathlive-mathfield
 													:id="'mf'+index"
 													:ref="'mathfield'+index"
-													:config="{smartMode:true , virtualKeyboardMode:'manual'}"
+													:config="{smartMode:true , readOnly: true}"
 													@focus="ping"
 													:on-keystroke="displayKeystroke"
 													v-model="aItem.answer"
@@ -136,7 +136,7 @@
 											<mathlive-mathfield
 													:id="'mf'+index"
 													:ref="'mathfield'+index"
-													:config="{smartMode:true, virtualKeyboardMode:'manual'}"
+													:config="{smartMode:true, readOnly: true}"
 													@focus="ping"
 													:on-keystroke="displayKeystroke"
 													v-model="aItem.answer"
@@ -577,13 +577,13 @@
 			saveLast(){
                 console.log(this.questions.length)
                 // if (this.currentQuestion > this.questions.length - 1){
-                	if (this.leavedQuestion <= 1) {
+                // 	if (this.leavedQuestion <= 1) {
                         this.isLast = 'last'
                         this.nextQuestion()
-					}
-                    else{
-                        alert(" You should finish all your question.")
-					}
+					// }
+                    // else{
+                    //     alert(" You should finish all your question.")
+					// }
                 // }
                 // else{
                 // 	alert(" This is not last question!!! ")

@@ -6,6 +6,7 @@
         <script type="text/javascript" src="${ASSETS}/script/jquery.datetimepicker.full.min.js"></script>
         <script type="text/javascript" src="${ASSETS}/script/chart-plugin.min.js"></script>
         <script type="text/javascript" src="${ASSETS}/script/chartjs-plugin-datalabels.min.js"></script>
+        <script type="text/javascript" src="'${ASSETS}/script/chart/Chart.js'"></script>
     </head>
 <body>
 <div id="container">
@@ -135,7 +136,7 @@
                         'Content-Type': 'application/json',
                     }
      
-                    axios.get('${BASEURL}/exam/showresult', {
+                    axios.post('${BASEURL}/exam/showresult', {
                         params: {
                             examId: examId,
     

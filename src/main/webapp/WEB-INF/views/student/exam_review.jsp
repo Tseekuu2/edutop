@@ -18,7 +18,7 @@
                 <div class="explain-area left w358">
                     <div class="top-area">
                         <p class="ftr pdt5 mgr10 font-size16">
-                            <span class="col-darkgray">전체 문제 : <b class="col-orange02">{{question.length}}</b></span>
+                            <span class="col-darkgray">전체 문제 : <b class="col-orange02">{{questions.length}}</b></span>
                         </p>
                     </div>
                     <div class="class-area" v-for="(item,Index) in questions" :key="Index"
@@ -199,8 +199,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="answers-exp small">
-                            <h2 class="title none mgb0">90도</h2>
+                        <div class="answers-exp small uk-margin-top uk-margin-botton" >
+                            <div v-for="(qqitem,qqindex) in item.answers" :key="qqindex">
+                                <h3>True answer : </h3><p v-if="qqitem.answerFlag == true" class="uk-padding-left">
+                                {{qqitem.answer}}</p>
+                            </div>
+                            <h2 class="title none mgb0" >
+                            
+                            </h2>
                         </div>
                         <div class="answers-exp">
 <%--                            <h2 class="title none">--%>
@@ -222,7 +228,9 @@
                         <div class="popup-scroll height-type01 mgt15">
                             <ul class="list-basic">
                                 <template v-for="(asuult,seuq) in questions">
-                                    <li class="like" v-if="ques.like == '1' " @click="webIndex(seuq)">
+                                    <li>
+                                        <span class="like" v-if="asuult.like == 1 " @click="webIndex(seuq)"> </span>
+                                        <span class="like none" > </span>
                                         <span class="num-default">{{seuq+1}}</span>
                                         <div v-if="asuult.questionType == 1">
                                             <span class="num-default"
@@ -250,42 +258,42 @@
                                             </span>
                                         </div>
                                         <span class="ftr" v-if="asuult.answerFlag == true"><img
-                                                src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
+                                                src="${ASSETS}/img/viewer/icon-o.png" alt="" /></span>
                                         <span class="ftr"
-                                              v-else><img src="${ASSETS}/img/viewer/icon-o.png" alt="" /></span>
+                                              v-else><img src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
                                     </li>
-                                    <li class="like none" v-else>
-                                        <span class="num-default">{{seuq+1}}</span>
-                                        <div v-if="asuult.questionType == 1">
-                                            <span class="num-default"
-                                                  v-for="(hariult,xedni) in asuult.answers"
-                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}
-                                            </span>
-                                        </div>
-                                        <%--                                        check again !!!!--%>
-                                        <div v-else-if="asuult.questionType == 2">
-                                            <span class="num-default"
-                                                  v-for="(hariult,xedni) in asuult.answers"
-                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{asuult.answerInputedData}}
-                                            </span>
-                                        </div>
-                                        <div v-else-if="asuult.questionType == 3">
-                                            <span class="num-default"
-                                                  v-for="(hariult,xedni) in asuult.answers"
-                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}
-                                            </span>
-                                        </div>
-                                        <div v-else>
-                                            <span class="num-default"
-                                                  v-for="(hariult,xedni) in asuult.answers"
-                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}
-                                            </span>
-                                        </div>
-                                        <span class="ftr" v-if="asuult.answerFlag == true"><img
-                                                src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
-                                        <span class="ftr"
-                                              v-else><img src="${ASSETS}/img/viewer/icon-o.png" alt="" /></span>
-                                    </li>
+<%--                                    <li class="like none" v-else>--%>
+<%--                                        <span class="num-default">{{seuq+1}}</span>--%>
+<%--                                        <div v-if="asuult.questionType == 1">--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in asuult.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}--%>
+<%--                                            </span>--%>
+<%--                                        </div>--%>
+<%--                                        &lt;%&ndash;                                        check again !!!!&ndash;%&gt;--%>
+<%--                                        <div v-else-if="asuult.questionType == 2">--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in asuult.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{asuult.answerInputedData}}--%>
+<%--                                            </span>--%>
+<%--                                        </div>--%>
+<%--                                        <div v-else-if="asuult.questionType == 3">--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in asuult.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}--%>
+<%--                                            </span>--%>
+<%--                                        </div>--%>
+<%--                                        <div v-else>--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in asuult.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}--%>
+<%--                                            </span>--%>
+<%--                                        </div>--%>
+<%--                                        <span class="ftr" v-if="asuult.answerFlag == true"><img--%>
+<%--                                                src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>--%>
+<%--                                        <span class="ftr"--%>
+<%--                                              v-else><img src="${ASSETS}/img/viewer/icon-o.png" alt="" /></span>--%>
+<%--                                    </li>--%>
                                 </template>
                             </ul>
                         </div>
@@ -294,12 +302,13 @@
                     <div class="list-area">
                         <div class="popup-scroll height-type01 mgt15">
                             <ul class="list-basic">
-                                <li class="like">
+<%--                                v-for="(wwitem,wwindex) in questions" :key="wwindex"--%>
+                                <li class="like" >
                                     <span class="num-default">1</span>
                                     <span class="num-default">90º</span>
                                     <span class="ftr"><img src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
                                 </li>
-                                <li class="like this">
+                                <li class="like ">
                                     <span class="num-default">2</span>
                                     <span class="number-txt">2</span>
                                     <span class="ftr"><img src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
@@ -473,24 +482,20 @@
                 userId: 0,
             },
             mounted(){
-                // let parameters = this.$route.query
-                // console.log("here is  parameter :")
-                // console.log(parameters)
-                //
-                // if (typeof this.$route.query.examId != 'undefined') {
-                //     let userId = this.$route.query.userId;
-                //     this.userId = userId
-                //     console.log("userId Id")
-                //     console.log(userId)
-                //
-                //     let id = this.$route.query.examId;
-                //     console.log("exam Id")
-                //     console.log(id)
-                //     this.getQuestions(id)
-                // }
-                // else{
-                //     alert("exam id undefined")
-                // }
+                let parameters = this.$route.query
+                console.log("here is  parameter :")
+                console.log(parameters)
+
+                if (typeof this.$route.query.examId != 'undefined') {
+
+                    let id = this.$route.query.examId;
+                    console.log("exam Id")
+                    console.log(id)
+                    this.getQuestions(id)
+                }
+                else{
+                    alert("exam id undefined")
+                }
             },
             created(){
                 // this.imgPath = window.location.protocol +'//'+ window.location.hostname+':80'+'/webapps/uploadingDir/'
