@@ -570,32 +570,35 @@
                                         question.like = question.resultData.like
                                         question.memo = question.resultData.memo
                                         question.paint =  question.resultData.paint
-                                        for (let d = 0; d < question.resultData.details.length; d++) {
-                                            let j = question.resultData.details[d];
-                                            if (question.questionType == '1' || question.questionType == '3') {
-                                                if (answer.id == j.answerId) {
-                                                    answer.selectedAnswer = true
-                                                    if (answer.answerFlag == 'true' && answer.selectedAnswer == true) {
+                                        if (question.resultData != null)
+                                        {
+                                            for (let d = 0; d < question.resultData.details.length; d++) {
+                                                let j = question.resultData.details[d];
+                                                if (question.questionType == '1' || question.questionType == '3') {
+                                                    if (answer.id == j.answerId) {
+                                                        answer.selectedAnswer = true
+                                                        if (answer.answerFlag == 'true' && answer.selectedAnswer == true) {
+                                                            question.answerFlag = true
+                                                        }
+                                                    }
+                                                }
+                                                if (question.questionType == '2') {
+                                                    question.answerInputedData = j.answerInputedData
+                                                    if (answer.trueData == question.answerInputedData) {
                                                         question.answerFlag = true
                                                     }
                                                 }
+                                                // if (question.questionType == '4') {
+                                                //     question.answerInputedData = j.answerInputedData
+                                                //     if (question.resultData.score == '1') {
+                                                //         question.answers[0].selectedAnswer = true
+                                                //         question.answerFlag = true
+                                                //     }
+                                                //     else{
+                                                //         question.answers[0].selectedAnswer = false
+                                                //     }
+                                                // }
                                             }
-                                            if (question.questionType == '2') {
-                                                question.answerInputedData = j.answerInputedData
-                                                if (answer.trueData == question.answerInputedData) {
-                                                    question.answerFlag = true
-                                                }
-                                            }
-                                            // if (question.questionType == '4') {
-                                            //     question.answerInputedData = j.answerInputedData
-                                            //     if (question.resultData.score == '1') {
-                                            //         question.answers[0].selectedAnswer = true
-                                            //         question.answerFlag = true
-                                            //     }
-                                            //     else{
-                                            //         question.answers[0].selectedAnswer = false
-                                            //     }
-                                            // }
                                         }
                                         
                                         // if (question.questionType == '4') {

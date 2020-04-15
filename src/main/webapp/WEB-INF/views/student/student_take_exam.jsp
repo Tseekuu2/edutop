@@ -73,9 +73,7 @@
 											</p>
 										</div>
 										<p v-else>
-										
 										</p>
-									
 									</template>
 								</div>
 								<div class="uk-margin-large-top" v-else>
@@ -84,19 +82,21 @@
 								<div class="example-list" v-if="item.questionType == '1'">
 									<div class="example-wrap" v-for="(aItem,index) in item.answers" :key="index">
 										<template v-if="item.answerType == 'math' ">
-											<input type="button" name="numRadio" class="checkBtn uk-margin-remove"
-												   style="padding-left: 0px;" @click="activeanswers(aItem, item)"
-												   :value="aItem.optionNumber"
-												   :class="{'answerFlag': aItem.selectedAnswer}"/>
-											<mathlive-mathfield
-													:id="'mf'+index"
-													:ref="'mathfield'+index"
-													:config="{smartMode:true , readOnly: true}"
-													@focus="ping"
-													:on-keystroke="displayKeystroke"
-													v-model="aItem.answer"
-											>{{aItem.answer}}
-											</mathlive-mathfield>
+											<div class="" style="display: inline-flex">
+												<input type="button" name="numRadio" class="checkBtn uk-margin-remove"
+													   style="padding-left: 0px;" @click="activeanswers(aItem, item)"
+													   :value="aItem.optionNumber"
+													   :class="{'answerFlag': aItem.selectedAnswer}"/>
+												<mathlive-mathfield
+														:id="'mf'+index"
+														:ref="'mathfield'+index"
+														:config="{smartMode:true , readOnly: true}"
+														@focus="ping"
+														:on-keystroke="displayKeystroke"
+														v-model="aItem.answer"
+												>{{aItem.answer}}
+												</mathlive-mathfield>
+											</div>
 										</template>
 										<span v-else-if="item.answerType == 'image' ">
                                                 <input type="button" name="numRadio" class="checkBtn uk-margin-remove"
@@ -127,22 +127,23 @@
 									<div class="example-wrap" v-for="(aItem,index) in item.answers" :key="index"
 										 style="display: flex">
 										<template v-if="item.answerType == 'math' ">
-											<input type="button" name="numRadio" class="checkBtn uk-margin-remove"
-												   style="padding-left: 0px; margin-right: 20px !important;"
-												   @click="activeanswers(aItem, item)"
-												   :value="aItem.optionNumber"
-												   :class="{'answerFlag': aItem.selectedAnswer}"/>
-											
-											<mathlive-mathfield
-													:id="'mf'+index"
-													:ref="'mathfield'+index"
-													:config="{smartMode:true, readOnly: true}"
-													@focus="ping"
-													:on-keystroke="displayKeystroke"
-													v-model="aItem.answer"
-											>{{aItem.answer}}
-											</mathlive-mathfield>
-										
+											<div style="display: inline-flex">
+												<input type="button" name="numRadio" class="checkBtn uk-margin-remove"
+													   style="padding-left: 0px; margin-right: 20px !important;"
+													   @click="activeanswers(aItem, item)"
+													   :value="aItem.optionNumber"
+													   :class="{'answerFlag': aItem.selectedAnswer}"/>
+												
+												<mathlive-mathfield
+														:id="'mf'+index"
+														:ref="'mathfield'+index"
+														:config="{smartMode:true, readOnly: true}"
+														@focus="ping"
+														:on-keystroke="displayKeystroke"
+														v-model="aItem.answer"
+												>{{aItem.answer}}
+												</mathlive-mathfield>
+											</div>
 										</template>
 										<span v-else-if="item.answerType == 'image' ">
                                                 <input type="button" name="numRadio" class="checkBtn uk-margin-remove"
@@ -532,8 +533,8 @@
             imgPath: '',
             empty: '',
 			isLast: 'notlast',
-			// localPath: 'http://localhost:8084/exam/student',
-            localPath: 'http://devasse.edunet.net:8000/exam',
+			localPath: 'http://localhost:8084/exam/student',
+            // localPath: 'http://devasse.edunet.net:8000/exam',
         },
         mounted() {
             let parameters = this.$route.query
