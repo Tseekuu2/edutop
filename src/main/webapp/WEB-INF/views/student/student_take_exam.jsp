@@ -54,7 +54,7 @@
 										<div v-if="apps.media != null">
 											<p v-if=" apps.media.mediaType == 'image' ">
 												<img :src="'http://103.41.247.45:80/webapps/uploadingDir/examquestion/' + apps.media.fileName"
-													 :alt="apps.media.fileName" :key="mindex" style="width: 100%"/>
+													 :alt="apps.media.fileName" :key="mindex" style="width: auto"/>
 											</p>
 											<p v-else-if="apps.media.mediaType == 'math' ">
 												<mathlive-mathfield
