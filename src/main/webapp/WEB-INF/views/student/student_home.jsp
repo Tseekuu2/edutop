@@ -299,7 +299,7 @@
                     var loginId = '${sessionScope.loginId}';
                     loginId = this.userId
 
-                    window.open( this.localPath + "/" + link + "?examId=" + id + "&userId=" + this.userId,
+                    window.open( this.localPath + "/" + link + "?examId=" + id + "&userId=" + loginId,
 						'_blank',
 						'width=1240,height=800')
 				},

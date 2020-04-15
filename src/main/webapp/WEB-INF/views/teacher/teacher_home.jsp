@@ -258,8 +258,9 @@
 																class="uk-button uk-button-default uk-button-small"
 														>{{exam.lifeStartDate}}
 														</button>
-														<button href="#lifeEndpicker" uk-toggle
-																class="uk-button uk-button-default uk-button-small"
+														<button href="#lifeEndpicker" uk-toggle  style="padding-left:
+														 80px;"
+																class="uk-button uk-button-default uk-button-small "
 														>{{exam.lifeEndDate}}
 														</button>
 													</div>
@@ -311,14 +312,12 @@
 													<span class="stg-check">
 														 <input type="checkbox" id="item.id" value="true"
 																 v-model="item.selected">
-														<label for="item.id">{{item.id}} {{item.schoolName}}
-															{{item.groupName}}</label>
+														<label for="item.id">{{item.id}} {{item.schoolName}}</label>
 													</span>
 												</li>
 											</ul>
 										</div>
-										
-										<div class="pagination">
+										<div class="pagination" style="display: block;">
 											<a href="#"><img
 													src="${ASSETS}/img/common/icon-page-first.jpg" alt="처음으로"/></a>
 											<a href="#"><img src="${ASSETS}/img/common/icon-page-prev.jpg"
@@ -525,29 +524,51 @@
 				</div>
 			
 			</div>
-			<div class="pagination">
+			<div class="pagination" style="display: block;">
 				<a
 						href="javascript:void(0)"><img src="${ASSETS}/images/bg-pagination-first.png"
 													   @click="firstQuestion()"
 													   alt="처음으로"/></a>
-				<a
-						href="javascript:void(0)"><img src="${ASSETS}/images//bg-pagination-prev.png"
-													   @click="prevQuestion()"
-													   alt="뒤로"/></a>
+				<a href="javascript:void(0)"><img src="${ASSETS}/images//bg-pagination-prev.png"
+												  @click="prevQuestion()"
+												  alt="뒤로"/></a>
 				<template v-for="(item,index) in pages" :key="index"
 						  v-if="Math.abs(item - currentPage) < 3 || item == pages || item == 1">
 					<a href="javascript:void(0)" @click="questionCurrent(item)" :class="{
 						'activePagination': currentPage === item,
-						last: (item == pages && Math.abs(item - currentPage) > 3),
-						first: (item == 1 && Math.abs(item - currentPage) > 3)}">{{item}}</a>
+					last: (item == pages && Math.abs(item - currentPage) > 3),
+					first: (item == 1 && Math.abs(item - currentPage) > 3)}" >{{item}}</a>
 				</template>
-				<a href="javascript:void(0)">
-					<img src="${ASSETS}/images//bg-pagination-next.png" @click="nextQuestion()"
-						 alt="앞으로"/></a>
-				<a href="javascript:void(0)">
-					<img src="${ASSETS}/images//bg-pagination-last.png" @click="lastQuestion()"
-						 alt="마지막으로"/></a>
+				<a href="javascript:void(0)"><img src="${ASSETS}/images//bg-pagination-next.png"
+												  @click="nextQuestion()"
+												  alt="앞으로"/></a>
+				<a href="javascript:void(0)"><img src="${ASSETS}/images//bg-pagination-last.png"
+												  @click="lastQuestion()"
+												  alt="마지막으로"/></a>
 			</div>
+<%--			<div class="pagination">--%>
+<%--				<a--%>
+<%--						href="javascript:void(0)"><img src="${ASSETS}/images/bg-pagination-first.png"--%>
+<%--													   @click="firstQuestion()"--%>
+<%--													   alt="처음으로"/></a>--%>
+<%--				<a--%>
+<%--						href="javascript:void(0)"><img src="${ASSETS}/images//bg-pagination-prev.png"--%>
+<%--													   @click="prevQuestion()"--%>
+<%--													   alt="뒤로"/></a>--%>
+<%--				<template v-for="(item,index) in pages" :key="index"--%>
+<%--						  v-if="Math.abs(item - currentPage) < 3 || item == pages || item == 1">--%>
+<%--					<a href="javascript:void(0)" @click="questionCurrent(item)" :class="{--%>
+<%--						'activePagination': currentPage === item,--%>
+<%--						last: (item == pages && Math.abs(item - currentPage) > 3),--%>
+<%--						first: (item == 1 && Math.abs(item - currentPage) > 3)}">{{item}}</a>--%>
+<%--				</template>--%>
+<%--				<a href="javascript:void(0)">--%>
+<%--					<img src="${ASSETS}/images//bg-pagination-next.png" @click="nextQuestion()"--%>
+<%--						 alt="앞으로"/></a>--%>
+<%--				<a href="javascript:void(0)">--%>
+<%--					<img src="${ASSETS}/images//bg-pagination-last.png" @click="lastQuestion()"--%>
+<%--						 alt="마지막으로"/></a>--%>
+<%--			</div>--%>
 		</div>
 	</div>
 </section>
@@ -586,43 +607,43 @@
 					{
 					    classId : '1',
 						year: '2020/12/12',
-						schoolName: 'Mexim consulting',
-						groupName: 'Mexim group',
+						schoolName: 'ICT 맞춤형 클래스',
+						groupName: 'ICT 맞춤형 클래스',
 						photo: 'change',
 						selected : false
 					},
-                    {
-                        classId : '2',
-                        year: '2020/12/12',
-                        schoolName: 'Tseekuu consulting',
-                        groupName: 'Tseekuu group',
-                        photo: 'change2',
-                        selected : false
-                    },
-                    {
-                        classId : '3',
-                        year: '2020/12/12',
-                        schoolName: 'Tseke consulting',
-                        groupName: 'Tseke group',
-                        photo: 'change3',
-                        selected : false
-                    },
-                    {
-                        classId : '4',
-                        year: '2020/12/12',
-                        schoolName: 'Anand consulting',
-                        groupName: 'Anand group',
-                        photo: 'change4',
-                        selected : false
-                    },
-                    {
-                        classId : '5',
-                        year: '2020/12/12',
-                        schoolName: 'My consulting',
-                        groupName: 'My group',
-                        photo: 'change5',
-                        selected : false
-                    }
+                    // {
+                    //     classId : '2',
+                    //     year: '2020/12/12',
+                    //     schoolName: '위두랑 클래스 2',
+                    //     groupName: 'Tseekuu group',
+                    //     photo: 'change2',
+                    //     selected : false
+                    // },
+                    // {
+                    //     classId : '3',
+                    //     year: '2020/12/12',
+                    //     schoolName: '위두랑 클래스 5',
+                    //     groupName: 'Tseke group',
+                    //     photo: 'change3',
+                    //     selected : false
+                    // },
+                    // {
+                    //     classId : '4',
+                    //     year: '2020/12/12',
+                    //     schoolName: '위두랑 클래스 7',
+                    //     groupName: 'Anand group',
+                    //     photo: 'change4',
+                    //     selected : false
+                    // },
+                    // {
+                    //     classId : '5',
+                    //     year: '2020/12/12',
+                    //     schoolName: '위두랑 클래스 4',
+                    //     groupName: 'My group',
+                    //     photo: 'change5',
+                    //     selected : false
+                    // }
 				],
                 oId: '',
                 currentPage: 1,

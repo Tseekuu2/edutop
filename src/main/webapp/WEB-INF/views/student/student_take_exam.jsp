@@ -274,21 +274,20 @@
 									<div class="popup-scroll height-type01 mgt15">
 										<ul class="list-basic uk-padding-remove">
 											<template v-for="(item,eindex) in questions" :key="eindex">
-												<li @click="webIndex(eindex)" class="like" v-if="item.like == '1'"
-													:class="{'changed': eindex == currentQuestion}">
+												<li @click="webIndex(eindex)" class="like" v-if="item.like == '1'" style="display: flex";
+													:class="{'changed': eindex == currentQuestion}" >
 													<span class="num-default">{{eindex+1}}</span>
 													<span v-if="item.questionType == '4'">
 														<p class="num-default uk-margin-remove">그리기 문제</p>
 													</span>
 													<span class="answer-text" v-else-if="item.questionType == '2'">
 <%--														disabled--%>
-<%--														<input type="text" placeholder="주관식 문제"--%>
-<%--															   class="num-default uk-margin-remove"--%>
-<%--															   :value="questions[currentQuestion].answerWrite">--%>
+														<input type="text" placeholder="주관식 문제"
+															   class="num-default uk-margin-remove" disabled
+															   :value="questions[currentQuestion].answerWrite">
 														<p class="num-default uk-margin-remove" placeholder="주관식 문제"></p>
 													</span>
-													<label class="" v-else v-for="(aitem,aindex) in item.answers"
-													   :key="aindex">
+													<label class="" v-else v-for="(aitem,aindex) in item.answers" :key="aindex">
 														<span class="number-txt" style="margin-right: 10px"
 															  :class="{'answerFlag': aitem.selectedAnswer}"
 														>{{aindex+1}}</span>
@@ -301,8 +300,14 @@
 						                                                <p class="num-default uk-margin-remove">그리기 문제</p>
 						                                            </span>
 													<span class="answer-text" v-else-if="item.questionType == '2'">
-						                                                <p class="num-default uk-margin-remove">주관식 문제</p>
-						                                            </span>
+<%--						                                                <p class="num-default uk-margin-remove">주관식 문제</p>--%>
+														<template v-for="(ans,ansIndex) in item.answers" :key="ansIndex">
+<%--														    <p class="num-default uk-margin-remove"></p>--%>
+															<input type="text" placeholder="주관식 문제" disabled
+																   class="num-default uk-margin-remove"
+																   :value="ans.answerWrite">
+													   </template>
+													</span>
 													<label class="" v-else v-for="(aitem,aindex) in item.answers"
 														   :key="aindex">
 						                                            <span class="number-txt" style="margin-right: 10px"
@@ -320,14 +325,19 @@
 									<div class="popup-scroll height-type01 mgt15">
 										<ul class="list-basic uk-padding-remove">
 											<li v-for="(item,eindex) in questions" :key="eindex"
-												@click="webIndex(eindex)" v-if="item.selectedAnswer== false")
-												:class="{'changed': eindex == currentQuestion}">
+												@click="webIndex(eindex)" v-if="item.answerselected == false"
+												:class="{'changed': eindex === currentQuestion}"  style="display: flex;">
 												<span class="num-default">{{eindex+1}}</span>
 												<span v-if="item.questionType == '4'">
                                                     <p class="num-default uk-margin-remove">그리기 문제</p>
                                                 </span>
 												<span class="answer-text" v-else-if="item.questionType == '2'">
-                                                    <p class="num-default uk-margin-remove">주관식 문제</p>
+													<template v-for="(ans,ansIndex) in item.answers" :key="ansIndex">
+<%--														    <p class="num-default uk-margin-remove"></p>--%>
+														<input type="text" placeholder="주관식 문제" disabled
+															   class="num-default uk-margin-remove"
+															   :value="ans.answerWrite">
+												   </template>
                                                 </span>
 												<label class="" v-else v-for="(aitem,aindex) in item.answers"
 													   :key="aindex">
@@ -345,14 +355,19 @@
 									<div class="popup-scroll height-type01 mgt15">
 										<ul class="list-basic uk-padding-remove">
 											<template v-for="(item,eindex) in questions" :key="eindex">
-												<li @click="webIndex(eindex)" class="like" v-if="item.like == '1'"
+												<li @click="webIndex(eindex)" class="like" v-if="item.like == '1'" style="display: flex;"
 													:class="{'changed': eindex == currentQuestion}">
 													<span class="num-default">{{eindex+1}}</span>
 													<span v-if="item.questionType == '4'">
                                                         <p class="num-default uk-margin-remove">그리기 문제</p>
                                                     </span>
 													<span class="answer-text" v-else-if="item.questionType == '2'">
-                                                        <p class="num-default uk-margin-remove">주관식 문제</p>
+                                                       <template v-for="(ans,ansIndex) in item.answers" :key="ansIndex">
+<%--														    <p class="num-default uk-margin-remove"></p>--%>
+															<input type="text" placeholder="주관식 문제"
+																   class="num-default uk-margin-remove"
+																   :value="ans.answerWrite">
+													   </template>
                                                     </span>
 													<label class="" v-else v-for="(aitem,aindex) in item.answers"
 														   :key="aindex">
@@ -546,8 +561,6 @@
             console.log(this.imgPath)
 			
             if (typeof this.$route.query.examId != 'undefined') {
-                let userId = this.$route.query.userId;
-                this.userId = userId
 
                 let id = this.$route.query.examId;
                 this.examId = id
@@ -578,7 +591,7 @@
             },
 			saveLast(){
                 console.log(this.questions.length)
-                // if (this.currentQuestion > this.questions.length - 1){
+                if (this.currentQuestion > this.questions.length - 1){
                 // 	if (this.leavedQuestion <= 1) {
                         this.isLast = 'last'
                         this.nextQuestion()
@@ -589,7 +602,7 @@
                 // }
                 // else{
                 // 	alert(" This is not last question!!! ")
-                // }
+                }
 			},
             mobileBack() {
                 this.isPopup = false
@@ -603,7 +616,8 @@
                     let a = this.questions[i];
 
                     if (a.questionType == '2') {
-                        if (typeof(this.questions[i].answerWrite) !== 'undefined' || this.questions[i].answerWrite ==
+                        //typeof(this.questions[i].answerWrite) !== 'undefined' ||
+                        if (this.questions[i].answerWrite ==
 							"") {
                             this.leavedQuestion++
                         }
@@ -785,6 +799,7 @@
 										answerData: choose.answerWrite,
 										optionNumber:""
 									}
+									
 								sendAnswer.push(iitem)
 							}
                         }
@@ -854,6 +869,7 @@
                                     let url = this.localPath + "/result_see" + "?examId=" + this.examId + "&userId=" + loginId
 
                                     window.location.href = url
+									
 								}
                                 else{
                                     alert("마지막 문제입니다. 다음 문제가 없습니다.")
@@ -925,7 +941,7 @@
                         'Content-Type': 'application/json'
                     }
 
-                    axios.get('${BASEURL}/exam/questions', {
+                    axios.get('${BASEURL}/exam/student/questions', {
                         params: {
                             examId: examId,
                             loginId : loginId
@@ -933,9 +949,9 @@
                         headers: headers
                     }).then(function (response) {
                         // _$.unblockUI()
-                        for (let select = 0; select < response.data.result.questions.length; select++) {
-                            let active = response.data.result.questions[select];
-
+                        for (let select = 0; select < response.data.result.result.questions.length; select++) {
+                            let active = response.data.result.result.questions[select];
+						
                             active.like = '0'
                             active.memo = ""
                             active.paint = ""
@@ -944,58 +960,91 @@
                             active.time = 0
                             active.drawingData = ""
 							active.answerWrite = ''
-                            
-                            // if(active.resultData != null || active.resultData === 'undefined' ){
-							// 	if( active.resultData.islike == 1){
-                            //         active.like = '1'
-							// 		// this.bigheartlike = true
-							// 	}
-							// 	else{
-                            //         active.like = '0'
-                            //         // this.bigheartlike = false
-							// 		}
-							//
-                            //     active.memo = active.resultData.memo
-                            //     active.paint = active.resultData.paint
-                            // }
-                            
                             for (let a = 0; a < active.answers.length; a++) {
                                 let item = active.answers[a];
-                                item.selectedAnswer = ''
+                                item.selectedAnswer = false
                                 item.answerWrite = ''
-								
-                                // if(active.resultData != null){
-                                //     if (active.resultData.id == item.id)
-								// 	{
-                                //         item.selectedAnser = true
-								// 	}
-								// }
                              
                                 if (active.questionType == '4') {
                                     // item.width = '100%'
                                     // item.height = '100%'
                                     item.width = '370px'
                                     item.height = '370px'
-
+						
                                     let img = new Image();
-
+						
                                     // img.src = active.answers[0].drawingData
                                     // img.src = _this.imgPath + 'examanswer/' + active.answers[0].drawingData
-
+						
                                     console.log(img.src);
-
+						
                                     img.onload = () => {
                                         item.width = img.width + ""
                                         item.height = img.height + ""
                                         <%--console.log(`the image dimensions are ${img.width}x${img.height} ${active.id}`);--%>
                                     }
                                 }
+                                // for(let r = 0; r < response.data.result.result.results; r++ ){
+                                //     let res = response.data.result.result.results[r]
+                                //     {
+                                //         if (res.questioId = active.id)
+                                //         {
+                                //             res.like = active.like,
+                                //                 res.memo = active.memo
+                                //             res.paint = active.paint
+                                //             res.time = active.time
+                                //             if (active.questionType = '1')
+                                //             {
+                                //                 for(let jj=0; jj< res.answers; jj++)
+								// 				{
+                                //                     if ( item.id == jj.checkedAnswer )
+								// 					{
+								// 					    item.selectedAnswer == true
+								// 					}
+                                //                     else{
+                                //                         item.selectedAnswer == false
+								// 					}
+								// 				}
+                                //             }
+                                //             if (active.questionType = '2')
+                                //             {
+                                //                 if ( item.id == jj.checkedAnswer )
+								// 				{
+								// 				    item.answerWrite == jj.inputedData
+								// 				}
+                                //             }
+                                //             if (active.questionType = '3')
+                                //             {
+                                //                 for(let jj=0; jj< res.answers; jj++)
+                                //                 {
+                                //                     if ( item.id == jj.checkedAnswer )
+                                //                     {
+                                //                         item.selectedAnswer == true
+                                //                     }
+                                //                     else{
+                                //                         item.selectedAnswer == false
+                                //                     }
+                                //                 }
+                                //             }
+                                //             else{
+                                //                 console.log("canvas settings like this")
+                                //             }
+                                //         }
+								//
+                                //     }
+                                // }
                             }
-                          
+                           
                         }
-                        _this.questions = response.data.result.questions
+                        
+                        
+                        _this.questions = response.data.result.result.questions
                         console.log(_this.questions)
                         _this.leavedQuestion = _this.questions.length
+
+                        // console.log("here is results")
+                        // console.log(response.data.result.result.results)
+						
                         // var _this = this
 						
                         // if (response.data.success == true) {
@@ -1042,8 +1091,8 @@
                                 let a = this.questions[i];
 
                                 if (a.questionType == '2') {
-                                    if (typeof(this.questions[i].answerWrite) !== 'undefined' ||
-										this.questions[i].answerWrite == "") {
+                                    //typeof(this.questions[i].answerWrite) !== 'undefined' ||
+                                    if (this.questions[i].answerWrite == "") {
                                         this.leavedQuestion++
                                     }
                                 }

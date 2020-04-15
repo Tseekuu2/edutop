@@ -5,6 +5,7 @@
     <title >Exam question check</title>
 <%--    <link rel="stylesheet" type="text/css" href="${ASSETS}/css/examCheck.css">--%>
     <link rel="stylesheet" type="text/css" href="${ASSETS}/css/exam_review.css">
+    
 </head>
 <body>
 <div id="solving">
@@ -28,7 +29,7 @@
                             <div class="txt-type01 mgt20" >
                                 <div class="uk-subnav">
                                     <span>{{Index+1}}</span>
-                                    <p v-html="item.question"></p>
+                                    <p v-html="item.question" class="uk-margin-remove" style="margin: 0"></p>
                                 </div>
                                 <span class="right-wrong" v-if="item.answerFlag == true">
                                     <img src="${ASSETS}/img/viewer/icon-o-big.png" alt="">
@@ -199,11 +200,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="answers-exp small " >
-                            <h2 class="title none mgb0" >
-                            
-                            </h2>
-                        </div>
+<%--                        <div class="answers-exp small " >--%>
+<%--                            <h2 class="title none mgb0" >--%>
+<%--                            --%>
+<%--                            </h2>--%>
+<%--                        </div>--%>
                         <div class="answers-exp uk-margin-top">
 <%--                            <h2 class="title none">--%>
 <%--                                <span class="col-orange02">[정답]</span>--%>
@@ -211,57 +212,203 @@
 <%--                                    --%>
 <%--                                </div>--%>
 <%--                            </h2>--%>
-                            <p class="txt-exp">[해설]</p>
+                            <p class="txt-exp uk-margin-remove" >[해설]</p>
                             <p class="txt-subject" v-if="item.incorrectNote != null">
                                 wrong answer note here
                             </p>
                         </div>
                     </div>
                 </div><!--// 문제 -->
-                <div class="explain-area right w350 mobile-blind"><!-- 2020-03-02 -->
-                    <a href="#" class="ex-listTab nth-4 on">전체문제</a><!-- 2020-03-02 -->
-                    <div class="list-area on">
-                        <div class="popup-scroll height-type01 mgt15">
-                            <ul class="list-basic">
-                                <template v-for="(asuult,seuq) in questions">
-                                    <li @click="webIndex(seuq)">
-                                        <div class="like" v-if="asuult.like == 1 " ></div>
-                                        <div class="like none"  v-else></div>
-<%--                                        <img src="${ASSETS}/img/viewer/icon-like-over.jpg" >--%>
-<%--                                        <img src="${ASSETS}/img/viewer/icon-like-off.jpg">--%>
-                                        
-                                        <span class="num-default">{{seuq+1}}</span>
-                                        <div v-if="asuult.questionType == 1">
-                                            <span class="num-default"
-                                                  v-for="(hariult,xedni) in asuult.answers"
-                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}
-                                            </span>
-                                        </div>
-<%--                                        check again !!!!--%>
-                                        <div v-else-if="asuult.questionType == 2">
-                                            <span class="num-default"
-                                                  v-for="(hariult,xedni) in asuult.answers"
-                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{asuult.answerInputedData}}
-                                            </span>
-                                        </div>
-                                        <div v-else-if="asuult.questionType == 3">
-                                            <span class="num-default"
-                                                  v-for="(hariult,xedni) in asuult.answers"
-                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}
-                                            </span>
-                                        </div>
-                                        <div v-else>
-                                            <span class="num-default"
-                                                  v-for="(hariult,xedni) in asuult.answers"
-                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}
-                                            </span>
-                                        </div>
-                                        <span class="ftr" v-if="asuult.answerFlag == true"><img
-                                                src="${ASSETS}/img/viewer/icon-o.png" alt="" /></span>
-                                        <span class="ftr"
-                                              v-else><img src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
-                                    </li>
-<%--                                    <li class="like none" v-else>--%>
+                <div class="explain-area right w350 mobile-blind">
+                    <ul class="uk-tab uk-flex uk-flex-right uk-margin-remove-bottom"
+                        data-uk-tab="{connect:'#my-id'}">
+                        <li class="tabnew"><a href="" class="ex-listTab nth-1 on">전체문제</a></li>
+                        <li class="tabnew"><a href="" class="ex-listTab nth-2">안푼문제</a></li>
+                        <li class="tabnew"><a href="" class="ex-listTab nth-3">찜한문제</a></li>
+                        <li class="tabnew"><a href="" class="ex-listTab nth-4">찜한문제</a></li>
+                    </ul>
+                    <ul id="my-id" class="uk-switcher">
+                        <li>
+                            <div class="list-area on uk-margin-remove">
+                                <div class="popup-scroll height-type01 mgt15">
+                                    <ul class="list-basic uk-padding-remove">
+                                        <template v-for="(item,eindex) in questions" :key="eindex">
+                                            <li @click="webIndex(eindex)" class="like" v-if="item.like == '1'" style="display: flex";
+                                                :class="{'changed': eindex == currentQuestion}" >
+                                                <span class="num-default">{{eindex+1}}</span>
+                                                <span v-if="item.questionType == '4'">
+													<p class="num-default uk-margin-remove">그리기 문제</p>
+												</span>
+                                                <span class="answer-text" v-else-if="item.questionType == '2'">
+													<input type="text" placeholder="주관식 문제"
+                                                           class="num-default uk-margin-remove" disabled
+                                                           :value="questions[currentQuestion].answerWrite">
+													<p class="num-default uk-margin-remove" placeholder="주관식 문제"></p>
+												</span>
+                                                <label class="" v-else v-for="(aitem,aindex) in item.answers" :key="aindex">
+													<span class="number-txt" style="margin-right: 10px"
+                                                          :class="{'answerFlag': aitem.selectedAnswer}"
+                                                    >{{aindex+1}}</span>
+                                                </label>
+                                            </li>
+                                            <li @click="webIndex(eindex)" class="like none" v-else
+                                                :class="{'changed': eindex == currentQuestion}">
+                                                <span class="num-default">{{eindex+1}}</span>
+                                                <span v-if="item.questionType == '4'">
+					                                                <p class="num-default uk-margin-remove">그리기 문제</p>
+					                                            </span>
+                                                <span class="answer-text" v-else-if="item.questionType == '2'">
+													<template v-for="(ans,ansIndex) in item.answers" :key="ansIndex">
+														<input type="text" placeholder="주관식 문제" disabled
+                                                               class="num-default uk-margin-remove"
+                                                               :value="ans.answerWrite">
+												   </template>
+												</span>
+                                                <label class="" v-else v-for="(aitem,aindex) in item.answers"
+                                                       :key="aindex">
+					                                            <span class="number-txt" style="margin-right: 10px"
+                                                                      :class="{'answerFlag': aitem.selectedAnswer}"
+                                                                >{{aindex+1}}</span>
+                                                </label>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="list-area on uk-margin-remove">
+                                <div class="popup-scroll height-type01 mgt15">
+                                    <ul class="list-basic uk-padding-remove">
+                                        <li v-for="(item,eindex) in questions" :key="eindex"
+                                            @click="webIndex(eindex)" v-if="item.answerselected == false"
+                                            :class="{'changed': eindex === currentQuestion}"  style="display: flex;">
+                                            <span class="num-default">{{eindex+1}}</span>
+                                            <span v-if="item.questionType == '4'">
+	                                            <p class="num-default uk-margin-remove">그리기 문제</p>
+	                                        </span>
+                                            <span class="answer-text" v-else-if="item.questionType == '2'">
+												<template v-for="(ans,ansIndex) in item.answers" :key="ansIndex">
+													<input type="text" placeholder="주관식 문제" disabled
+                                                           class="num-default uk-margin-remove"
+                                                           :value="ans.answerWrite">
+											   </template>
+	                                        </span>
+                                            <label class="" v-else v-for="(aitem,aindex) in item.answers"
+                                                   :key="aindex">
+	                                            <span class="number-txt" style="margin-right: 10px"
+                                                      :class="{'answerFlag': aitem.selectedAnswer}"
+                                                >{{aindex+1}}</span>
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="">
+                            <div class="list-area on uk-margin-remove">
+                                <div class="popup-scroll height-type01 mgt15">
+                                    <ul class="list-basic uk-padding-remove">
+                                        <template v-for="(item,eindex) in questions" :key="eindex">
+                                            <li @click="webIndex(eindex)" class="like" v-if="item.like == '1'" style="display: flex;"
+                                                :class="{'changed': eindex == currentQuestion}">
+                                                <span class="num-default">{{eindex+1}}</span>
+                                                <span v-if="item.questionType == '4'">
+	                                                <p class="num-default uk-margin-remove">그리기 문제</p>
+	                                            </span>
+                                                <span class="answer-text" v-else-if="item.questionType == '2'">
+	                                               <template v-for="(ans,ansIndex) in item.answers" :key="ansIndex">
+														<input type="text" placeholder="주관식 문제"
+                                                               class="num-default uk-margin-remove"
+                                                               :value="ans.answerWrite">
+												   </template>
+	                                            </span>
+                                                <label class="" v-else v-for="(aitem,aindex) in item.answers"
+                                                       :key="aindex">
+	                                                <span class="number-txt" style="margin-right: 10px"
+                                                          :class="{'answerFlag': aitem.selectedAnswer}"
+                                                    >{{aindex+1}}</span>
+                                                </label>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="">
+                            <div class="list-area on uk-margin-remove">
+                                <div class="popup-scroll height-type01 mgt15">
+                                    <ul class="list-basic uk-padding-remove">
+                                        <template v-for="(item,eindex) in questions" :key="eindex">
+                                            <li @click="webIndex(eindex)" class="like" v-if="item.like == '1'" style="display: flex;"
+                                                :class="{'changed': eindex == currentQuestion}">
+                                                <span class="num-default">{{eindex+1}}</span>
+                                                <span v-if="item.questionType == '4'">
+	                                                <p class="num-default uk-margin-remove">그리기 문제</p>
+	                                            </span>
+                                                <span class="answer-text" v-else-if="item.questionType == '2'">
+	                                               <template v-for="(ans,ansIndex) in item.answers" :key="ansIndex">
+														<input type="text" placeholder="주관식 문제"
+                                                               class="num-default uk-margin-remove"
+                                                               :value="ans.answerWrite">
+												   </template>
+	                                            </span>
+                                                <label class="" v-else v-for="(aitem,aindex) in item.answers"
+                                                       :key="aindex">
+	                                                <span class="number-txt" style="margin-right: 10px"
+                                                          :class="{'answerFlag': aitem.selectedAnswer}"
+                                                    >{{aindex+1}}</span>
+                                                </label>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+<%--                <div class="explain-area right w350 mobile-blind"><!-- 2020-03-02 -->--%>
+<%--                    <a href="#" class="ex-listTab nth-4 on">전체문제</a><!-- 2020-03-02 -->--%>
+<%--                    <div class="list-area on">--%>
+<%--                        <div class="popup-scroll height-type01 mgt15">--%>
+<%--                            <ul class="list-basic">--%>
+<%--                                <template v-for="(asuult,seuq) in questions">--%>
+<%--                                    <li class="like" v-if="asuult.like = true" style="display: flex"--%>
+<%--                                        :class="{'changed': seuq == currentQuestion}" @click="webIndex(seuq)">--%>
+<%--                                        <span class="num-default">{{seuq+1}}</span>--%>
+<%--                                        <div v-if="asuult.questionType == 1">--%>
+<%--                                            <span class="num-text"--%>
+<%--                                                  v-for="(hariult,xedni) in asuult.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">--%>
+<%--                                                    {{xedni+1}}--%>
+<%--                                            </span>--%>
+<%--                                        </div>--%>
+<%--                                        &lt;%&ndash;                                        check again !!!!&ndash;%&gt;--%>
+<%--                                        <div v-else-if="asuult.questionType == 2">--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in asuult.answers" :key="xedni"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{asuult.answerInputedData}}--%>
+<%--                                            </span>--%>
+<%--                                        </div>--%>
+<%--                                        <div v-else-if="asuult.questionType == 3">--%>
+<%--                                            <span class="num-text"--%>
+<%--                                                  v-for="(hariult,xedni) in asuult.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}--%>
+<%--                                            </span>--%>
+<%--                                        </div>--%>
+<%--                                        <div v-else>--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in asuult.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}--%>
+<%--                                            </span>--%>
+<%--                                        </div>--%>
+<%--                                        <span class="ftr" v-if="asuult.answerFlag == true"><img--%>
+<%--                                                src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>--%>
+<%--                                        <span class="ftr"--%>
+<%--                                              v-else><img src="${ASSETS}/img/viewer/icon-o.png" alt="" /></span>--%>
+<%--                                    </li>--%>
+<%--                                    <li class="like none" v-else style="display: flex"--%>
+<%--                                        :class="{'changed': seuq == currentQuestion}" @click="webIndex(seuq)">--%>
 <%--                                        <span class="num-default">{{seuq+1}}</span>--%>
 <%--                                        <div v-if="asuult.questionType == 1">--%>
 <%--                                            <span class="num-default"--%>
@@ -293,87 +440,158 @@
 <%--                                        <span class="ftr"--%>
 <%--                                              v-else><img src="${ASSETS}/img/viewer/icon-o.png" alt="" /></span>--%>
 <%--                                    </li>--%>
-                                </template>
-                            </ul>
-                        </div>
-                    </div>
-                    <a href="#" class="ex-listTab nth-1">틀린문제</a><!-- 2020-03-02 -->
-                    <div class="list-area">
-                        <div class="popup-scroll height-type01 mgt15">
-                            <ul class="list-basic">
-<%--                                v-for="(wwitem,wwindex) in questions" :key="wwindex"--%>
-                                <li class="like" v-for="(wwitem,wwindex) in questions" :key="wwindex">
-                                    <span class="num-default">1</span>
-                                    <span class="num-default">90º</span>
-                                    <span class="ftr"><img src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
-                                </li>
-                                <li class="like ">
-                                    <span class="num-default">2</span>
-                                    <span class="number-txt">2</span>
-                                    <span class="ftr"><img src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
-                                </li>
-                                <li class="like none">
-                                    <span class="num-default">3</span>
-                                    <span class="number-txt">4</span>
-                                    <span class="ftr"><img src="${ASSETS}/img/viewer/icon-o.png" alt="" /></span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <a href="#" class="ex-listTab nth-2">맞은문제</a>
-                    <div class="list-area">
-                        <div class="popup-scroll height-type03 mgt15">
-                            <ul class="list-basic">
-                                <li>
-                                    <span class="num-default">1</span>
-                                    <span class="num-default">90º</span>
-                                    <span class="ftr"><img src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
-                                </li>
-                                <li>
-                                    <span class="num-default">2</span>
-                                    <span class="number-txt">1</span>
-                                    <span class="ftr"><img src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
-                                </li>
-                                <li>
-                                    <span class="num-default">3</span>
-                                    <span class="number-txt">1</span>
-                                    <span class="ftr"><img src="${ASSETS}/img/viewer/icon-x.png" alt="" /></span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <a href="#" class="ex-listTab nth-3">찜한문제</a>
-                    <div class="list-area">
-                        <!-- 2020-03-02 -->
-                        <div class="popup-scroll height-type01 mgt15">
-                            <ul class="list-basic">
-                                <li class="like">
-                                    <span class="num-default">1</span>
-                                    <span class="num-default">90º</span>
-                                </li>
-                                <li class="like this">
-                                    <span class="num-default">2</span>
-                                    <span class="number-txt">2</span>
-                                </li>
-                                <li class="like none">
-                                    <span class="num-default">3</span>
-                                    <span class="number-txt">4</span>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- //2020-03-02 -->
-                    </div>
-                </div><!--// 목록 -->
+<%--                                </template>--%>
+<%--                            </ul>--%>
+<%--                        </div>--%>
+<%--                    </div>--%>
+<%--                    <a href="#" class="ex-listTab nth-1">틀린문제</a><!-- 2020-03-02 -->--%>
+<%--                    <div class="list-area">--%>
+<%--                        <div class="popup-scroll height-type01 mgt15">--%>
+<%--                            <ul class="list-basic">--%>
+<%--                                <li class="like" v-for="(wwitem,wwitem) in questions" :key="wwitem"--%>
+<%--                                    style="display: flex" v-if="wwitem.answerFlag == false"--%>
+<%--                                    :class="{'changed': wwitem == currentQuestion}" @click="webIndex(wwitem)">--%>
+<%--                                    <span class="num-default">{{seuq+1}}</span>--%>
+<%--                                    <div v-if="wwitem.questionType == 1">--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in wwitem.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}--%>
+<%--                                            </span>--%>
+<%--                                    </div>--%>
+<%--                                    &lt;%&ndash;                                        check again !!!!&ndash;%&gt;--%>
+<%--                                    <div v-else-if="wwitem.questionType == 2">--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in wwitem.answers" :key="xedni"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{wwitem.answerInputedData}}--%>
+<%--                                            </span>--%>
+<%--                                    </div>--%>
+<%--                                    <div v-else-if="wwitem.questionType == 3">--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in wwitem.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}--%>
+<%--                                            </span>--%>
+<%--                                    </div>--%>
+<%--                                    <div v-else>--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in wwitem.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">그리기 문제--%>
+<%--                                            </span>--%>
+<%--                                    </div>--%>
+<%--                                    <span class="ftr"><img--%>
+<%--                                            src="${ASSETS}/img/viewer/icon-x.png"--%>
+<%--                                            alt="" /></span>--%>
+<%--                                </li>--%>
+<%--                            </ul>--%>
+<%--                        </div>--%>
+<%--                    </div>--%>
+<%--                    <a href="#" class="ex-listTab nth-2">맞은문제</a>--%>
+<%--                    <div class="list-area">--%>
+<%--                        <div class="popup-scroll height-type03 mgt15">--%>
+<%--                            <ul class="list-basic">--%>
+<%--                                <li class="like" v-for="(wwitem,wwitem) in questions" :key="wwitem"--%>
+<%--                                    style="display: flex" v-if="wwitem.answerFlag == true"--%>
+<%--                                    :class="{'changed': wwitem == currentQuestion}" @click="webIndex(wwitem)">--%>
+<%--                                    <span class="num-default">{{seuq+1}}</span>--%>
+<%--                                    <div v-if="wwitem.questionType == 1">--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in wwitem.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}--%>
+<%--                                            </span>--%>
+<%--                                    </div>--%>
+<%--                                    <div v-else-if="wwitem.questionType == 2">--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in wwitem.answers" :key="xedni"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{wwitem.answerInputedData}}--%>
+<%--                                            </span>--%>
+<%--                                    </div>--%>
+<%--                                    <div v-else-if="wwitem.questionType == 3">--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in wwitem.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}--%>
+<%--                                            </span>--%>
+<%--                                    </div>--%>
+<%--                                    <div v-else>--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in wwitem.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">그리기 문제--%>
+<%--                                            </span>--%>
+<%--                                    </div>--%>
+<%--                                    <span class="ftr"><img--%>
+<%--                                            src="${ASSETS}/img/viewer/icon-o.png"--%>
+<%--                                            alt="" /></span>--%>
+<%--                                </li>--%>
+<%--                            </ul>--%>
+<%--                        </div>--%>
+<%--                    </div>--%>
+<%--                    <a href="#" class="ex-listTab nth-3">찜한문제</a>--%>
+<%--                    <div class="list-area">--%>
+<%--                        <!-- 2020-03-02 -->--%>
+<%--                        <div class="popup-scroll height-type01 mgt15">--%>
+<%--                            <ul class="list-basic">--%>
+<%--                                <li class="like" v-for="(wwitem,wwitem) in questions" :key="wwitem"--%>
+<%--                                    style="display: flex" v-if="wwitem.like == true"--%>
+<%--                                    :class="{'changed': wwitem == currentQuestion}" @click="webIndex(wwitem)">--%>
+<%--                                    <span class="num-default">{{seuq+1}}</span>--%>
+<%--                                    <div v-if="wwitem.questionType == 1">--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in wwitem.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}--%>
+<%--                                            </span>--%>
+<%--                                    </div>--%>
+<%--                                    &lt;%&ndash;                                        check again !!!!&ndash;%&gt;--%>
+<%--                                    <div v-else-if="wwitem.questionType == 2">--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in wwitem.answers" :key="xedni"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{wwitem.answerInputedData}}--%>
+<%--                                            </span>--%>
+<%--                                    </div>--%>
+<%--                                    <div v-else-if="wwitem.questionType == 3">--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in wwitem.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">{{xedni+1}}--%>
+<%--                                            </span>--%>
+<%--                                    </div>--%>
+<%--                                    <div v-else>--%>
+<%--                                            <span class="num-default"--%>
+<%--                                                  v-for="(hariult,xedni) in wwitem.answers"--%>
+<%--                                                  :class="{'answerFlag': hariult.selectedAnswer }">그리기 문제--%>
+<%--                                            </span>--%>
+<%--                                    </div>--%>
+<%--                                    <span class="ftr" v-if="wwitem.answerFlag == true"><img--%>
+<%--                                            src="${ASSETS}/img/viewer/icon-o.png"--%>
+<%--                                            alt="" /></span>--%>
+<%--                                    <span class="ftr" v-else><img--%>
+<%--                                            src="${ASSETS}/img/viewer/icon-x.png"--%>
+<%--                                            alt="" /></span>--%>
+<%--                                </li>--%>
+<%--                            </ul>--%>
+<%--                        </div>--%>
+<%--                        <!-- //2020-03-02 -->--%>
+<%--                    </div>--%>
+<%--                </div>--%>
             </div>
             
             <div class="next-area of-hd mgt15">
                 <div class="solving-nav tac">
                     <button class="prev mobile-view" @click="prevQuestion">이전문제</button>
                     <button class="qs-list n_ty02" >문항목록</button>
-                    <button class="clip mobile-view none" >찜하기</button>
+                    <button class="clip mobile-view none" v-if="questions[currentQuestion].like == false">찜하기</button>
+                    <button class="clip mobile-view" v-else>찜하기</button>
                     <button class="pen_n mobile-blind" >펜쓰기</button>
-                    <button class="memo popup-open mobile-view" >메모</button>
+                    <button class="memo popup-open mobile-view" href="#memosPopup" uk-toggle >메모</button>
                     <button class="next mobile-view" @click="nextQuestion">다음문제</button>
+                </div>
+    
+                <div class="popup-dim " id="memosPopup" uk-modal>
+                    <div class="popup-layout memo-popup ">
+                        <button class="uk-modal-close-default" type="button" uk-close></button>
+                        <p class="pop-title tal">메모하기</p>
+                        <div class="memo-wrap">
+								<textarea placeholder="메모를 작성해주세요."
+                                          v-model="questions[currentQuestion].memo"></textarea>
+                            <button class="btn-orange uk-modal-close">저장하기</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

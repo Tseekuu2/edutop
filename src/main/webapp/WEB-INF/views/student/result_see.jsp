@@ -39,7 +39,7 @@
     </div>
 </div>
 <script type="text/javascript">
-    <%--import Chart from '${ASSETS}/script/chart/Chart.js'; --%>
+    import Chart from '${ASSETS}/script/chart/Chart.js';
     <%--Vue.use(Chart)--%>
     
     let router = new VueRouter({
@@ -50,7 +50,7 @@
         el: '#resultseestudent',
         router,
        component:{
-       
+           Chart
        } ,
         data:{
             examId: 0,
@@ -137,13 +137,9 @@
                     }
      
                     axios.post('${BASEURL}/exam/showresult', {
-                        params: {
                             examId: examId,
-    
                             loginId : loginId
-                        },
-                        headers: headers
-                    }).then (function (response) {
+                    },{headers: headers}).then (function (response) {
                         // const response = await services.totalScore({examId: this.examId, userId: this.userId});
                         console.log("response is here");
                         console.log(response.data);
