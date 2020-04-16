@@ -6,18 +6,11 @@
 	<link rel="stylesheet" type="text/css" href="${ASSETS}/css/studentTakeExam.css">
 	<link rel="stylesheet" type="text/css" href="${ASSETS}/script/mathlive/dist/mathlive.core.css">
 	<link rel="stylesheet" type="text/css" href="${ASSETS}/script/mathlive/dist/mathlive.css">
-<%--	<script type="text/javascript" src="${ASSETS}/script/vue/signature_pad.min.js"></script>--%>
-<%--	<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>--%>
-<%--	<script type="text/javascript" src="${ASSETS}/script/vue/drawing.js"></script>--%>
-	<%--<script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>--%>
 </head>
 
 <body>
-<%--<template id="vue-signature" :style="{width:w,height:h}">--%>
-	<%--<canvas style="border:1px solid #000000;" :id="uid" class="canvas" :data-uid="uid"></canvas>--%>
-<%--</template>--%>
-<section id="takeexam">
-	<vue-signature ref="signature" :sigOption="option" :w="'800px'" :h="'400px'"></vue-signature>
+<section id="takeexam" v-cloak>
+<%--	<vue-signature ref="signature" :sigOption="option" :w="'800px'" :h="'400px'"></vue-signature>--%>
 	<div id="solving">
 		<section class="solving-wrap">
 			<h1 class="title" style="margin: 0px;">
@@ -227,11 +220,11 @@
 								<div class="answers-exp mgt60 uk-margin-large-bottom" v-else>
 									<div v-for="(aItem,index) in item.answers"  :key="index">
 										<div v-if="aItem.answerFlag == 'math'">
-											<div class="uk-flex uk-margin-bottom">
-												<b>Guide text: </b>
-												<p class="uk-margin-remove" style="padding-left: 15px;">
-													{{aItem.answer}} </p>
-											</div>
+<%--											<div class="uk-flex uk-margin-bottom">--%>
+<%--												<b>Guide text: </b>--%>
+<%--												<p class="uk-margin-remove" style="padding-left: 15px;">--%>
+<%--													{{aItem.answer}} </p>--%>
+<%--											</div>--%>
 											<mathlive-mathfield
 													:id="'mf'+index"
 													:ref="'mathfield'+index"
@@ -244,11 +237,11 @@
 											</mathlive-mathfield>
 										</div>
 										<div v-else>
-											<div class="uk-flex uk-margin-bottom">
-												<b>Guide text: </b>
-												<p class="uk-margin-remove" style="padding-left: 15px;">
-												{{aItem.answer}} </p>
-											</div>
+<%--											<div class="uk-flex uk-margin-bottom">--%>
+<%--												<b>Guide text: </b>--%>
+<%--												<p class="uk-margin-remove" style="padding-left: 15px;">--%>
+<%--												{{aItem.answer}} </p>--%>
+<%--											</div>--%>
 										
 											<input type="text" class="txt-input" placeholder="정답을 입력해 주세요"
 												   v-model="aItem.answerWrite"
@@ -288,10 +281,25 @@
 													</span>
 													<span class="answer-text" v-else-if="item.questionType == '2'">
 <%--														disabled--%>
-														<input type="text" placeholder="주관식 문제"
-															   class="num-default uk-margin-remove" disabled
-															   :value="questions[currentQuestion].answerWrite">
-														<p class="num-default uk-margin-remove" placeholder="주관식 문제"></p>
+														<p>
+															<mathlive-mathfield
+																	:id="'mf'+eindex"
+																	:ref="'mathfield'+eindex"
+																	:config="{smartMode:true, readOnly: true}"
+																	@focus="ping"
+																	:on-keystroke="displayKeystroke"
+																	v-model="questions[currentQuestion].answerWrite"
+																	class="num-default uk-margin-remove"
+																	>
+<%--																style="border: 1px solid #ccc; padding: 10px; font-size: 17px;"--%>
+															{{questions[currentQuestion].answerWrite}}
+															
+														</mathlive-mathfield>
+														</p>
+<%--														<input type="text" placeholder="주관식 문제"--%>
+<%--															   class="num-default uk-margin-remove" disabled--%>
+<%--															   :value="questions[currentQuestion].answerWrite">--%>
+<%--														<p class="num-default uk-margin-remove" placeholder="주관식 문제"></p>--%>
 													</span>
 													<label class="" v-else v-for="(aitem,aindex) in item.answers" :key="aindex">
 														<span class="number-txt" style="margin-right: 10px"
@@ -299,7 +307,7 @@
 														>{{aindex+1}}</span>
 													</label>
 												</li>
-												<li @click="webIndex(eindex)" class="like none" v-else
+												<li @click="webIndex(eindex)" class="like none" v-else style="display: flex;"
 													:class="{'changed': eindex == currentQuestion}">
 													<span class="num-default">{{eindex+1}}</span>
 													<span v-if="item.questionType == '4'">
@@ -422,9 +430,7 @@
 						</div>
 					</div>
 					<div class="solving-submit mobile-blind">
-						<button class="on" @click="saveLast()">학습종료</button><!--// 문제를 다 풀었을때 버튼 클래스 "on" 추가해주세요.
-						 --><!-- 2020-03-02
-						 -->
+						<button class="on" @click="saveLast()">학습종료</button>
 					</div>
 				</div>
 			</div>
@@ -466,7 +472,7 @@
 										<ul class="list-basic uk-padding-remove">
 											<li class="" v-for="(item,index) in questions" :key="index"
 												@click="chooseQuestion(index)" v-if="item.answerselected == false">
-												<a href="#" class="num-default">{{index+1}}</a>
+												<a href="#" class="num-default" >{{index+1}}</a>
 											</li>
 										</ul>
 									</div>
@@ -477,8 +483,10 @@
 									<div class="popup-scroll height-type01 mgt15">
 										<ul class="list-basic uk-padding-remove">
 											<li class="" v-for="(item,index) in questions" :key="index"
+												:class="{'mobileCheck': item.answerSelected}"
 												@click="chooseQuestion(index)" v-if="item.like == '1'">
-												<a href="#" class="num-default">{{index+1}}</a>
+												<a href="#" class="num-default"
+												   :class="{'mobileNumber': item.answerSelected}">{{index+1}}</a>
 											</li>
 										</ul>
 									</div>
@@ -487,27 +495,21 @@
 						</ul>
 					</div>
 				</div>
-				
-				<!-- 2020-02-27 -->
 				<div class="next-area mgt15">
 					<div class="solving-nav tac mobile-view" style="overflow:visible;">
 						<button class="mobile-view btn_view_end" @click="mobileBack">back</button>
 					</div>
-				</div><!--// 다음문제 영역 -->
-				<!-- //2020-02-27 -->
+				</div>
+				
 			</div>
 		</section>
 		
 	</div>
 </section>
 <script type="module">
-    // import VueSignaturePad from 'vue-signature-pad';
-    // import Vue from 'vue';
 
     import MathLive from '${ASSETS}/script/mathlive/dist/src/mathlive.js';
     import Mathfield from '${ASSETS}/script/mathlive/dist/vue-mathlive.js';
-    // import VueSignaturePad from '../../../../../../node_modules/vue-signature-pad/dist/vue-signature-pad.js';
-    // Vue.use(VueSignaturePad);
     Vue.use(Mathfield, MathLive);
 
     var router = new VueRouter({
@@ -648,12 +650,10 @@
         el: '#takeexam',
         router,
 		components:{
-            // VueSignaturePad
 		},
         data: {
             formula: 'x=-b\\pm \\frac {\\sqrt{b^2-4ac}}{2a}',
             keystroke: '',
-            // images: ['../../assets/img/viewer/icon_dec_on.png'],
             options2: {
                 penColor: "#0d87f9"
             },
@@ -666,7 +666,6 @@
             examId: 0,
             questions: [],
             currentQuestion: 0,
-            sendQuestion: [],
             answerActive: [],
             ansWer: [],
             likeCount: '',
@@ -725,12 +724,11 @@
                 };
             },
 			saveLast(){
-                console.log(this.questions.length)
                 // if (this.currentQuestion > this.questions.length - 1){
-                // 	if (this.leavedQuestion <= 1) {
+                	if (this.leavedQuestion <= 1) {
                         this.isLast = 'last'
                         this.nextQuestion()
-					// }
+					}
                     // else{
                     //     alert(" You should finish all your question.")
 					// }
@@ -742,33 +740,30 @@
             mobileBack() {
                 this.isPopup = false
             },
-            webIndex(item) {
-                this.nextQuestion()
-                this.currentQuestion = item
-                this.leavedQuestion = 0
-                for (let i = 0; i < this.questions.length; i++) {
-                    
-                    let a = this.questions[i];
+			leavedCount(){
+				for(let i=0; i > this.questions.length; i++)
+				{
+					if (this.questions[this.currentQuestion].questionType == '2') {
+						if (this.questions[this.currentQuestion].answerWrite == "") {
+							this.leavedQuestion--
+						}
+					}
+					if (this.questions[this.currentQuestion].questionType == '4') {
+						if (this.questions[this.currentQuestion].drawingData == '') {
+							this.leavedQuestion--
+						}
+					} else {
+						if (this.questions[this.currentQuestion].answerselected == true) {
+							this.leavedQuestion--
+						}
+					}
+                    console.log("hhhhhhhhhhhhh")
+                    console.log(this.leavedQuestion)
+				}
 
-                    if (a.questionType == '2') {
-                        //typeof(this.questions[i].answerWrite) !== 'undefined' ||
-                        if (this.questions[i].answerWrite ==
-							"") {
-                            this.leavedQuestion++
-                        }
-                    }
-                    if(a.questionType == '4'){
-                        if (a.drawingData == '') {
-                            this.leavedQuestion++
-                        }
-                    }
-                    else{
-                        if ( a.answerselected == false ) {
-                            this.leavedQuestion++
-                        }
-                    }
-                }
-               
+            },
+            async webIndex(item) {
+                this.currentQuestion = item
                 // if (this.questions[this.currentQuestion].questionType === '4') {
                 //
                 //     let {isEmpty, data} = this.$refs.qcanvas[0].saveSignature()
@@ -783,10 +778,11 @@
                     alert("펜쓰기 저장 버튼을 눌러주세요.")
 
                     return
-                    console.log("false pencil2")
 					
                 } else {
-
+                   await this.sentQuestion()
+					
+					this.leavedCount()
                     // if (this.questions[item].questionType === '4') {
                     //     this.$nextTick(() => {
                     //         this.$refs.qcanvas[0].fromDataURL(this.questions[this.currentQuestion].drawingData)
@@ -798,8 +794,6 @@
                     //
                     //
                     if (this.questions[item].questionLike == '0') {
-                        console.log("questions currentQuestion like")
-                        console.log(this.questions[this.currentQuestion].questionLike)
                         this.likelike = false
                     } else {
                         this.likelike = true
@@ -841,6 +835,7 @@
                 // }
             },
             changePop() {
+                this.sentQuestion()
                 // this.isPopup = !this.isPopup
                 if (this.isPopup == false) {
                     this.isPopup = true
@@ -887,205 +882,18 @@
                 //     this.$refs.signaturePad.undoSignature();
                 // }
             },
-            nextQuestion() {
-                try {
-                    let question = {}
-                    let sendAnswer = []
-					let typeBool = false
-
-                    if (this.pencil2 == false) {
-                        alert("펜쓰기 저장 버튼을 눌러주세요.")
-                        return
-                    }
-                    else {
-                        if (this.leavedQuestion > 0) {
-
-                            this.leavedQuestion = 0
-
-                            for (let i = 0; i < this.questions.length; i++) {
-                                let a = this.questions[i];
-
-                                if (a.questionType == '2') {
-                                    //typeof(this.questions[i].answerWrite) !== 'undefined' ||
-                                    if ( this.questions[i].answerWrite == "") {
-                                        this.leavedQuestion++
-                                    }
-                                    else{
-                                    }
-                                }
-                                if(a.questionType == '4'){
-                                    if (a.drawingData == '') {
-                                        this.leavedQuestion++
-                                    }
-                                }
-                                else{
-                                    if ( a.answerselected == false && a.questionType != 2) {
-                                        this.leavedQuestion++
-                                    }
-                                    else{
-                                    }
-                                }
-                            }
-                        }
-						
-                        if (this.questions[this.currentQuestion].questionType == "2") {
-							for (let i = 0; i < this.questions[this.currentQuestion].answers.length; i++)
-							{
-								let choose = this.questions[this.currentQuestion].answers[i]
-									let iitem ={
-										answerFlag: choose.answerFlag,
-										answerId: choose.id,
-										answerTrueData: choose.trueData,
-										answerData: choose.answerWrite,
-										optionNumber:""
-									}
-									
-								sendAnswer.push(iitem)
-							}
-                        }
-                        if (this.questions[this.currentQuestion].questionType == "4") {
-                            for (let i = 0; i < this.questions[this.currentQuestion].answers.length; i++) {
-                                let choose = this.questions[this.currentQuestion].answers[i]
-                                let iitem = {
-                                    answerFlag: choose.answerFlag,
-                                    answerId: choose.id,
-                                    answerTrueData: choose.trueData,
-                                    answerData: this.questions[this.currentQuestion].drawingData,
-                                    optionNumber: ""
-                                }
-                                sendAnswer.push(iitem)
-                            }
-                        }
-                        else {
-                            for (let i = 0; i < this.questions[this.currentQuestion].answers.length; i++) {
-                                let choose = this.questions[this.currentQuestion].answers[i]
-                                if (choose.selectedAnswer == true) {
-                                    if(choose.answerFlag == 'true')
-									{
-                                        typeBool  = true
-									}
-                                    let iitem = {
-                                        answerFlag: typeBool,
-                                        answerId: choose.id,
-                                        answerTrueData: choose.selectedAnswer,
-                                        answerData: this.questions[this.currentQuestion].answerWrite,
-                                        optionNumber: ""
-                                    }
-                                    sendAnswer.push(iitem)
-                                }
-                            }
-                        }
-                        var loginId = '${sessionScope.loginId}'
-                        var ex_schcode = '${sessionScope.ex_schcode}'
-                        
-                        question.questionId = this.questions[this.currentQuestion].id
-                        question.examId = this.examId
-                        question.paint = this.questions[this.currentQuestion].paint
-                        question.like = this.questions[this.currentQuestion].questionLike
-                        question.memo = this.questions[this.currentQuestion].memo
-                        question.time = this.questions[this.currentQuestion].time
-                        question.answers = sendAnswer
-						question.loginId = loginId
-						question.islast = this.isLast
-						question.ex_schcode = ex_schcode
-						question.classId = 'classid'
-                        
-                        const headers = {
-                            'Content-Type': 'application/json'
-                        }
-                        
-                        axios.post('${BASEURL}/kexam/result/put',
-							question,
-							{
-							    headers: headers
-							}).then((response)=> {
-
-                            console.log("question result put response ")
-                            console.log(response)
-							
-							
-						if(response.status == 200) {
-                            if (this.currentQuestion >= this.questions.length-1) {
-                                if (this.isLast == 'last')
-								{
-                                    let url = this.localPath + "/result_see" + "?examId=" + this.examId + "&userId="+ loginId
-                                    window.location.href = url
-									
-								}
-                                else{
-                                    alert("마지막 문제입니다. 다음 문제가 없습니다.")
-                                    return
-								}
-                            }
-                            else{
-
-                                this.currentQuestion++
-
-                                // this.$nextTick(() => {
-                                //     this.$refs.qcanvas[0].fromDataURL(this.questions[this.currentQuestion].drawingData)
-                                // })
-
-                                if (this.questions[this.currentQuestion].questionLike == '0') {
-                                    console.log("questions currentQuestion like")
-                                    console.log(this.questions[this.currentQuestion].questionLike)
-                                    this.likelike = false
-                                } else {
-                                    this.likelike = true
-                                }
-
-                                this.pencil2 == false
-                                
-							}
-									// this.$refs.signaturePad.clearSignature();
-									// this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
-
-
-							// if (this.questions[this.currentQuestion].questionType === '4') {
-							//     this.$nextTick(() => {
-							//         this.$refs.qcanvas[this.currentQuestion].clearSignature();
-							//         this.$refs.qcanvas[this.currentQuestion].fromDataURL(this.questions[this.currentQuestion].answers[0].answerData)
-							//     });
-							// }
-
-
-							// if (this.questions[this.currentQuestion].questionType === '4') {
-							//     let {isEmpty, data} = this.$refs.qcanvas[0].saveSignature()
-							//     if (isEmpty == false) {
-							//         this.questions[this.currentQuestion].drawingData = data
-							//     }
-							// }
-							}
-                            else{
-                                alert(response.data.message)
-								alert("Failed !!")
-                                window.close();
-                            }
-                        },function (error){
-                            console.log("axios error found")
-                            console.log(error);
-                        });
-
-                        
-                    }
-                } catch (error) {
-                    console.log(error)
-                }
-            },
             async getQuestions(examId) {
                 try {
                     // $.blockUI({message: '<span> Loading...</span>'});
                     // var _$ = $
                     var _this = this
-
-                    // const users = JSON.parse(localStorage.getItem('users'));
-                    // console.log("this is users")
-                    // console.log(users.id)
+ 
                     var loginId = '${sessionScope.loginId}';
                     const headers = {
                         'Content-Type': 'application/json'
                     }
 
-                    axios.get('${BASEURL}/kexam/student/questions', {
+                    await  axios.get('${BASEURL}/kexam/student/questions', {
                         params: {
                             examId: examId,
                             loginId : loginId
@@ -1093,9 +901,10 @@
                         headers: headers
                     }).then(function (response) {
                         // _$.unblockUI()
+						
                         for (let select = 0; select < response.data.result.result.questions.length; select++) {
                             let active = response.data.result.result.questions[select];
-						
+
                             active.questionLike = '0'
                             active.memo = ""
                             active.paint = ""
@@ -1103,94 +912,95 @@
                             active.answerselected = false
                             active.time = 0
                             active.drawingData = ""
-							active.answerWrite = ''
+                            active.answerWrite = ''
                             for (let a = 0; a < active.answers.length; a++) {
                                 let item = active.answers[a];
                                 item.selectedAnswer = false
                                 item.answerWrite = ''
-                             
+
                                 if (active.questionType == '4') {
                                     // item.width = '100%'
                                     // item.height = '100%'
                                     item.width = '370px'
                                     item.height = '370px'
-						
+
                                     // let img = new Image();
-						
+
                                     // img.src = active.answers[0].drawingData
                                     // img.src = _this.imgPath + 'examanswer/' + active.answers[0].drawingData
-						
+
                                     <%--console.log(img.src);--%>
-									
+
                                     <%--img.onload = () => {--%>
                                     <%--    item.width = img.width + ""--%>
                                     <%--    item.height = img.height + ""--%>
                                     <%--    console.log(`the image dimensions are ${img.width}x${img.height} ${active.id}`);--%>
                                     <%--}--%>
                                 }
-                                // for(let r = 0; r < response.data.result.result.results; r++ ){
-                                //     let res = response.data.result.result.results[r]
-                                //     {
-                                //         if (res.questioId = active.id)
-                                //         {
-                                //             res.like = active.like,
-                                //                 res.memo = active.memo
-                                //             res.paint = active.paint
-                                //             res.time = active.time
-                                //             if (active.questionType = '1')
-                                //             {
-                                //                 for(let jj=0; jj< res.answers; jj++)
-								// 				{
-                                //                     if ( item.id == jj.checkedAnswer )
-								// 					{
-								// 					    item.selectedAnswer == true
-								// 					}
-                                //                     else{
-                                //                         item.selectedAnswer == false
-								// 					}
-								// 				}
-                                //             }
-                                //             if (active.questionType = '2')
-                                //             {
-                                //                 if ( item.id == jj.checkedAnswer )
-								// 				{
-								// 				    item.answerWrite == jj.inputedData
-								// 				}
-                                //             }
-                                //             if (active.questionType = '3')
-                                //             {
-                                //                 for(let jj=0; jj< res.answers; jj++)
-                                //                 {
-                                //                     if ( item.id == jj.checkedAnswer )
-                                //                     {
-                                //                         item.selectedAnswer == true
-                                //                     }
-                                //                     else{
-                                //                         item.selectedAnswer == false
-                                //                     }
-                                //                 }
-                                //             }
-                                //             else{
-                                //                 console.log("canvas settings like this")
-                                //             }
-                                //         }
-								//
-                                //     }
-                                // }
+                                
+                                for(let r = 0; r < response.data.result.result.results; r++ ){
+                                    let res = response.data.result.result.results[r]
+                                    {
+                                        if (res.questioId = active.id)
+                                        {
+                                            res.like = active.like,
+											res.memo = active.memo
+                                            res.paint = active.paint
+                                            res.time = active.time
+                                            if (active.questionType = '1')
+                                            {
+                                                for(let jj=0; jj< res.answers; jj++)
+                                				{
+                                                    if ( item.id == jj.checkedAnswer )
+                                					{
+                                					    item.selectedAnswer == true
+                                					}
+                                                    else{
+                                                        item.selectedAnswer == false
+                                					}
+                                				}
+                                            }
+                                            if (active.questionType = '2')
+                                            {
+                                                if ( item.id == jj.checkedAnswer )
+                                				{
+                                				    item.answerWrite == jj.inputedData
+                                				}
+                                            }
+                                            if (active.questionType = '3')
+                                            {
+                                                for(let jj=0; jj< res.answers; jj++)
+                                                {
+                                                    if ( item.id == jj.checkedAnswer )
+                                                    {
+                                                        item.selectedAnswer == true
+                                                    }
+                                                    else{
+                                                        item.selectedAnswer == false
+                                                    }
+                                                }
+                                            }
+                                            else{
+                                                console.log("canvas settings like this")
+                                            }
+                                        }
+
+                                    }
+                                }
                             }
-                           
+
                         }
-                        
-                        
+
+
                         _this.questions = response.data.result.result.questions
-                        console.log(_this.questions)
                         _this.leavedQuestion = _this.questions.length
+                        console.log(_this.questions)
 
                         // console.log("here is results")
                         // console.log(response.data.result.result.results)
-						
+
                         // var _this = this
-						
+
                         // if (response.data.success == true) {
                         //     if (_this.questions[_this.currentQuestion].questionType === '4') {
                         //         for (let i = 0; i < _this.questions.length; i++) {
@@ -1201,7 +1011,7 @@
                         //             });
                         //         }
                         //     }
-                            _this.toggleTimer()
+                        _this.toggleTimer()
                         // }
                         // _this.currentQuestion++;
                         // setTimeout(() => {
@@ -1221,66 +1031,199 @@
                     }
                 }
             },
-            prevQuestion() {
+			async sentQuestion(){
+                try {
+                    let question = {}
+                    let sendAnswer = []
+                    let typeBool = false
+					
+                    if (this.questions[this.currentQuestion].questionType == "2") {
+                        for (let i = 0; i < this.questions[this.currentQuestion].answers.length; i++)
+                        {
+                            let choose = this.questions[this.currentQuestion].answers[i]
+                            let iitem ={
+                                answerFlag: choose.answerFlag,
+                                answerId: choose.id,
+                                answerTrueData: choose.trueData,
+                                answerData: choose.answerWrite,
+                                optionNumber:""
+                            }
+
+                            sendAnswer.push(iitem)
+                        }
+                    }
+                    if (this.questions[this.currentQuestion].questionType == "4") {
+                        for (let i = 0; i < this.questions[this.currentQuestion].answers.length; i++) {
+                            let choose = this.questions[this.currentQuestion].answers[i]
+                            let iitem = {
+                                answerFlag: choose.answerFlag,
+                                answerId: choose.id,
+                                answerTrueData: choose.trueData,
+                                answerData: this.questions[this.currentQuestion].drawingData,
+                                optionNumber: ""
+                            }
+                            sendAnswer.push(iitem)
+                        }
+                    }
+                    else {
+                        for (let i = 0; i < this.questions[this.currentQuestion].answers.length; i++) {
+                            let choose = this.questions[this.currentQuestion].answers[i]
+                            if (choose.selectedAnswer == true) {
+                                if(choose.answerFlag == 'true')
+                                {
+                                    typeBool  = true
+                                }
+                                let iitem = {
+                                    answerFlag: typeBool,
+                                    answerId: choose.id,
+                                    answerTrueData: choose.selectedAnswer,
+                                    answerData: this.questions[this.currentQuestion].answerWrite,
+                                    optionNumber: ""
+                                }
+                                sendAnswer.push(iitem)
+                            }
+                        }
+                    }
+                    var loginId = '${sessionScope.loginId}'
+                    var ex_schcode = '${sessionScope.ex_schcode}'
+
+                    question.questionId = this.questions[this.currentQuestion].id
+                    question.examId = this.examId
+                    question.paint = this.questions[this.currentQuestion].paint
+                    question.like = this.questions[this.currentQuestion].questionLike
+                    question.memo = this.questions[this.currentQuestion].memo
+                    question.time = this.questions[this.currentQuestion].time
+                    question.answers = sendAnswer
+                    question.loginId = loginId
+                    question.islast = this.isLast
+                    question.ex_schcode = ex_schcode
+                    question.classId = 'classid'
+
+                    const headers = {
+                        'Content-Type': 'application/json'
+                    }
+
+                    await  axios.post('${BASEURL}/kexam/result/put',
+                        question,
+                        {
+                            headers: headers
+                        }).then((response)=> {
+
+                        console.log("question result put response ")
+                        console.log(response)
+
+
+                        if(response.status == 200) {
+                            
+                            // this.$nextTick(() => {
+                            //     this.$refs.qcanvas[0].fromDataURL(this.questions[this.currentQuestion].drawingData)
+                            // })
+							
+							
+                            // this.$refs.signaturePad.clearSignature();
+                            // this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
+
+
+                            // if (this.questions[this.currentQuestion].questionType === '4') {
+                            //     this.$nextTick(() => {
+                            //         this.$refs.qcanvas[this.currentQuestion].clearSignature();
+                            //         this.$refs.qcanvas[this.currentQuestion].fromDataURL(this.questions[this.currentQuestion].answers[0].answerData)
+                            //     });
+                            // }
+
+
+                            // if (this.questions[this.currentQuestion].questionType === '4') {
+                            //     let {isEmpty, data} = this.$refs.qcanvas[0].saveSignature()
+                            //     if (isEmpty == false) {
+                            //         this.questions[this.currentQuestion].drawingData = data
+                            //     }
+                            // }
+                        }
+                        else{
+                            alert(response.data.message)
+                            alert("Failed !!")
+                            window.close();
+                        }
+                    },function (error){
+                        console.log("axios error found")
+                        console.log(error);
+                    });
+
+                }
+                catch (error) {
+                    console.log(error)
+                }
+			},
+            async nextQuestion() {
+
+                    if (this.pencil2 == false) {
+                        alert("펜쓰기 저장 버튼을 눌러주세요.")
+                        return
+                    }
+                    else {
+                        if (this.currentQuestion >= this.questions.length-1) {
+                            if (this.isLast == 'last')
+                            {
+                                let url = this.localPath + "/result_see" + "?examId=" + this.examId + "&userId="+ loginId
+                                window.location.href = url
+                            }
+                            else{
+                                alert("마지막 문제입니다. 다음 문제가 없습니다.")
+                                return
+                            }
+                        }
+                        else{
+                            await this.sentQuestion()
+                           
+                            this.currentQuestion++
+
+                            this.leavedCount()
+
+                            if (this.questions[this.currentQuestion].questionLike == '0') {
+                                this.likelike = false
+                            } else {
+                                this.likelike = true
+                            }
+                            this.pencil2 == false
+                        }
+                        
+                    }
+            },
+            async prevQuestion() {
+
                 if (this.pencil2 == false) {
                     alert("펜쓰기 저장 버튼을 눌러주세요.")
                     return
                 } else {
-                    if (this.currentQuestion > 0) {
-                        if (this.leavedQuestion > 0) {
+                    // if (this.questions[this.currentQuestion].questionType === '4') {
+                    //     let {isEmpty, data} = this.$refs.qcanvas[0].saveSignature()
+                    //     if (isEmpty == false) {
+                    //         this.questions[this.currentQuestion].drawingData = data
+                    //     }
+                    // }
+                    await this.sentQuestion()
+					
+                    this.currentQuestion--
+					
+					this.leavedCount()
+                    // if (this.questions[this.currentQuestion].questionType === '4') {
+                    //     this.$nextTick(() => {
+                    //         this.$refs.qcanvas[0].fromDataURL(this.questions[this.currentQuestion].drawingData)
+                    //     });
+                    // }
 
-                            this.leavedQuestion = 0
-
-                            for (let i = 0; i < this.questions.length; i++) {
-                                let a = this.questions[i]
-
-                                if (a.questionType == '2') {
-                                    //typeof(this.questions[i].answerWrite) !== 'undefined' ||
-                                    if (this.questions[i].answerWrite == "") {
-                                        this.leavedQuestion++
-                                    }
-                                }
-                                if(a.questionType == '4'){
-                                    if (a.drawingData == '') {
-                                        this.leavedQuestion++
-                                    }
-                                }
-                                else{
-                                    if ( a.answerselected == false && a.questionType != 2) {
-                                        this.leavedQuestion++
-                                    }
-                                }
-                            }
-                        }
-
-                        // if (this.questions[this.currentQuestion].questionType === '4') {
-                        //     let {isEmpty, data} = this.$refs.qcanvas[0].saveSignature()
-                        //     if (isEmpty == false) {
-                        //         this.questions[this.currentQuestion].drawingData = data
-                        //     }
-                        // }
-
-                        this.currentQuestion--
-
-                        // if (this.questions[this.currentQuestion].questionType === '4') {
-                        //     this.$nextTick(() => {
-                        //         this.$refs.qcanvas[0].fromDataURL(this.questions[this.currentQuestion].drawingData)
-                        //     });
-                        // }
-
-                        if (this.questions[this.currentQuestion].questionLike == '0') {
-                            console.log("questions currentQuestion like")
-                            console.log(this.questions[this.currentQuestion].questionLike)
-                            this.likelike = false
-                        } else {
-                            this.likelike = true
-                        }
-                        // this.$refs.signaturePad.clearSignature()
-                        // this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
+                    if (this.questions[this.currentQuestion].questionLike == '0') {
+                        console.log("questions currentQuestion like")
+                        console.log(this.questions[this.currentQuestion].questionLike)
+                        this.likelike = false
                     } else {
-                        alert("1번 문제입니다. 이전 문제가 없습니다.")
+                        this.likelike = true
                     }
+                    // this.$refs.signaturePad.clearSignature()
+                    // this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
                 }
+            
+            
             },
             toggleTimer() {
                 if (this.isRunning) {
@@ -1329,18 +1272,18 @@
                         )) ||
                     ''
                 );
-            }
+            },
 
-            // drawing() {
-            //     this.pencil2 = !this.pencil2
-            //     // this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].answerData);
-            //     if (this.pencil2 == true) {
-            //         const {isEmpty, data} = this.$refs.signaturePad.saveSignature();
-            //         this.questions[this.currentQuestion].paint = data
-            //         this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
-            //     }
-            // },
-        }
+            drawing() {
+                this.pencil2 = !this.pencil2
+                // this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].answerData);
+                if (this.pencil2 == true) {
+                    const {isEmpty, data} = this.$refs.signaturePad.saveSignature();
+                    this.questions[this.currentQuestion].paint = data
+                    this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
+                }
+            },
+		}
     })
 </script>
 

@@ -823,7 +823,7 @@
                                         question.like = question.resultData.like
                                         question.memo = question.resultData.memo
                                         question.paint =  question.resultData.paint
-                                        if (Object.key !== 0 )
+                                        if (Object.key(question.resultData).length !== 0 )
                                         {
                                             console.log("searching true data")
                                             for (let d = 0; d < question.resultData.details.length; d++) {
