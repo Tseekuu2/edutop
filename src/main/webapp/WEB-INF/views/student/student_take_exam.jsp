@@ -875,8 +875,7 @@
                             if (this.currentQuestion >= this.questions.length-1) {
                                 if (this.isLast == 'last')
 								{
-                                    let url = this.localPath + "/result_see" + "?examId=" + this.examId + "&userId=" + loginId
-
+                                    let url = this.localPath + "/result_see" + "?examId=" + this.examId + "&userId="+ loginId
                                     window.location.href = url
 									
 								}

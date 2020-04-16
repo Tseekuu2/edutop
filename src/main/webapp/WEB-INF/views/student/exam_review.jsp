@@ -233,7 +233,8 @@
                                 <div class="popup-scroll height-type01 mgt15">
                                     <ul class="list-basic uk-padding-remove">
                                         <template v-for="(item,eindex) in questions" :key="eindex">
-                                            <li @click="webIndex(eindex)" class="like" v-if="item.like == '1'" style="display: flex";
+                                            <li @click="webIndex(eindex)" class="like" v-if="item.like == '1'"
+                                                style="display: flex;"
                                                 :class="{'changed': eindex == currentQuestion}" >
                                                 <span class="num-default">{{eindex+1}}</span>
                                                 <span v-if="item.questionType == '4'">
@@ -822,7 +823,7 @@
                                         question.like = question.resultData.like
                                         question.memo = question.resultData.memo
                                         question.paint =  question.resultData.paint
-                                        if (question.resultData.length !== 0 )
+                                        if (Object.key !== 0 )
                                         {
                                             console.log("searching true data")
                                             for (let d = 0; d < question.resultData.details.length; d++) {
