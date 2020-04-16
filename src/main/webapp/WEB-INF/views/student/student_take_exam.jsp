@@ -234,7 +234,7 @@
 													@focus="ping"
 													:on-keystroke="displayKeystroke"
 													v-model="aItem.answerWrite"
-													style="border: 1px solid #ccc;padding: 10px;font-size: 17px;" >
+													style="border: 1px solid #ccc; padding: 10px; font-size: 17px;" >
 												{{aItem.answerWrite}}
 											</mathlive-mathfield>
 										</div>
@@ -274,7 +274,8 @@
 									<div class="popup-scroll height-type01 mgt15">
 										<ul class="list-basic uk-padding-remove">
 											<template v-for="(item,eindex) in questions" :key="eindex">
-												<li @click="webIndex(eindex)" class="like" v-if="item.like == '1'" style="display: flex";
+												<li @click="webIndex(eindex)" class="like"
+													v-if="item.questionLike == '1'" style="display: flex;"
 													:class="{'changed': eindex == currentQuestion}" >
 													<span class="num-default">{{eindex+1}}</span>
 													<span v-if="item.questionType == '4'">
@@ -355,7 +356,7 @@
 									<div class="popup-scroll height-type01 mgt15">
 										<ul class="list-basic uk-padding-remove">
 											<template v-for="(item,eindex) in questions" :key="eindex">
-												<li @click="webIndex(eindex)" class="like" v-if="item.like == '1'" style="display: flex;"
+												<li @click="webIndex(eindex)" class="like" v-if="item.questionLike == '1'" style="display: flex;"
 													:class="{'changed': eindex == currentQuestion}">
 													<span class="num-default">{{eindex+1}}</span>
 													<span v-if="item.questionType == '4'">
@@ -391,7 +392,7 @@
 						<button class="prev mobile-view" @click="prevQuestion">이전문제</button>
 						<a class="qs-list n_ty02" @click="changePop()">문항목록</a>
 						<button class="clip none mobile-view" @click="bigLike(currentQuestion)"
-								v-if="questions[currentQuestion].questionLike == '0'">찜하기
+								v-if="likelike== false">찜하기
 						</button>
 						<button class="clip mobile-view" @click="bigLike(currentQuestion)" v-else>찜하기</button>
 						<button class="pen_n mobile-blind">펜쓰기</button>
@@ -663,13 +664,13 @@
                     // this.$refs.signaturePad.fromDataURL(this.questions[item].paint)
                     //
                     //
-                    // if (this.questions[item].like == '0') {
-                    //     console.log("questions currentQuestion like")
-                    //     console.log(this.questions[this.currentQuestion].like)
-                    //     this.bigheartlike = false
-                    // } else {
-                    //     this.bigheartlike = true
-                    // }
+                    if (this.questions[item].questionLike == '0') {
+                        console.log("questions currentQuestion like")
+                        console.log(this.questions[this.currentQuestion].questionLike)
+                        this.likelike = false
+                    } else {
+                        this.likelike = true
+                    }
                 }
             },
             activeanswers(answer, question) {
@@ -725,14 +726,23 @@
             bigLike(item) {
                 if (this.questions[item].questionLike == '0') {
                     this.questions[item].questionLike = '1'
-                    console.log("questions currentQuestion like")
-                    console.log(this.questions[item].questionLike)
+                    this.likelike = true
                 }
-                if (this.questions[item].questionLike == '1') {
-                    console.log("questions currentQuestion like")
-                    console.log(this.questions[item].questionLike)
+                else{
                     this.questions[item].questionLike = '0'
+                    this.likelike = false
                 }
+               //  this.likelike = !this.likelike
+				//
+               //  if (this.likelike = true) {
+               //      this.questions[item].questionLike = '1'
+               //      console.log("questions currentQuestion like")
+               //      console.log(this.questions[item].questionLike)
+               //
+               //  }
+               // else{
+               //      this.questions[item].questionLike = '0'
+				// }
             },
             options2Eraser() {
                 alert("working on it ")
@@ -832,7 +842,7 @@
                                 }
                             }
                         }
-                        var loginId = '${sessionScope.loginId}';
+                        var loginId = '${sessionScope.loginId}'
                         var ex_schcode = '${sessionScope.ex_schcode}'
                         
                         question.questionId = this.questions[this.currentQuestion].id
@@ -883,13 +893,13 @@
                                 //     this.$refs.qcanvas[0].fromDataURL(this.questions[this.currentQuestion].drawingData)
                                 // })
 
-                                // if (this.questions[this.currentQuestion].like == '0') {
-                                //     console.log("questions currentQuestion like")
-                                //     console.log(this.questions[this.currentQuestion].like)
-                                //     this.bigheartlike = false
-                                // } else {
-                                //     this.bigheartlike = true
-                                // }
+                                if (this.questions[this.currentQuestion].questionLike == '0') {
+                                    console.log("questions currentQuestion like")
+                                    console.log(this.questions[this.currentQuestion].questionLike)
+                                    this.likelike = false
+                                } else {
+                                    this.likelike = true
+                                }
 
                                 this.pencil2 == false
                                 
@@ -915,6 +925,7 @@
 							}
                             else{
                                 alert(response.data.message)
+								alert("Failed !!")
                                 window.close();
                             }
                         },function (error){
@@ -1067,7 +1078,7 @@
                         console.log("done!!!")
                     }, function (error) {
                         console.log("axios error found")
-                        console.log(error);
+                        console.log(error)
                         // _$.unblockUI
                     });
                 } catch (error) {
@@ -1089,7 +1100,7 @@
                             this.leavedQuestion = 0
 
                             for (let i = 0; i < this.questions.length; i++) {
-                                let a = this.questions[i];
+                                let a = this.questions[i]
 
                                 if (a.questionType == '2') {
                                     //typeof(this.questions[i].answerWrite) !== 'undefined' ||
@@ -1125,13 +1136,13 @@
                         //     });
                         // }
 
-                        // if (this.questions[this.currentQuestion].like == '0') {
-                        //     console.log("questions currentQuestion like")
-                        //     console.log(this.questions[this.currentQuestion].like)
-                        //     this.bigheartlike = false
-                        // } else {
-                        //     this.bigheartlike = true
-                        // }
+                        if (this.questions[this.currentQuestion].questionLike == '0') {
+                            console.log("questions currentQuestion like")
+                            console.log(this.questions[this.currentQuestion].questionLike)
+                            this.likelike = false
+                        } else {
+                            this.likelike = true
+                        }
                         // this.$refs.signaturePad.clearSignature()
                         // this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
                     } else {
@@ -1141,20 +1152,20 @@
             },
             toggleTimer() {
                 if (this.isRunning) {
-                    clearInterval(this.interval);
-                    console.log('timer stops');
+                    clearInterval(this.interval)
+                    console.log('timer stops')
                 } else {
-                    this.interval = setInterval(this.incrementTime, 1000);
+                    this.interval = setInterval(this.incrementTime, 1000)
 
                 }
                 this.isRunning = !this.isRunning
             },
             incrementTime() {
-                this.time = parseInt(this.time) + 1;
-                this.hours = Math.floor(this.time / 3600);
-                this.time %= 3600;
-                this.minutes = Math.floor(this.time / 60);
-                this.seconds = this.time % 60;
+                this.time = parseInt(this.time) + 1
+                this.hours = Math.floor(this.time / 3600)
+                this.time %= 3600
+                this.minutes = Math.floor(this.time / 60)
+                this.seconds = this.time % 60
                 this.questions[this.currentQuestion].time++
 
                 // console.log("real timer: "+this.questions[this.currentQuestion].time)

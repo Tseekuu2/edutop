@@ -144,7 +144,6 @@
 						<td>{{item.updateAt}}</td>
 						<td>{{item.classRoom}}</td>
 						<td>{{item.examSubject}}</td>
-						<%--								<td>{{item.examSubject}}</td>--%>
 						<td>{{item.examName}}</td>
 						<td class="on">
 							<a href="javascript:void(0)" class=""
@@ -158,7 +157,6 @@
 								   @click="newtab('teacher/exam_result_see', item.id)">
 									{{kkk.givedUserCount}}</a>
 							</template>
-<%--								{{((kkk.givedUserCount/kkk.studentCount)*100).toFixed(2)}}%--%>
 						</td>
 						<td>
 							<template v-for="(kkk,cIndex)  in item.classes" :key="cIndex" >
@@ -172,8 +170,8 @@
 							<template v-for="(kkk,cIndex)  in item.classes" :key="cIndex">
 								<a href="javascript:void(0)" class=""
 								   @click="newtab('teacher/exam_result_see', item.id)">
-									{{kkk.averageTime}}</a>
-							</template> >
+									{{kkk.averageTime}} </a>
+							</template>
 						</td>
 						
 						
