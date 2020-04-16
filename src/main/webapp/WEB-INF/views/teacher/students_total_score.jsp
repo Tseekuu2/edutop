@@ -27,7 +27,7 @@
                         <div class="menu-tab">
                             <p class="title line mgb20">
         <%--                        <b class="col-orange02">[초등4 수학]</b> 여러 가지 삼각형–이등변 삼각형의 성질 탐구하기--%>
-                                {examInfo.createdAt}} {{examInfo.kurs}}
+                                {{examInfo.createdAt}} {{examInfo.kurs}}
                                 {{examInfo.examType}} {{examInfo.examName}}
                             </p>
                             <p class="title mgb5">
@@ -445,7 +445,7 @@
                         const headers = {
                             'Content-Type': 'application/json',
                         }
-                        axios.get('${BASEURL}/exam/studentsdata', {
+                        axios.get('${BASEURL}/kexam/studentsdata', {
                             params: {
                                 examId: item,
                                 loginId: loginId
@@ -463,8 +463,8 @@
                             for (let i = 0; i < response.data.users.length; i++) {
                                 let item = response.data.users[i];
                                 if (item.examData != null) {
+                                    
                                     let score = parseInt(item.examData.totalScore)
-            
                                     this.totalGivin++
                                     this.averageScore += parseInt(item.examData.totalScore)
             
@@ -525,10 +525,9 @@
                             'Content-Type': 'application/json'
                         }
                         
-                        axios.post('${BASEURL}/exam/result/studentdetail',{
+                        axios.post('${BASEURL}/kexam/result/studentdetail',{
                         
                             examId: this.examId,
-    
                             loginId : loginId
                             
                         },{headers: headers}).then((response)=>{

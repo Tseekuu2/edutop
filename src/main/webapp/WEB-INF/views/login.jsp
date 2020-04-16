@@ -8,11 +8,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <%
-	//	request.getSession().setAttribute("loginId", "teacher1");
-//	request.getSession().setAttribute("logoffUrl", "");
-//	request.getSession().setAttribute("userInfo", "");
-//	String redirectURL = request.getContextPath() + "/main";
-//	response.sendRedirect(redirectURL);
+	request.getSession().setAttribute("loginId", "student11");
+	request.getSession().setAttribute("ex_schcode", "D00005");
+	request.getSession().setAttribute("logoffUrl", "");
+	request.getSession().setAttribute("userInfo", "");
+	String redirectURL = request.getContextPath() + "/teacher_home";
+	response.sendRedirect(redirectURL);
+	
 	
 	String role = "";
 	String logonUrl = "";        // 로그온 URL
@@ -336,14 +338,14 @@
 	request.getSession().setAttribute("logoffUrl", logoffUrl);
 	request.getSession().setAttribute("userInfo", userInfo);
 	
-	if (role.equals("02")) {
-		String redirectURL = request.getContextPath() + "/teacher_home";
-		response.sendRedirect(redirectURL);
-	}
-	if (role.equals("08") || role.equals("01")) {
-		String redirectURL = request.getContextPath() + "/student_home";
-		response.sendRedirect(redirectURL);
-	}
+//	if (role.equals("02")) {
+//		String redirectURL = request.getContextPath() + "/teacher_home";
+//		response.sendRedirect(redirectURL);
+//	}
+//	if (role.equals("08") || role.equals("01")) {
+//		String redirectURL = request.getContextPath() + "/student_home";
+//		response.sendRedirect(redirectURL);
+//	}
 %>
 로그인 사용자 : <%=logonId %><br/><br/>
 사용자 정보 : <br/><%=userInfo%><br/><br/>

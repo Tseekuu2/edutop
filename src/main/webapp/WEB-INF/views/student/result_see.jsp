@@ -30,7 +30,7 @@
                                 <canvas id="percentCorrect" height="235"></canvas></div>
                             <span class="percent">{{items}}/{{total}}</span>
                         </div>
-                        <button class="btn-blar" @click="close()">나의 평가 목록으로</button>
+                        <button class="btn-blar" @click="close">나의 평가 목록으로</button>
                     </div><!--// 문제영역 -->
                 </div>
             </div>
@@ -136,7 +136,7 @@
                         'Content-Type': 'application/json',
                     }
      
-                    axios.post('${BASEURL}/exam/showresult', {
+                    axios.post('${BASEURL}/kexam/showresult', {
                             examId: examId,
                             loginId : loginId
                     },{headers: headers}).then (function (response) {

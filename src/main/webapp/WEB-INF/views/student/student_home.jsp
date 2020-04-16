@@ -119,11 +119,11 @@
 								</td>
 								<td>{{item.totalScore}}</td>
 								<td>
-									<button class="vew_result01" v-if="item.isReEval == true"
+									<button class="i_score"  v-if="item.isReEval == true"
 											@click="newtab('student/secondexam', item.id)">
-										결과보기
+										채첨하기
 									</button>
-									<button class="i_score"  @click="newtab('student/exam_review', item.id)">채첨하기
+									<button class="vew_result01" @click="newtab('student/exam_review', item.id)">결과보기
 									</button>
 								</td>
 							</tr>
@@ -266,9 +266,9 @@
 					itemsPerPage: 1,
 					totalQuestionNumber: 0,
 					userId: 0,
-					linkPath: 'http://103.41.247.45/kerisexam',
-					localPath: 'http://devasse.edunet.net:8000/exam',
-					// localPath: 'http://localhost:8084/exam'
+					// linkPath: 'http://103.41.247.45/kerisexam',
+					// localPath: 'http://asse.edunet.net/exam',
+					localPath: 'http://localhost:8084/keris'
 				}
 			},
 	
@@ -297,7 +297,7 @@
 				newtab(link, id) {
 
                     var loginId = '${sessionScope.loginId}';
-                    loginId = this.userId
+                    this.userId = loginId
 
                     window.open( this.localPath + "/" + link + "?examId=" + id + "&userId=" + loginId,
 						'_blank',
@@ -305,8 +305,10 @@
 				},
 				async loaddata(page) {
 					try {
-
+                        console.log("heeloo")
                         var loginId = '${sessionScope.loginId}';
+                        console.log(loginId)
+                        
                         
 						const headers = {
 							'Content-Type': 'application/json',

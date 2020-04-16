@@ -58,7 +58,7 @@
 				</div>
 				<!-- //head -->
 				<div class="calendar-area">
-					<p class="desc"><strong>김상우 선생님</strong>께 등록된 평가지에요. 등록 버튼을 클릭하여 평가를
+					<p class="desc"><strong>{{userId}} 선생님</strong>께 등록된 평가지에요. 등록 버튼을 클릭하여 평가를
 						원하는 위두랑 클래스를 선택해주세요.</p>
 				</div>
 			</div>
@@ -151,19 +151,32 @@
 							   @click="newtab('teacher/exam_check', item.id)">
 								{{item.questionCount}}</a>
 						</td>
+						
 						<td class="on">
-							<a href="javascript:void(0)" class=""
-							   @click="newtab('teacher/exam_result_see', item.id)">
-								{{((item.givedUserCount/item.studentCount)*100).toFixed(2)}}%</a>
+							<template v-for="(kkk,cIndex)  in item.classes" :key="cIndex">
+								<a href="javascript:void(0)" class=""
+								   @click="newtab('teacher/exam_result_see', item.id)">
+									{{kkk.givedUserCount}}</a>
+							</template>
+<%--								{{((kkk.givedUserCount/kkk.studentCount)*100).toFixed(2)}}%--%>
 						</td>
 						<td>
-<%--							 v-if="exam.givedUserCount > 0"--%>
-							<a href="" class="" @click="newtab2('teacher/students_total_score', item.id)"
-							  >
-								{{(item.totalScore/item.givedUserCount).toFixed(1)}}</a>
-<%--							<p class="" v-else> _ </p>--%>
+							<template v-for="(kkk,cIndex)  in item.classes" :key="cIndex" >
+								<a href="javascript:void(0)" class=""
+								   @click="newtab('teacher/exam_result_see', item.id)">
+									{{kkk.givedUserCount}}</a>
+							</template>
+						
 						</td>
-						<td class="on"> {{item.averageTime}}</td>
+						<td class="on">
+							<template v-for="(kkk,cIndex)  in item.classes" :key="cIndex">
+								<a href="javascript:void(0)" class=""
+								   @click="newtab('teacher/exam_result_see', item.id)">
+									{{kkk.averageTime}}</a>
+							</template> >
+						</td>
+						
+						
 						<td>
 							<a class="clipboard" href="#urlPopup"
 							   v-if="item.examStatus == 'finish'"
@@ -184,12 +197,15 @@
 									</div>
 									<div class="url-popup-wrap">
 										<input type="text" class="url-input" id="clipInput"
-											   :value="host+ `${examIdCopy}`"/>
+											   value="hostqqqqq"
+											   style="color: #000000; border: 1px solid #b3b3b3; padding: 5px;" />
+<%--										+ `${examIdCopy}`--%>
 									</div>
 									<div class="uk-text-center uk-margin-top">
 										<button class="uk-modal-close btn-black">취소</button>
-										<%--										<button class="btn-orange uk-margin-left" v-clipboard:copy="host + examIdCopy"--%>
-										<%--												v-clipboard:success="onCopy">복사</button>--%>
+										<button class="btn-orange uk-margin-left" v-clipboard:copy="host"
+												v-clipboard:success="onCopy">복사</button>
+<%--										 + examIdCopy--%>
 									</div>
 								</div>
 							</div>
@@ -503,11 +519,11 @@
 						<td>
 							<a href="" class="" @click="newtab2('teacher/students_total_score', item.id)"
 							   v-if="item.givedUserCount > 0">
-								{{(exam.totalScore/exam.givedUserCount).toFixed(1)}}</a>
+								{{(item.totalScore/item.givedUserCount).toFixed(1)}}</a>
 							<p class="" v-else> _ </p>
 						</td>
 						<td>
-							{{exam.averageTime}}
+							{{item.averageTime}}
 						</td>
 						<td>
 							<button class="clipboard">URL 복사</button>
@@ -591,6 +607,7 @@
                 exams: [],
                 end: 'end',
                 eeid: 0,
+                host: 'http://devasse.edunet.net/exam/student_home',
                 examIdCopy: 0,
                 copiedText: 'http://103.41.247.45:81/',
                 host: '',
@@ -651,9 +668,9 @@
                 itemsPerPage: 1,
                 totalQuestionNumber: 0,
                 userId: 0,
-                linkPath: 'http://103.41.247.45/kerisexam',
-                // localPath: 'http://localhost:8084/exam'
-                localPath: 'http://devasse.edunet.net:8000/exam',
+                // linkPath: 'http://103.41.247.45/kerisexam',
+                localPath: 'http://localhost:8084/keris'
+                // localPath: 'http://asse.edunet.net/exam',
             }
         },
 
@@ -679,6 +696,15 @@
         },
         filters: {},
         methods: {
+			onCopy: function (e) {
+				alert('다음과 같이 URL이 복사되었습니다. \n' + e.text)
+			},
+			onError: function (e) {
+				alert('Failed to copy texts')
+			},
+			urlCopy(item){
+				this.examIdCopy = item
+			},
             async classListAdd(examId){
 
                 console.log("all classes  seles e ee is here ")
@@ -711,7 +737,7 @@
 					}
 				}
               
-              axios.post('${BASEURL}/exam/classes',{
+              axios.post('${BASEURL}/kexam/classes',{
                   classes: activeClass,
                   examId: examId
 			  }).then((response)=>{
@@ -729,6 +755,7 @@
             newtab2(link, id) {
 
                 var loginId = '${sessionScope.loginId}';
+                
                 this.userId =loginId
 				
                 window.open(this.localPath + "/" + link + "?examId=" + id + "&userId=" + this.userId,
@@ -755,11 +782,13 @@
             async reset(Id) {
                 try {
                     var loginId = '${sessionScope.loginId}';
+
+                    
                     const headers = {
                         'Content-Type': 'application/json',
                     }
                     var _this = this
-                    axios.post('${BASEURL}/exam/reset', {
+                    axios.post('${BASEURL}/kexam/reset', {
                         examId: Id,
 						loginId: loginId
                     }, {
@@ -788,7 +817,7 @@
                     }
                     
                     var _this = this
-                    axios.post('${BASEURL}/exam/examstatus',
+                    axios.post('${BASEURL}/kexam/examstatus',
                         {
                             examId: item,
                             examStatus: this.exam.examStatus,
@@ -816,6 +845,9 @@
                     console.log("heelooo")
 
                     var loginId = '${sessionScope.loginId}';
+
+                    this.loginId = loginId
+
                     console.log(loginId)
 					
                     const headers = {
@@ -830,11 +862,12 @@
                         page = page - 1
                     }
 
-                    axios.get('${BASEURL}/exam/list/?size=8', {
+                    axios.get('${BASEURL}/kexam/list/?size=8', {
                         params: {
                             page: page,
                             examId: this.exam.id,
                             examName: this.exam.examName,
+							type: 1,
                             
                         },loginId: loginId,
                         headers: headers
@@ -844,20 +877,26 @@
                         if (response.status == 200) {
                             
                             for (let i = 0; i < response.data.content.length; i++) {
+													
+                                for(let j=0; j < response.data.content[i].classes.length; j++)
+								{
+								    let classes = response.data.content[i].classes[j]
 
-                                if (response.data.content[i].totalTime == 0) {
-                                    response.data.content[i].averageTime = ""
-                                }
-                                else{
-                                    let time =  response.data.content[i].totalTime / response.data.content[i].givedUserCount
-                                    // console.log(time);
-                                    time = parseInt(time);
-                                    let hours = Math.floor(time / 3600);
-                                    time %= 3600;
-                                    let minutes = Math.floor(time / 60);
-                                    let seconds = time % 60;
-                                    response.data.content[i].averageTime =  hours +":"+ minutes +":"+ seconds
-                                }
+                                    if (classes.totalTime == 0) {
+                                        classes.averageTime = ""
+                                    }
+                                    else{
+                                        let time =  classes.totalTime / classes.givedUserCount
+                                        // console.log(time);
+                                        time = parseInt(time);
+                                        let hours = Math.floor(time / 3600);
+                                        time %= 3600;
+                                        let minutes = Math.floor(time / 60);
+                                        let seconds = time % 60;
+                                        classes.averageTime =  hours +":"+ minutes +":"+ seconds
+                                    }
+								}
+                            
                             }
                             
                             console.log(response.data);

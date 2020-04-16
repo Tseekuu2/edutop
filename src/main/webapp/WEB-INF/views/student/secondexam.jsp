@@ -34,17 +34,25 @@
 						<div class="class-area popup-scroll">
 <%--							<div class="pdl60" v-for="(item,examIndex) in questions" :key="examIndex"--%>
 <%--								 v-show="currentQuestion === examIndex" :class="{'activeQuestion': currentQuestion === examIndex}">--%>
-						<div class="pdl60">
-							<p class="txt-type01 mgt20">qqqqqqqqqqqqqqqqqqqqqqqqqqqq</p>
+						<div class="pdl60" v-for="(item,index) in questions" :key="index"
+							 v-show="currentQuestion === examIndex" :class="{'activeQuestion': currentQuestion === examIndex}">
+							<p class="txt-type01 mgt20">
+								<div>
+									{{item+1}}
+									<p>
+										<span v-html="item.questions">
+										</span>
+									</p>
+								</div>
+							</p>
 							<div class="view_wrap_n popup-scroll">
 								<div class="bg_area02">
 									<ul>
-										<template v-for="(aItem, aIndex) in answers" :key="aIndex">
+										<template v-for="(aItem, aIndex) in item.answers" :key="aIndex">
 										<li class="ar_l">
 											<div class="in_bx">
 												<img
-<%--														:src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/'+ aItem.drawingData"--%>
-															:src = "aItem.drawingData"
+														:src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/'+ aItem.drawingData"
 														style="width:100% !important; margin: 0 !important"
 														class="uk-flex uk-flex-center"
 												/>
@@ -54,8 +62,7 @@
 										<li class="ar_r">
 											<div class="in_bx">
 												<img
-<%--														:src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/'+ aItem.trueData"--%>
-														:src = "aItem.trueData"
+														:src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/'+ aItem.trueData"
 														style="width:100% !important; margin: 0 !important"
 														class="uk-flex uk-flex-center"
 														/>
@@ -67,7 +74,6 @@
 									</ul>
 								</div>
 							</div>
-<%--&lt;%&ndash;								<div style="clear:both;"></div>&ndash;%&gt;--%>
 								<div class="view_bx_n ty_n02">
 									<ul class="complete-wrap mgb50" >
 										<li v-for="(aItem,aIndex) in answers" :key="aIndex">
@@ -230,21 +236,10 @@
             leavedQuestion: '',
             isPopup : false,
             empty: '',
-			answers:[{
-					drawingData:'https://www.fotoware.com/hubfs/IMG-hero-homepagegreen.jpg',
-					answer: '맞음',
-					selectedData: false,
-				},
-				{
-                    trueData:'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQ9-a1MwHr8mwC8wGLUEQdS91rgyWJHPB4hh0zyTEEau9B16hmU&usqp=CAU',
-                    answer: '틀림',
-				    selectedData: false
-				}
-				],
             imgPath: '',
             userId: 0,
-            // localPath: 'http://192.168.1.9:8084/exam'
-            localPath: 'http://devasse.edunet.net:8000/exam',
+            localPath: 'http://localhost:8084/keris'
+            // localPath: 'http://asse.edunet.net/exam',
         },
         mounted(){
             let parameters = this.$route.query
@@ -332,7 +327,7 @@
                     var _$ = $
                     var _this = this
 
-                    axios.get('${BASEURL}/exam/questions',{
+                    axios.get('${BASEURL}/kexam/student/questions',{
                         params: {
                             examId: examId,
 							loginId: loginId
@@ -340,12 +335,11 @@
                         headers: headers
                     }).then (function (response) {
                         _$.unblockUI()
-						
-						for(let i = 0; i< response.data.result.data.length; i++){
+
+                        for (let select = 0; select < response.data.result.result.questions.length; select++) {
+                            let active = response.data.result.result.questions[select];
 						    
-						    let data = response.data.result.data[i];
-						    
-						    if(data.questionType === "4"){
+						    if(active.questionType === "4"){
                                 _this.questions.push(data)
                             }
 						}
@@ -385,7 +379,7 @@
                             return
                         }
                     }
-                    axios.post('${BASEURL}/exam/result/put/steval',{
+                    axios.post('${BASEURL}/kexam/result/put/steval',{
 
                         examId: this.examId,
                         loginId : loginId,

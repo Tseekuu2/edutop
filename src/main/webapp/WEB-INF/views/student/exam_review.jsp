@@ -23,7 +23,7 @@
                         </p>
                     </div>
                     <div class="class-area" v-for="(item,Index) in questions" :key="Index"
-                         v-show="currentQuestion === Index"
+                         v-show="currentQuestion === Index" style="overflow: auto;"
                          :class="{'activeQuestion': currentQuestion === Index}" >
                         <div class="">
                             <div class="txt-type01 mgt20" >
@@ -223,8 +223,8 @@
                     <ul class="uk-tab uk-flex uk-flex-right uk-margin-remove-bottom"
                         data-uk-tab="{connect:'#my-id'}">
                         <li class="tabnew"><a href="" class="ex-listTab nth-1 on">전체문제</a></li>
-                        <li class="tabnew"><a href="" class="ex-listTab nth-2">안푼문제</a></li>
-                        <li class="tabnew"><a href="" class="ex-listTab nth-3">찜한문제</a></li>
+                        <li class="tabnew"><a href="" class="ex-listTab nth-2">맞은문제</a></li>
+                        <li class="tabnew"><a href="" class="ex-listTab nth-3">틀린문제</a></li>
                         <li class="tabnew"><a href="" class="ex-listTab nth-4">찜한문제</a></li>
                     </ul>
                     <ul id="my-id" class="uk-switcher">
@@ -250,6 +250,13 @@
                                                           :class="{'answerFlag': aitem.selectedAnswer}"
                                                     >{{aindex+1}}</span>
                                                 </label>
+                                                <span class="ftr" v-if="item.answerFlag == true"><img
+                                                        src="${ASSETS}/img/viewer/icon-o.png"
+                                                                             alt=""
+                                                /></span>
+                                                <span class="ftr" v-else><img src="${ASSETS}/img/viewer/icon-x.png"
+                                                                            alt=""
+                                                /></span>
                                             </li>
                                             <li @click="webIndex(eindex)" class="like none" v-else
                                                 :class="{'changed': eindex == currentQuestion}">
@@ -270,6 +277,13 @@
                                                                       :class="{'answerFlag': aitem.selectedAnswer}"
                                                                 >{{aindex+1}}</span>
                                                 </label>
+                                                <span class="ftr" v-if="item.answerFlag == true"><img
+                                                        src="${ASSETS}/img/viewer/icon-o.png"
+                                                        alt=""
+                                                /></span>
+                                                <span class="ftr" v-else><img src="${ASSETS}/img/viewer/icon-x.png"
+                                                                              alt=""
+                                                /></span>
                                             </li>
                                         </template>
                                     </ul>
@@ -281,7 +295,7 @@
                                 <div class="popup-scroll height-type01 mgt15">
                                     <ul class="list-basic uk-padding-remove">
                                         <li v-for="(item,eindex) in questions" :key="eindex"
-                                            @click="webIndex(eindex)" v-if="item.answerselected == false"
+                                            @click="webIndex(eindex)" v-if="item.answerFlag == true"
                                             :class="{'changed': eindex === currentQuestion}"  style="display: flex;">
                                             <span class="num-default">{{eindex+1}}</span>
                                             <span v-if="item.questionType == '4'">
@@ -310,7 +324,8 @@
                                 <div class="popup-scroll height-type01 mgt15">
                                     <ul class="list-basic uk-padding-remove">
                                         <template v-for="(item,eindex) in questions" :key="eindex">
-                                            <li @click="webIndex(eindex)" class="like" v-if="item.like == '1'" style="display: flex;"
+                                            <li @click="webIndex(eindex)"  v-if="item.answerFlag == false"
+                                                style="display: flex;"
                                                 :class="{'changed': eindex == currentQuestion}">
                                                 <span class="num-default">{{eindex+1}}</span>
                                                 <span v-if="item.questionType == '4'">
@@ -329,6 +344,13 @@
                                                           :class="{'answerFlag': aitem.selectedAnswer}"
                                                     >{{aindex+1}}</span>
                                                 </label>
+                                                <span class="ftr" v-if="item.answerFlag == true"><img
+                                                        src="${ASSETS}/img/viewer/icon-x.png"
+                                                        alt=""
+                                                /></span>
+                                                <span class="ftr" v-else><img src="${ASSETS}/img/viewer/icon-o.png"
+                                                                              alt=""
+                                                /></span>
                                             </li>
                                         </template>
                                     </ul>
@@ -359,6 +381,14 @@
                                                           :class="{'answerFlag': aitem.selectedAnswer}"
                                                     >{{aindex+1}}</span>
                                                 </label>
+                                                <span class="ftr" v-if="item.answerFlag == true"><img
+                                                        src="${ASSETS}/img/viewer/icon-x.png"
+                                                        alt=""
+                                                /></span>
+                                                <span class="ftr" v-else><img src="${ASSETS}/img/viewer/icon-o.png"
+                                                                              alt=""
+                                                /></span>
+                                                
                                             </li>
                                         </template>
                                     </ul>
@@ -574,7 +604,7 @@
             <div class="next-area of-hd mgt15">
                 <div class="solving-nav tac">
                     <button class="prev mobile-view" @click="prevQuestion">이전문제</button>
-                    <button class="qs-list n_ty02" >문항목록</button>
+                    <button class="qs-list n_ty02" @click="mobileBack()">문항목록</button>
                     <button class="clip mobile-view none" v-if="questions[currentQuestion].like == false">찜하기</button>
                     <button class="clip mobile-view" v-else>찜하기</button>
                     <button class="pen_n mobile-blind" >펜쓰기</button>
@@ -623,23 +653,24 @@
                                     </ul>
                                 </div>
                             </div>
-                            <a href="#" class="ex-listTab nth-1">틀린문제</a> 
+                            <a href="#" class="ex-listTab nth-1">맞은문제</a>
                             <div class="list-area">
                                 <div class="popup-scroll height-type01 mgt15">
                                     <ul class="list-basic mob">
                                         <li class=""  v-for="(qqqq,aaa) in questions" @click="chooseQuestion(aaa)">
-                                            <a href="#" class="num-default"  v-if="qqqq.answerFlag == false">{{aaa+1}}</a>
+                                            <a href="#" class="num-default"  v-if="qqqq.answerFlag == true">{{aaa+1
+                                                }}</a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
-                            <a href="#" class="ex-listTab nth-2">맞은문제</a>
+                            <a href="#" class="ex-listTab nth-2">틀린문제</a>
                             <div class="list-area">
                                 <div class="popup-scroll height-type03 mgt15">
                                     <ul class="list-basic mob">
                                         <li class="" v-for="(qqqq,aaa) in questions" :class="{'solved_n': qqqq.answerFlag}"
                                             @click="chooseQuestion(aaa)">
-                                            <a href="#" class="num-default" v-if="qqqq.answerFlag == true">{{aaa+1}}</a>
+                                            <a href="#" class="num-default" v-if="qqqq.answerFlag == false">{{aaa+1}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -720,6 +751,9 @@
                 // console.log("here is Userid : " +this.userId);
             },
             methods:{
+                mobileBack(){
+                  this.isPopup = true
+                },
                 webIndex(item){
                     this.currentQuestion = item
                 },
@@ -763,14 +797,14 @@
                         // var _$ = $
                         // var _this = this
                         
-                        axios.get('${BASEURL}/exam/result/student/',{
+                        axios.get('${BASEURL}/kexam/result/student/',{
                             params: {
                                 examId: examId,
                                 loginId: loginId
                             },
                             headers: headers
                         }).then ((response)=> {
-                            console.log("questions heelel")
+                            console.log("questions all")
                             
                             console.log(response.data.result.data);
                             
@@ -788,34 +822,42 @@
                                         question.like = question.resultData.like
                                         question.memo = question.resultData.memo
                                         question.paint =  question.resultData.paint
-                                        if (question.resultData != null)
+                                        if (question.resultData.length !== 0 )
                                         {
+                                            console.log("searching true data")
                                             for (let d = 0; d < question.resultData.details.length; d++) {
                                                 let j = question.resultData.details[d];
-                                                if (question.questionType == '1' || question.questionType == '3') {
+                                                
+                                                if (question.questionType == '2') {
+                                                    question.answerInputedData = j.answerInputedData
+                                                    if (answer.trueData == question.answerInputedData) {
+                                                        console.log("Q2")
+                                                        console.log(question.answerFlag = true)
+                                                        question.answerFlag = true
+                                                    }
+                                                }
+                                                if (question.questionType == '4') {
+                                                    question.answerInputedData = j.answerInputedData
+                                                    if (question.resultData.score == '1') {
+                                                        question.answers[0].selectedAnswer = true
+                                                        question.answerFlag = true
+                                                    }
+                                                    else{
+                                                        question.answers[0].selectedAnswer = false
+                                                    }
+                                                }
+                                                else {
                                                     if (answer.id == j.answerId) {
                                                         answer.selectedAnswer = true
                                                         if (answer.answerFlag == 'true' && answer.selectedAnswer == true) {
                                                             question.answerFlag = true
+                                                            //     answer.selectedAnswer = true
+                                                            console.log("Q1")
+                                                            console.log(question.answerFlag = true)
                                                         }
                                                     }
                                                 }
-                                                if (question.questionType == '2') {
-                                                    question.answerInputedData = j.answerInputedData
-                                                    if (answer.trueData == question.answerInputedData) {
-                                                        question.answerFlag = true
-                                                    }
-                                                }
-                                                // if (question.questionType == '4') {
-                                                //     question.answerInputedData = j.answerInputedData
-                                                //     if (question.resultData.score == '1') {
-                                                //         question.answers[0].selectedAnswer = true
-                                                //         question.answerFlag = true
-                                                //     }
-                                                //     else{
-                                                //         question.answers[0].selectedAnswer = false
-                                                //     }
-                                                // }
+                                               
                                             }
                                         }
                                         

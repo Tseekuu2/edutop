@@ -391,7 +391,7 @@
 						<button class="prev mobile-view" @click="prevQuestion">이전문제</button>
 						<a class="qs-list n_ty02" @click="changePop()">문항목록</a>
 						<button class="clip none mobile-view" @click="bigLike(currentQuestion)"
-								v-if="bigheartlike == false">찜하기
+								v-if="questions[currentQuestion].questionLike == '0'">찜하기
 						</button>
 						<button class="clip mobile-view" @click="bigLike(currentQuestion)" v-else>찜하기</button>
 						<button class="pen_n mobile-blind">펜쓰기</button>
@@ -527,7 +527,7 @@
             },
             pencil2: true,
             bigheartlike: false,
-            like: false,
+			likelike: false,
             examId: 0,
             questions: [],
             currentQuestion: 0,
@@ -548,7 +548,7 @@
             imgPath: '',
             empty: '',
 			isLast: 'notlast',
-			localPath: 'http://localhost:8084/exam/student',
+			localPath: 'http://localhost:8084/keris/student',
             // localPath: 'http://devasse.edunet.net:8000/exam',
         },
         mounted() {
@@ -608,6 +608,7 @@
                 this.isPopup = false
             },
             webIndex(item) {
+                this.nextQuestion()
                 this.currentQuestion = item
 				
                 this.leavedQuestion = 0
@@ -662,11 +663,13 @@
                     // this.$refs.signaturePad.fromDataURL(this.questions[item].paint)
                     //
                     //
-                    if (this.questions[item].like == '0') {
-                        this.bigheartlike = false
-                    } else {
-                        this.bigheartlike = true
-                    }
+                    // if (this.questions[item].like == '0') {
+                    //     console.log("questions currentQuestion like")
+                    //     console.log(this.questions[this.currentQuestion].like)
+                    //     this.bigheartlike = false
+                    // } else {
+                    //     this.bigheartlike = true
+                    // }
                 }
             },
             activeanswers(answer, question) {
@@ -720,12 +723,15 @@
                 // }
             },
             bigLike(item) {
-                if (this.questions[item].like == '0') {
-                    // this.questions[item].like = '1';
-                    this.bigheartlike = true
-                } else {
-                    // this.questions[item].like = '0';
-                    this.bigheartlike = false
+                if (this.questions[item].questionLike == '0') {
+                    this.questions[item].questionLike = '1'
+                    console.log("questions currentQuestion like")
+                    console.log(this.questions[item].questionLike)
+                }
+                if (this.questions[item].questionLike == '1') {
+                    console.log("questions currentQuestion like")
+                    console.log(this.questions[item].questionLike)
+                    this.questions[item].questionLike = '0'
                 }
             },
             options2Eraser() {
@@ -827,23 +833,25 @@
                             }
                         }
                         var loginId = '${sessionScope.loginId}';
+                        var ex_schcode = '${sessionScope.ex_schcode}'
                         
                         question.questionId = this.questions[this.currentQuestion].id
                         question.examId = this.examId
                         question.paint = this.questions[this.currentQuestion].paint
-                        question.like = this.questions[this.currentQuestion].like
+                        question.like = this.questions[this.currentQuestion].questionLike
                         question.memo = this.questions[this.currentQuestion].memo
                         question.time = this.questions[this.currentQuestion].time
                         question.answers = sendAnswer
 						question.loginId = loginId
 						question.islast = this.isLast
-						question.classId = 'demoClass'
+						question.ex_schcode = ex_schcode
+						question.classId = 'classid'
                         
                         const headers = {
                             'Content-Type': 'application/json'
                         }
                         
-                        axios.post('${BASEURL}/exam/result/put',
+                        axios.post('${BASEURL}/kexam/result/put',
 							question,
 							{
 							    headers: headers
@@ -875,11 +883,13 @@
                                 //     this.$refs.qcanvas[0].fromDataURL(this.questions[this.currentQuestion].drawingData)
                                 // })
 
-                                if (this.questions[this.currentQuestion].like == '0') {
-                                    this.bigheartlike = false
-                                } else {
-                                    this.bigheartlike = true
-                                }
+                                // if (this.questions[this.currentQuestion].like == '0') {
+                                //     console.log("questions currentQuestion like")
+                                //     console.log(this.questions[this.currentQuestion].like)
+                                //     this.bigheartlike = false
+                                // } else {
+                                //     this.bigheartlike = true
+                                // }
 
                                 this.pencil2 == false
                                 
@@ -932,7 +942,7 @@
                         'Content-Type': 'application/json'
                     }
 
-                    axios.get('${BASEURL}/exam/student/questions', {
+                    axios.get('${BASEURL}/kexam/student/questions', {
                         params: {
                             examId: examId,
                             loginId : loginId
@@ -943,7 +953,7 @@
                         for (let select = 0; select < response.data.result.result.questions.length; select++) {
                             let active = response.data.result.result.questions[select];
 						
-                            active.like = '0'
+                            active.questionLike = '0'
                             active.memo = ""
                             active.paint = ""
                             active.answerData = ""
@@ -1115,11 +1125,13 @@
                         //     });
                         // }
 
-                        if (this.questions[this.currentQuestion].like == '0') {
-                            this.bigheartlike = false
-                        } else {
-                            this.bigheartlike = true
-                        }
+                        // if (this.questions[this.currentQuestion].like == '0') {
+                        //     console.log("questions currentQuestion like")
+                        //     console.log(this.questions[this.currentQuestion].like)
+                        //     this.bigheartlike = false
+                        // } else {
+                        //     this.bigheartlike = true
+                        // }
                         // this.$refs.signaturePad.clearSignature()
                         // this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
                     } else {

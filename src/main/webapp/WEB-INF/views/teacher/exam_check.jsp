@@ -54,9 +54,6 @@
                                             </mathlive-mathfield>
 <%--                                            {smartMode:true}, virtualKeyboardMode:'manual',--%>
                                         </p>
-                                        <p v-else>
-                                        
-                                        </p>
                                     </div>
                                     <p v-else>
         
@@ -108,7 +105,7 @@
                             </div>
                             <div class="example-list"  v-else-if="item.questionType == '3'">
                                 <div class="example-wrap" v-for="(aItem,index) in item.answers" :key="index" style="display: flex;">
-                                    <template v-if="item.answerType == 'math' " >
+                                    <template v-if="item.answerType == true " >
                                         <input type="button" name="numRadio" class="checkBtn uk-margin-remove"
                                                style="padding-left: 0px; margin-right: 15px !important;"
                                                :value="aItem.optionNumber" :class="{'answerFlag': aItem.answerFlag}"/>
@@ -167,7 +164,8 @@
                             </div>
                             <div class="answers-exp mgt60 uk-margin-large-bottom" v-else>
                                 <div v-for="(aItem,index) in item.answers"  :key="index">
-                                    <div v-if="aItem.answerFlag == 'math'">
+<%--                                    v-if="aItem.answerFlag == 'math'"--%>
+                                    <div>
                                         <div class="uk-flex uk-margin-bottom">
                                             <b>Guide text: </b>
                                             <p class="uk-margin-remove" style="padding-left: 15px;">
@@ -176,7 +174,7 @@
                                         <mathlive-mathfield
                                                 :id="'mf'+index"
                                                 :ref="'mathfield'+index"
-                                                :config="{smartMode:true, virtualKeyboardMode:'manual'}"
+                                                :config="{smartMode:true, readOnly: true}"
                                                 @focus="ping"
                                                 :on-keystroke="displayKeystroke"
                                                 v-model="aItem.trueData"
@@ -184,24 +182,25 @@
                                             {{aItem.trueData}}
                                         </mathlive-mathfield>
                                     </div>
-                                    <div v-if="aItem.answerFlag == true || aItem.answerFlag == 'text' ">
-                                        <div class="uk-flex uk-margin-bottom">
-                                            <b>Guide text: </b>
-                                            <p class="uk-margin-remove" style="padding-left: 15px;">
-                                                {{aItem.answer}} </p>
-                                        </div>
-                                        <div class="uk-flex uk-margin-bottom">
-                                            <b>Answer true : </b>
-                                            <p class="uk-margin-remove" style="padding-left: 15px;">
-                                                {{aItem.trueData}} </p>
-                                        </div>
-                                        <input type="text" class="txt-input" placeholder="정답을 입력해 주세요"
-                                               v-model="questions[currentQuestion].trueData"
-                                               class="uk-width1-1" style="font-size: 16px; width: 100%;
-													border: 1px solid #ccc;
-													border-radius: 15px;
-													padding: 8px;"/>
-                                    </div>
+<%--                                    <div v-else>--%>
+<%--                                        <div class="uk-flex uk-margin-bottom">--%>
+<%--                                            <b>Guide text: </b>--%>
+<%--                                            <p class="uk-margin-remove" style="padding-left: 15px;">--%>
+<%--                                                {{aItem.answer}} </p>--%>
+<%--                                        </div>--%>
+<%--                                        <div class="uk-flex uk-margin-bottom">--%>
+<%--                                            <b>Answer true : </b>--%>
+<%--                                            <p class="uk-margin-remove" style="padding-left: 15px;">--%>
+<%--                                                {{aItem.trueData}}--%>
+<%--                                            </p>--%>
+<%--                                        </div>--%>
+<%--                                        <input type="text" class="txt-input" placeholder="정답을 입력해 주세요"--%>
+<%--                                               v-model="questions[currentQuestion].trueData"--%>
+<%--                                               class="uk-width1-1" style="font-size: 16px; width: 100%;--%>
+<%--													border: 1px solid #ccc;--%>
+<%--													border-radius: 15px;--%>
+<%--													padding: 8px;"/>--%>
+<%--                                    </div>--%>
                                 </div>
                             </div>
                         </div>
@@ -384,7 +383,7 @@
                         var _$ = $
                         var _this = this
     
-                        axios.get('${BASEURL}/exam/questions', {
+                        axios.get('${BASEURL}/kexam/questions', {
                             params: {
                                 examId: examId,
                                 loginId : loginId
@@ -393,7 +392,10 @@
                         }).then (function (response) {
                             _$.unblockUI()
                             for (let i = 0; i < response.data.result.questions.length; i++) {
+    
+                               
                                 let q = response.data.result.questions[i];
+                                console.log(q.incorrectNote)
                                 for (let j = 0; j < q.answers.length; j++) {
                                     let ans = q.answers[j];
                                     if (ans.answerFlag == 'false') {
@@ -406,7 +408,7 @@
                             }
                             if (response.data.status == 200) {
                                 console.log("working ")
-                                console.log(response.data.result)
+                                console.log(response.data.result.questions)
                                 _this.questions = response.data.result.questions
                                 // localStorage.setItem('examQuestionData', JSON.stringify(response.data));
                                 _$.unblockUI()
