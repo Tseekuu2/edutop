@@ -95,7 +95,7 @@
 								<template v-for="(apps, mindex) in item.datas" :key="mindex">
 									<div v-if="apps.media != null">
 										<p v-if=" apps.media.mediaType == 'image' ">
-											<img :src="'http://103.41.247.45:80/webapps/uploadingDir/examquestion/' + apps.media.fileName"
+											<img :src="'http://asse.edunet.net/uploadingDir/examquestion/' + apps.media.fileName"
 												 :alt="apps.media.fileName" :key="mindex" style="width: auto"/>
 										</p>
 										<p v-else-if="apps.media.mediaType == 'math' ">
@@ -138,7 +138,7 @@
 													</mathlive-mathfield>
 												</div>
 												<span v-else-if="item.answerType == 'image' ">
-													<img :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + aitem.media.fileName"
+													<img :src="'http://asse.edunet.net/uploadingDir/examanswer/' + aitem.media.fileName"
 														 :alt="aitem.media.fileName" style="width: 300px !important;"
 														 class="uk-margin-top uk-margin-left"/>
 												</span>
@@ -175,7 +175,7 @@
 													</mathlive-mathfield>
 												</div>
 												<span v-else-if="item.answerType == 'image' ">
-													<img :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + aitem.media.fileName"
+													<img :src="'http://asse.edunet.net/uploadingDir/examanswer/' + aitem.media.fileName"
 														 :alt="aitem.media.fileName" style="width: 300px !important;"
 														 class="uk-margin-top uk-margin-left"/>
 												</span>
@@ -228,7 +228,7 @@
 										<p class="" style="border: 1px solid #080808; padding: 8px;">
 											정답지 - 펜을 눌러 쓰세요.</p>
 										<img
-												:src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + aItem.drawingData"
+												:src="'http://asse.edunet.net/uploadingDir/examanswer/' + aItem.drawingData"
 												class="uk-flex uk-flex-center" style="width:100% !important;
                                                  margin: 0 !important"/>
 									</div>
@@ -237,7 +237,7 @@
 											채점지 – 정답을 보고 채점하세요.
 										</p>
 										<img
-												:src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/'+aItem.trueData"
+												:src="'http://asse.edunet.net/uploadingDir/examanswer/'+aItem.trueData"
 												class="uk-flex uk-flex-center"
 												style="width:100% !important; margin: 0 !important"/>
 									</div>
@@ -266,7 +266,7 @@
 <%--													   style="padding-left: 0px;"--%>
 <%--													   :value="aItem.optionNumber"--%>
 <%--													   :class="{'answerFlag': aItem.answerFlag}"/>--%>
-<%--                                                <img :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + aItem.media.fileName"--%>
+<%--                                                <img :src="'http://asse.edunet.net/uploadingDir/examanswer/' + aItem.media.fileName"--%>
 <%--													 :alt="aItem.media.fileName" style="width: 300px !important;"--%>
 <%--													 class="uk-margin-top uk-margin-left"/>--%>
 <%--                                            </span>--%>

@@ -605,9 +605,9 @@
                 exams: [],
                 end: 'end',
                 eeid: 0,
-                host: 'http://devasse.edunet.net/exam/student_home',
+                host: 'http://asse.edunet.net/exam/student_home',
                 examIdCopy: 0,
-                copiedText: 'http://103.41.247.45:81/',
+                copiedText: 'http://asse.edunet.net',
                 host: '',
                 exam: {
                     examName: '',
@@ -866,7 +866,7 @@
                             examId: this.exam.id,
                             examName: this.exam.examName,
 							type: 1,
-                            
+                        
                         },loginId: loginId,
                         headers: headers
                     }).then(function (response) {

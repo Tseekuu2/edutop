@@ -9,10 +9,15 @@
 <%--	<script type="text/javascript" src="${ASSETS}/script/vue/signature_pad.min.js"></script>--%>
 <%--	<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>--%>
 <%--	<script type="text/javascript" src="${ASSETS}/script/vue/drawing.js"></script>--%>
+	<%--<script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>--%>
 </head>
 
 <body>
+<%--<template id="vue-signature" :style="{width:w,height:h}">--%>
+	<%--<canvas style="border:1px solid #000000;" :id="uid" class="canvas" :data-uid="uid"></canvas>--%>
+<%--</template>--%>
 <section id="takeexam">
+	<vue-signature ref="signature" :sigOption="option" :w="'800px'" :h="'400px'"></vue-signature>
 	<div id="solving">
 		<section class="solving-wrap">
 			<h1 class="title" style="margin: 0px;">
@@ -53,7 +58,7 @@
 									<template v-for="(apps, mindex) in item.datas" :key="mindex">
 										<div v-if="apps.media != null">
 											<p v-if=" apps.media.mediaType == 'image' ">
-												<img :src="'http://103.41.247.45:80/webapps/uploadingDir/examquestion/' + apps.media.fileName"
+												<img :src="'http://asse.edunet.net/uploadingDir/examquestion/' + apps.media.fileName"
 													 :alt="apps.media.fileName" :key="mindex" style="width: auto"/>
 											</p>
 											<p v-else-if="apps.media.mediaType == 'math' ">
@@ -103,7 +108,7 @@
 													   style="padding-left: 0px;" @click="activeanswers(aItem, item)"
 													   :value="aItem.optionNumber"
 													   :class="{'answerFlag': aItem.selectedAnswer}"/>
-                                                <img :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + aItem.media.fileName"
+                                                <img :src="'http://asse.edunet.net/uploadingDir/examanswer/' + aItem.media.fileName"
 													 :alt="aItem.media.fileName" style="width: 100% !important;
                                                        max-width: 280px;"
 													 class="uk-margin-top "/>
@@ -150,7 +155,7 @@
 													   style="padding-left: 0px;" @click="activeanswers(aItem, item)"
 													   :value="aItem.optionNumber"
 													   :class="{'answerFlag': aItem.selectedAnswer}"/>
-                                                <img :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + aItem.media.fileName"
+                                                <img :src="'http://asse.edunet.net/uploadingDir/examanswer/' + aItem.media.fileName"
 													 :alt="aItem.media.fileName" style="width: 100% !important;"
 													 class="uk-margin-top "/>
                                             </span>
@@ -177,11 +182,11 @@
 									 v-for="(aItem,index) in item.answers" :key="index">
 									<div class="uk-width-expand uk-flex uk-flex-middle uk-flex-center">
 										<img class=""
-											 :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + item.answers[0].drawingData"
+											 :src="'http://asse.edunet.net/uploadingDir/examanswer/' + item.answers[0].drawingData"
 											 :width="item.answers[0].width" :height="item.answers[0].height"/>
 										<!-- :width="item.answers[0].width+'px'"
 												:height="item.answers[0].height+'px'" -->
-										<!-- :style="{ background: 'url('+ 'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + item.answers[0].drawingData +')'+
+										<!-- :style="{ background: 'url('+ 'http://asse.edunet.net/uploadingDir/examanswer/' + item.answers[0].drawingData +')'+
 											'no-repeat left center', width: item.answers[0].width + 'px', height: item.answers[0].height + 'px', margin: 'auto' }" -->
 										<%--                                                <vue-signature-pad--%>
 										<%--                                                        :key="index"--%>
@@ -191,7 +196,7 @@
 										<%--                                                        class="uk-width-3-4 uk-padding-remove"--%>
 										<%--                                                        :width="370+'px'"--%>
 										<%--                                                        :height="370+'px'"--%>
-										<%--                                                        :style="{ background: 'url('+ 'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + item.answers[0].drawingData +')'+--%>
+										<%--                                                        :style="{ background: 'url('+ 'http://asse.edunet.net/uploadingDir/examanswer/' + item.answers[0].drawingData +')'+--%>
 										<%--                                                'no-repeat left center', width: 370 + 'px', height: 370 + 'px', margin: 'auto' }"--%>
 										<%--                                                        ref="qcanvas">--%>
 										<%--                                                </vue-signature-pad>--%>
@@ -510,6 +515,135 @@
         routes: []
     });
 
+
+    // Vue.component('vue-signature', {
+    //     template: '#vue-signature',
+    //     props:{
+    //         sigOption: {
+    //             type:Object,
+    //             default:()=>{
+    //                 return {
+    //                     backgroundColor:'rgb(255,255,255)',
+    //                     penColor : 'rgb(0, 0, 0)'
+    //                 }
+    //             },
+    //         },
+    //         w:{
+    //             type:String,
+    //             default:"100%"
+    //         },
+    //         h:{
+    //             type:String,
+    //             default:"100%"
+    //         },
+    //         clearOnResize:{
+    //             type:Boolean,
+    //             default:false
+    //         }
+    //     },
+    //     data(){
+    //         return {
+    //             sig:()=>{},
+    //             option:{
+    //                 backgroundColor:'rgb(255,255,255)',
+    //                 penColor : 'rgb(0, 0, 0)'
+    //             },
+    //             uid:""
+    //         }
+    //     },
+    //     created(){
+    //         var _this = this;
+    //         this.uid = "canvas" + _this._uid
+    //         var sigOptions = Object.keys(_this.sigOption);
+    //         for(var item of sigOptions){
+    //             _this.option[item] = _this.sigOption[item]
+    //         }
+    //     },
+    //     methods:{
+    //         draw(){
+    //             var _this = this;
+    //             var canvas = document.getElementById(_this.uid)
+    //             _this.sig = new SignaturePad(canvas,_this.option);
+    //             function resizeCanvas() {
+    //                 var url;
+    //                 if(!_this.isEmpty()){
+    //                     url = _this.save();
+    //                 }
+    //                 var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+    //                 canvas.width = canvas.offsetWidth * ratio;
+    //                 canvas.height = canvas.offsetHeight * ratio;
+    //                 canvas.getContext("2d").scale(ratio, ratio);
+    //                 _this.clear();
+    //                 !_this.clearOnResize && url !== undefined && _this.fromDataURL(url)
+    //             }
+    //             window.addEventListener("resize", resizeCanvas);
+    //             resizeCanvas();
+    //         },
+    //         clear(){
+    //             var _this = this;
+    //             _this.sig.clear();
+    //         },
+    //         save(format){
+    //             var _this = this;
+    //             return format ? _this.sig.toDataURL(format) :  _this.sig.toDataURL()
+    //             // signaturePad.toDataURL(); // save image as PNG
+    //             // signaturePad.toDataURL("image/jpeg"); // save image as JPEG
+    //             // signaturePad.toDataURL("image/svg+xml"); // save image as SVG
+    //         },
+    //         fromDataURL(url){
+    //             var _this = this;
+    //             _this.sig.fromDataURL(url)
+    //         },
+    //         isEmpty(){
+    //             var _this = this;
+    //             return _this.sig.isEmpty();
+    //         },
+    //         undo(){
+    //             var _this = this;
+    //             var data = _this.sig.toData();
+    //             if(data){
+    //                 data.pop()
+    //                 _this.sig.fromData(data);
+    //             }
+    //         },
+    //         addWaterMark(data){
+    //             var _this = this;
+    //             if(!(Object.prototype.toString.call(data) == '[object Object]')){
+    //                 throw new Error("Expected Object, got "+typeof data+".")
+    //             }else{
+    //                 var vCanvas = document.getElementById(_this.uid);
+    //                 var textData = {
+    //                     text:data.text || '',
+    //                     x:data.x || 20,
+    //                     y:data.y || 20,
+    //                     sx:data.sx || 40,
+    //                     sy:data.sy || 40
+    //                 }
+	//
+    //                 var ctx = vCanvas.getContext('2d');
+    //                 ctx.font = data.font || '20px sans-serif';
+    //                 ctx.fillStyle = data.fillStyle || "#333";
+    //                 ctx.strokeStyle = data.strokeStyle || "#333";
+    //                 if(data.style == 'all'){
+    //                     ctx.fillText(textData.text,textData.x,textData.y);
+    //                     ctx.strokeText(textData.text,textData.sx,textData.sx);
+    //                 }else if(data.style == 'stroke'){
+    //                     ctx.strokeText(textData.text,textData.sx,textData.sx);
+    //                 }else{
+    //                     ctx.fillText(textData.text,textData.x,textData.y);
+    //                 }
+    //                 _this.sig._isEmpty = false
+    //             }
+    //         }
+    //     },
+    //     mounted(){
+    //         var _this = this;
+    //         this.$nextTick(() => {
+    //             _this.draw()
+    //         });
+    //     }
+    // })
+    //
     var app = new Vue({
         el: '#takeexam',
         router,
@@ -550,15 +684,15 @@
             empty: '',
 			isLast: 'notlast',
 			localPath: 'http://localhost:8084/keris/student',
-            // localPath: 'http://devasse.edunet.net:8000/exam',
+             // localPath: 'http://asse.edunet.net:8000/exam',
         },
         mounted() {
             let parameters = this.$route.query
             console.log("here is  parameter :")
             console.log(parameters)
 
-            this.imgPath = 'http://103.41.247.45:80/webapps/uploadingDir/'
-            // this.imgPath = window.location.protocol +'//'+ window.location.hostname+':80'+'/webapps/uploadingDir/'
+            this.imgPath = 'http://asse.edunet.net/uploadingDir/'
+            // this.imgPath = window.location.protocol +'//'+ window.location.hostname+':80'+'/uploadingDir/'
             console.log(this.imgPath)
 			
             if (typeof this.$route.query.examId != 'undefined') {
@@ -572,7 +706,7 @@
             }
         },
         created() {
-            // this.imgPath = window.location.protocol +'//'+ window.location.hostname+':80'+'/webapps/uploadingDir/'
+            // this.imgPath = window.location.protocol +'//'+ window.location.hostname+':80'+'/uploadingDir/'
         },
         methods: {
             colorChange() {
