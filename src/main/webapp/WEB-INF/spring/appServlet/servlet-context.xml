@@ -35,8 +35,10 @@
         <interceptor>
             <mapping path="/exam/**" />
             <exclude-mapping path="/exam/" />
+            <exclude-mapping path="/index.html" />
             <exclude-mapping path="/resources/**" />
             <exclude-mapping path="/uploadingDir/**" />
+            <exclude-mapping path="/logout"/>
             <beans:bean class="com.nsdevil.keris.common.LoginInterceptor" />
         </interceptor>
     </interceptors>

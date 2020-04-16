@@ -8,8 +8,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <%
-	request.getSession().setAttribute("loginId", "student11");
-	request.getSession().setAttribute("ex_schcode", "D00005");
+	request.getSession().setAttribute("loginId", "teacher1");
 	request.getSession().setAttribute("logoffUrl", "");
 	request.getSession().setAttribute("userInfo", "");
 	String redirectURL = request.getContextPath() + "/teacher_home";
@@ -337,6 +336,7 @@
 	request.getSession().setAttribute("loginId", logonId);
 	request.getSession().setAttribute("logoffUrl", logoffUrl);
 	request.getSession().setAttribute("userInfo", userInfo);
+	
 	
 //	if (role.equals("02")) {
 //		String redirectURL = request.getContextPath() + "/teacher_home";

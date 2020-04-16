@@ -53,7 +53,8 @@
     ssoProvider는 SSO 인증을 제공하는 중앙 인증 도메인 설정이다.
     value 속성에 SSO 중앙 인증 도메인을 설정한다.
     -->
-	<ssoProvider value="stsso4.edunet.net">
+	<ssoProvider value="stsso2.edunet.net">
+		<!--<ssoProvider value="stsso4.edunet.net">-->
 		<!--
         ssoServiceUrl은 SSO 에이전트와 SSO 인증 서버 간의 각종 정보 교환을 위해서
         사용하는 웹 서비스 URL이다.
@@ -62,7 +63,8 @@
         SSO 인증 서버로 부터의 응답을 기다리는 대기 시간이다. 이 속성에 설정된 값을 초과한
         경우에는 SSO 인증 서버 연결을 강제로 종료한다. 이 값은 밀리초 단위이다.
         -->
-		<ssoServiceUrl value="http://stsso4.edunet.net/nsso-authweb/webservices/ssoservice?wsdl" timeOut="2000" />
+		<ssoServiceUrl value="http://stsso2.edunet.net/nsso-authweb/webservices/ssoservice?wsdl" timeOut="2000" />
+		<!--<ssoServiceUrl value="http://stsso4.edunet.net/nsso-authweb/webservices/ssoservice?wsdl" timeOut="2000" />-->
 		<!--
         crypto 설정은 SSO 에이전트과 SSO 인증 서버 간에 HTTP 통신을 수행하는 과정에서
         주고 받는 데이터를 암호화하기 위한 설정이다.
@@ -77,7 +79,8 @@
             ssoSite는 SSO 대상 시스템을 정의하는 설정이다.(systemID)
             serverIP 속성은 해당 서버에 할당된 IP를 입력한다.
             -->
-			<ssoSite siteDNS="devasse.edunet.net" serverIP="10.39.140.219">
+			<ssoSite siteDNS="asse.edunet.net" serverIP="10.39.197.63">
+				<!--<ssoSite siteDNS="devasse.edunet.net" serverIP="10.39.140.219">-->
 				<!--
                 authCheckLevel은 SSO 에이전트가 인증을 검사할 때 사용할 검사 수준을 설정한다.
                 level 속성에 하기의 값중에 하나를 설정한다.
@@ -88,7 +91,8 @@
                 -->
 				<authCheckLevel level="MEDIUM" />
 				<!-- 인증되지 않은 경우에 로그온 페이지로 이동하게 된다. 이때 로그온 페이지로 전달된 ReturnURL이 누락된 경우에 사용할 기본 ReturnURL을 설정한다. -->
-				<defaultReturnURL value="http://devasse.edunet.net:8000" />
+				<defaultReturnURL value="http://asse.edunet.net" />
+				<!--<defaultReturnURL value="http://devasse.edunet.net:8000" />-->
 			</ssoSite>
 		</ssoSiteList>
 	</ssoProvider>
