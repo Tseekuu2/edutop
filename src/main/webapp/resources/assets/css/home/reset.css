@@ -1,44 +1,44 @@
 @charset "UTF-8";
 
-@font-face {
-    font-family: 'Noto Sans KR';
-    font-weight: 700;
-    src:
-    url('font/NotoSansKR-Bold-Hestia.eot'),
-	url('font/NotoSansKR-Bold-Hestia.eot?#iefix') format('embedded-opentype'),
-    url('font/NotoSansKR-Bold-Hestia.woff') format('woff'),
-    url('font/NotoSansKR-Bold-Hestia.otf') format('opentype');
-}
+/*@font-face {*/
+/*    font-family: 'Noto Sans KR';*/
+/*    font-weight: 700;*/
+/*    src:*/
+/*    !*url('../edutop/src/main/webapp/resources/assets/css/home/font/NotoSansKR-Bold-Hestia.eot'),*!*/
+/*	!*url('./font/NotoSansKR-Bold-Hestia.eot?#iefix') format('embedded-opentype'),*!*/
+/*    !*url('./font/NotoSansKR-Bold-Hestia.woff') format('woff'),*!*/
+/*    !*url('font/NotoSansKR-Bold-Hestia.otf') format('opentype');*!*/
+/*}*/
 
-@font-face {
-    font-family: 'Noto Sans KR';
-    font-weight: 600;
-    src:
-    url('font/NotoSansKR-Medium-Hestia.eot'),
-	url('font/NotoSansKR-Medium-Hestia.eot?#iefix') format('embedded-opentype'),
-    url('font/NotoSansKR-Medium-Hestia.woff') format('woff'),
-    url('font/NotoSansKR-Medium-Hestia.otf') format('opentype');
-}
+/*@font-face {*/
+/*    font-family: 'Noto Sans KR';*/
+/*    font-weight: 600;*/
+/*    src:*/
+/*    !*url('font/NotoSansKR-Medium-Hestia.eot'),*!*/
+/*	!*url('font/NotoSansKR-Medium-Hestia.eot?#iefix') format('embedded-opentype'),*!*/
+/*    !*url('font/NotoSansKR-Medium-Hestia.woff') format('woff'),*!*/
+/*    !*url('font/NotoSansKR-Medium-Hestia.otf') format('opentype');*!*/
+/*}*/
 
-@font-face {
-    font-family: 'Noto Sans KR';
-    font-weight: 400;
-    src:
-    url('font/NotoSansKR-Regular-Hestia.eot'),
-	url('font/NotoSansKR-Regular-Hestia.eot?#iefix') format('embedded-opentype'),
-    url('font/NotoSansKR-Regular-Hestia.woff') format('woff'),
-    url('font/NotoSansKR-Regular-Hestia.otf') format('opentype');
-}
+/*@font-face {*/
+/*    font-family: 'Noto Sans KR';*/
+/*    font-weight: 400;*/
+/*    src:*/
+/*    url('font/NotoSansKR-Regular-Hestia.eot'),*/
+/*	url('font/NotoSansKR-Regular-Hestia.eot?#iefix') format('embedded-opentype'),*/
+/*    url('font/NotoSansKR-Regular-Hestia.woff') format('woff'),*/
+/*    url('font/NotoSansKR-Regular-Hestia.otf') format('opentype');*/
+/*}*/
 
-@font-face {
-    font-family: 'Noto Sans KR';
-    font-weight: 300;
-    src:
-    url('font/NotoSansKR-Light-Hestia.eot'),
-	url('font/NotoSansKR-Light-Hestia.eot?#iefix') format('embedded-opentype'),
-    url('font/NotoSansKR-Light-Hestia.woff') format('woff'),
-    url('font/NotoSansKR-Light-Hestia.otf') format('opentype');
-}
+/*@font-face {*/
+/*    font-family: 'Noto Sans KR';*/
+/*    font-weight: 300;*/
+/*    src:*/
+/*    url('font/NotoSansKR-Light-Hestia.eot'),*/
+/*	url('font/NotoSansKR-Light-Hestia.eot?#iefix') format('embedded-opentype'),*/
+/*    url('font/NotoSansKR-Light-Hestia.woff') format('woff'),*/
+/*    url('font/NotoSansKR-Light-Hestia.otf') format('opentype');*/
+/*}*/
 
 /* default */
 body,html {margin:0; padding:0; background:#fff; -webkit-text-size-adjust:none}

@@ -724,46 +724,97 @@
                 };
             },
 			saveLast(){
-                // if (this.currentQuestion > this.questions.length - 1){
-                	if (this.leavedQuestion <= 1) {
-                        this.isLast = 'last'
-                        this.nextQuestion()
+                if (this.currentQuestion == this.questions.length - 1){
+                    this.leavedCount()
+					
+					if (this.leavedQuestion <= 1) {
+						this.isLast = 'last'
+						this.sentQuestion()
+
+                        var loginId = '${sessionScope.loginId}';
+						
+                        let url = this.localPath + "/result_see" + "?examId=" + this.examId + "&userId="+ loginId
+					    window.location.href = url
+						
 					}
-                    // else{
-                    //     alert(" You should finish all your question.")
-					// }
-                // }
-                // else{
-                // 	alert(" This is not last question!!! ")
-                // }
-				},
+					else{
+						alert(" You should finish all your question.")
+					}
+				}
+				else{
+					alert(" This is not last question!!! ")
+				}
+			},
             mobileBack() {
                 this.isPopup = false
             },
 			leavedCount(){
-				for(let i=0; i > this.questions.length; i++)
-				{
-					if (this.questions[this.currentQuestion].questionType == '2') {
-						if (this.questions[this.currentQuestion].answerWrite == "") {
-							this.leavedQuestion--
-						}
-					}
-					if (this.questions[this.currentQuestion].questionType == '4') {
-						if (this.questions[this.currentQuestion].drawingData == '') {
-							this.leavedQuestion--
-						}
-					} else {
-						if (this.questions[this.currentQuestion].answerselected == true) {
-							this.leavedQuestion--
-						}
-					}
-                    console.log("hhhhhhhhhhhhh")
-                    console.log(this.leavedQuestion)
-				}
+                if (this.currentQuestion > 0) { //check
+                    this.leavedQuestion = 0 //init
+                    for (let i = 0; i < this.questions.length; i++) {
+                        //et a = this.questions[i];
+						console.log("QUEsTION NO: " + i+1);
+						
+						//single choice
+                        if (this.questions[i].questionType == '1') {
+                            if (this.questions[i].answerselected == false ) {
+                                console.log("Sige choise hariul alga " + this.questions[i].answerWrite);
+                                this.leavedQuestion++
+								
+                            }else{
+                                console.log("Sige choise hariul bn " + this.questions[i].answerWrite);
+							}
+                        }
+                        //short answer
+                        if (this.questions[i].questionType == '2') {
+                            let cnt = 0;
+                            for(let j=0; j < this.questions[i].answers.length; j++) {
+                                console.log(j + " : " + this.questions[i].answers[j].answerWrite);
 
+
+                                if (this.questions[i].answers[j].answerWrite == "" || this.questions[i].answers[j].answerWrite == null) {
+                                    cnt++;
+                                    console.log("Short answer hariult alga bn " + this.questions[i].answers[j].answerWrite);
+                                } else {
+                                    console.log("Short answer hariult bn " + this.questions[i].answers[j].answerWrite);
+                                    
+                                }
+                            }
+                            if(cnt != 0){
+                                this.leavedQuestion++
+							}
+                        }
+                        //multiple choice
+                        if (this.questions[i].questionType == '3') {
+                            if (this.questions[i].answerselected == false) {
+                                this.leavedQuestion++
+								console.log("multiple hariult alga bn ");
+                                //for(let j = 0; this.questions[i].answers.length; j++){
+                                //    console.log(this.questions[i].answers[j].selectedAnswer);
+                                //}
+                            }else{
+                                console.log("multiple hariult bn ");
+                                //for(let j = 0; this.questions[i].answers.length; j++){
+                                //    console.log(this.questions[i].answers[j].selectedAnswer);
+								//}
+							}
+                        }
+                        //drawing todo check
+                        if (this.questions[i].questionType == '4') {
+                            if (this.questions[i].drawingData == "") {
+                                this.leavedQuestion++
+                                console.log("drawing hariult alga bn ");
+                            }else{
+                                console.log("drawing hariult bn " + this.questions[i].drawingData);
+							}
+                        }
+						
+                    }
+                    console.log("=========================================");
+                    console.log("LEAVED Q CNT: " + this.leavedQuestion);
+                }
             },
             async webIndex(item) {
-                this.currentQuestion = item
                 // if (this.questions[this.currentQuestion].questionType === '4') {
                 //
                 //     let {isEmpty, data} = this.$refs.qcanvas[0].saveSignature()
@@ -782,7 +833,9 @@
                 } else {
                    await this.sentQuestion()
 					
-					this.leavedCount()
+					await this.leavedCount()
+
+                    this.currentQuestion = item
                     // if (this.questions[item].questionType === '4') {
                     //     this.$nextTick(() => {
                     //         this.$refs.qcanvas[0].fromDataURL(this.questions[this.currentQuestion].drawingData)
@@ -1162,22 +1215,23 @@
                     }
                     else {
                         if (this.currentQuestion >= this.questions.length-1) {
-                            if (this.isLast == 'last')
-                            {
-                                let url = this.localPath + "/result_see" + "?examId=" + this.examId + "&userId="+ loginId
-                                window.location.href = url
-                            }
-                            else{
+                            // if (this.isLast == 'last')
+                            // {
+                            //     //let url = this.localPath + "/result_see" + "?examId=" + this.examId + "&userId="+ loginId
+                            //    //window.location.href = url
+                            // }
+                            //else{
                                 alert("마지막 문제입니다. 다음 문제가 없습니다.")
+                                await this.leavedCount()
                                 return
-                            }
+                            //}
                         }
                         else{
                             await this.sentQuestion()
-                           
-                            this.currentQuestion++
 
-                            this.leavedCount()
+                            this.currentQuestion++
+							console.log("+++++++++++++++++++++++++++++++++");
+                            await this.leavedCount()
 
                             if (this.questions[this.currentQuestion].questionLike == '0') {
                                 this.likelike = false
@@ -1195,6 +1249,20 @@
                     alert("펜쓰기 저장 버튼을 눌러주세요.")
                     return
                 } else {
+
+                    if (this.currentQuestion == 0) {
+                        // if (this.isLast == 'last')
+                        // {
+                        //     //let url = this.localPath + "/result_see" + "?examId=" + this.examId + "&userId="+ loginId
+                        //    //window.location.href = url
+                        // }
+                        //else{\
+						//todo check
+                        alert("First question 문제입니다. 다음 문제가 없습니다.")
+                        await this.leavedCount()
+                        return
+                        //}
+                    }
                     // if (this.questions[this.currentQuestion].questionType === '4') {
                     //     let {isEmpty, data} = this.$refs.qcanvas[0].saveSignature()
                     //     if (isEmpty == false) {
@@ -1205,7 +1273,7 @@
 					
                     this.currentQuestion--
 					
-					this.leavedCount()
+					await this.leavedCount()
                     // if (this.questions[this.currentQuestion].questionType === '4') {
                     //     this.$nextTick(() => {
                     //         this.$refs.qcanvas[0].fromDataURL(this.questions[this.currentQuestion].drawingData)

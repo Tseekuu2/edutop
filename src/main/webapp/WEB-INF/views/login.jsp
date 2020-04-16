@@ -8,7 +8,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <%
-	request.getSession().setAttribute("loginId", "teacher12");
+	request.getSession().setAttribute("loginId", "hagsen");
 	request.getSession().setAttribute("logoffUrl", "");
 	request.getSession().setAttribute("userInfo", "");
 	String redirectURL = request.getContextPath() + "/teacher_home";
