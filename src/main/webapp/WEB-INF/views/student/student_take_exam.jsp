@@ -17,9 +17,10 @@
 	<%--<canvas style="border:1px solid #000000;" :id="uid" class="canvas" :data-uid="uid"></canvas>--%>
 <%--</template>--%>
 <section id="takeexam">
-	<vue-signature ref="signature" :sigOption="option" :w="'800px'" :h="'400px'"></vue-signature>
+	
 	<div id="solving">
 		<section class="solving-wrap">
+			<vue-signature ref="signature"  :w="'800px'" :h="'400px'"></vue-signature>
 			<h1 class="title" style="margin: 0px;">
 				<span class="col-orange02">[초등 4 수학]</span>
 				여러 가지 삼각형–이등변 삼각형의 성질 탐구하기
