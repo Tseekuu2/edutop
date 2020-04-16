@@ -14,8 +14,8 @@
 	<div id="solving">
 		<section class="solving-wrap">
 			<h1 class="title" style="margin: 0px;">
-				<span class="col-orange02">[초등 4 수학]</span>
-				여러 가지 삼각형–이등변 삼각형의 성질 탐구하기
+				<span class="col-orange02">[{{examInfo.examSubject}}]</span>
+				{{examInfo.examName}}
 			</h1>
 			<div class="solving-layout" v-if="isPopup == false">
 				<div class="explain-wrap">
@@ -683,6 +683,7 @@
             empty: '',
 			isLast: 'notlast',
 			localPath: 'http://localhost:8084/keris/student',
+			examInfo: {},
              // localPath: 'http://asse.edunet.net:8000/exam',
         },
         mounted() {
@@ -939,6 +940,12 @@
                 try {
                     // $.blockUI({message: '<span> Loading...</span>'});
                     // var _$ = $
+					let resultMemo = '';
+					let resultPaint = '';
+					let resultLike = '';
+					
+					
+					
                     var _this = this
  
                     var loginId = '${sessionScope.loginId}';
@@ -954,6 +961,66 @@
                         headers: headers
                     }).then(function (response) {
                         // _$.unblockUI()
+                        // console.log("all response is here")
+                        // console.log(response)
+                        // console.log(response.data.result.result.examInfo)
+						_this.examInfo = response.data.result.result.examInfo
+						
+						
+						
+                        // for(let r = 0; r < response.data.result.result.results; r++ ){
+						//
+                        //     let res = response.data.result.result.results[r]
+                        //     console.log("results")
+                        //     console.log(res)
+                        //     {
+                        //         if (res.questioId = active.id)
+                        //         {
+                        //
+                        //             res.like = active.like,
+						// 			res.memo = active.memo
+                        //             res.paint = active.paint
+                        //             res.time = active.time
+                        //             if (active.questionType = '1')
+                        //             {
+                        //                 for(let jj=0; jj< res.answers; jj++)
+                        //                 {
+                        //                     if ( item.id == jj.checkedAnswer )
+                        //                     {
+                        //                         item.selectedAnswer == true
+                        //                     }
+                        //                     else{
+                        //                         item.selectedAnswer == false
+                        //                     }
+                        //                 }
+                        //             }
+                        //             if (active.questionType = '2')
+                        //             {
+                        //                 if ( item.id == jj.checkedAnswer )
+                        //                 {
+                        //                     item.answerWrite == jj.inputedData
+                        //                 }
+                        //             }
+                        //             if (active.questionType = '3')
+                        //             {
+                        //                 for(let jj=0; jj< res.answers; jj++)
+                        //                 {
+                        //                     if ( item.id == jj.checkedAnswer )
+                        //                     {
+                        //                         item.selectedAnswer == true
+                        //                     }
+                        //                     else{
+                        //                         item.selectedAnswer == false
+                        //                     }
+                        //                 }
+                        //             }
+                        //             else{
+                        //                 console.log("canvas settings like this")
+                        //             }
+                        //         }
+						//
+                        //     }
+                        // }
 						
                         for (let select = 0; select < response.data.result.result.questions.length; select++) {
                             let active = response.data.result.result.questions[select];
@@ -966,83 +1033,38 @@
                             active.time = 0
                             active.drawingData = ""
                             active.answerWrite = ''
+							  
                             for (let a = 0; a < active.answers.length; a++) {
                                 let item = active.answers[a];
                                 item.selectedAnswer = false
                                 item.answerWrite = ''
 
-                                if (active.questionType == '4') {
-                                    // item.width = '100%'
-                                    // item.height = '100%'
-                                    item.width = '370px'
-                                    item.height = '370px'
+                                console.log("item resukt");
+                                console.log(response.data.result.result.results)
 
-                                    // let img = new Image();
-
-                                    // img.src = active.answers[0].drawingData
-                                    // img.src = _this.imgPath + 'examanswer/' + active.answers[0].drawingData
-
-                                    <%--console.log(img.src);--%>
-
-                                    <%--img.onload = () => {--%>
-                                    <%--    item.width = img.width + ""--%>
-                                    <%--    item.height = img.height + ""--%>
-                                    <%--    console.log(`the image dimensions are ${img.width}x${img.height} ${active.id}`);--%>
-                                    <%--}--%>
-                                }
-                                
-                                for(let r = 0; r < response.data.result.result.results; r++ ){
-                                    let res = response.data.result.result.results[r]
-                                    {
-                                        if (res.questioId = active.id)
-                                        {
-                                            res.like = active.like,
-											res.memo = active.memo
-                                            res.paint = active.paint
-                                            res.time = active.time
-                                            if (active.questionType = '1')
-                                            {
-                                                for(let jj=0; jj< res.answers; jj++)
-                                				{
-                                                    if ( item.id == jj.checkedAnswer )
-                                					{
-                                					    item.selectedAnswer == true
-                                					}
-                                                    else{
-                                                        item.selectedAnswer == false
-                                					}
-                                				}
-                                            }
-                                            if (active.questionType = '2')
-                                            {
-                                                if ( item.id == jj.checkedAnswer )
-                                				{
-                                				    item.answerWrite == jj.inputedData
-                                				}
-                                            }
-                                            if (active.questionType = '3')
-                                            {
-                                                for(let jj=0; jj< res.answers; jj++)
-                                                {
-                                                    if ( item.id == jj.checkedAnswer )
-                                                    {
-                                                        item.selectedAnswer == true
-                                                    }
-                                                    else{
-                                                        item.selectedAnswer == false
-                                                    }
-                                                }
-                                            }
-                                            else{
-                                                console.log("canvas settings like this")
-                                            }
-                                        }
-
-                                    }
-                                }
+                                <%--if (active.questionType == '4') {--%>
+                                <%--    item.width = '100%'--%>
+                                <%--    item.height = '100%'--%>
+                                <%--    item.width = '370px'--%>
+                                <%--    item.height = '370px'--%>
+								
+                                <%--    let img = new Image();--%>
+								
+                                <%--    img.src = active.answers[0].drawingData--%>
+                                <%--    img.src = _this.imgPath + 'examanswer/' + active.answers[0].drawingData--%>
+								
+                                <%--    console.log(img.src);--%>
+								
+                                <%--    img.onload = () => {--%>
+                                <%--        item.width = img.width + ""--%>
+                                <%--        item.height = img.height + ""--%>
+                                <%--        console.log(`the image dimensions are ${img.width}x${img.height} ${active.id}`);--%>
+                                <%--    }--%>
+                                <%--}--%>
                             }
-
                         }
+                        
+                        
 
 
                         _this.questions = response.data.result.result.questions
@@ -1070,7 +1092,6 @@
                         // setTimeout(() => {
                         //     _this.currentQuestion--;
                         // }, 50)
-                        console.log("done!!!")
                     }, function (error) {
                         console.log("axios error found")
                         console.log(error)
