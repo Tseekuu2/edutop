@@ -52,7 +52,7 @@
 										<li class="ar_l">
 											<div class="in_bx">
 												<img
-														:src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/'+ aItem.drawingData"
+														:src="'http://asse.edunet.net/uploadingDir/examanswer/'+ aItem.drawingData"
 														style="width:100% !important; margin: 0 !important"
 														class="uk-flex uk-flex-center"
 												/>
@@ -62,7 +62,7 @@
 										<li class="ar_r">
 											<div class="in_bx">
 												<img
-														:src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/'+ aItem.trueData"
+														:src="'http://asse.edunet.net/uploadingDir/examanswer/'+ aItem.trueData"
 														style="width:100% !important; margin: 0 !important"
 														class="uk-flex uk-flex-center"
 														/>
@@ -266,7 +266,7 @@
             // this.examId = this.$route.params.userId
             // this.getQuestions()
             // this.imgPath = window.location.protocol +'//'+ window.location.hostname+':80'+'/webapps/uploadingDir/'
-            // this.imgPath = 'http://103.41.247.45:80/webapps/uploadingDir'
+            // this.imgPath = 'http://asse.edunet.net/uploadingDir'
             // console.log("here is Userid : " +this.userId);
         },
         methods:{

@@ -42,7 +42,7 @@
                                 <div v-for="(apps, mindex) in item.datas" >
                                     <div v-if="apps.media != null">
                                         <p v-if=" apps.media.mediaType == 'image' ">
-                                            <img :src="'http://103.41.247.45:80/webapps/uploadingDir/examquestion/' + apps.media.fileName"
+                                            <img :src="'http://asse.edunet.net/uploadingDir/examquestion/' + apps.media.fileName"
                                                  :alt="apps.media.fileName"  :key="mindex" style="width: auto" />
                                         </p>
 <%--                                    <p class="tal col-darkgray mgt10 mgl25">--%>
@@ -88,7 +88,7 @@
                                                 <input type="button" name="numRadio" class="checkBtn uk-margin-remove"
                                                        style="padding-left: 0px;"
                                                        :value="aItem.optionNumber"   :class="{'answerFlag': aItem.selectedAnswer}"/>
-                                                <img  :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + aItem.media.fileName"
+                                                <img  :src="'http://asse.edunet.net/uploadingDir/examanswer/' + aItem.media.fileName"
                                                       :alt="aItem.media.fileName"  style="width: 300px !important;"
                                                       class="uk-margin-top uk-margin-left"/>
                                             </span>
@@ -126,7 +126,7 @@
                                                 <input type="button" name="numRadio" class="checkBtn uk-margin-remove"
                                                        style="padding-left: 0px;"
                                                        :value="aItem.optionNumber"   :class="{'answerFlag': aItem.selectedAnswer}"/>
-                                                <img  :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + aItem.media.fileName"
+                                                <img  :src="'http://asse.edunet.net/uploadingDir/examanswer/' + aItem.media.fileName"
                                                       :alt="aItem.media.fileName"  style="width: 300px !important;"
                                                       class="uk-margin-top uk-margin-left"/>
                                             </span>
@@ -150,7 +150,7 @@
                                     <p class="" style="border: 1px solid #080808; padding: 8px;">
                                         정답지 - 펜을 눌러 쓰세요.</p>
                                     <img
-                                            :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/' + aItem.drawingData"
+                                            :src="'http://asse.edunet.net/uploadingDir/examanswer/' + aItem.drawingData"
                                             class="uk-flex uk-flex-center" style="width:100% !important;
                                                  margin: 0 !important"/>
                                 </div>
@@ -159,7 +159,7 @@
                                         채점지 – 정답을 보고 채점하세요.
                                     </p>
                                     <img
-                                            :src="'http://103.41.247.45:80/webapps/uploadingDir/examanswer/'+aItem.trueData"
+                                            :src="'http://asse.edunet.net/uploadingDir/examanswer/'+aItem.trueData"
                                             class="uk-flex uk-flex-center"
                                             style="width:100% !important; margin: 0 !important"/>
                                 </div>
@@ -233,7 +233,8 @@
                                 <div class="popup-scroll height-type01 mgt15">
                                     <ul class="list-basic uk-padding-remove">
                                         <template v-for="(item,eindex) in questions" :key="eindex">
-                                            <li @click="webIndex(eindex)" class="like" v-if="item.like == '1'" style="display: flex";
+                                            <li @click="webIndex(eindex)" class="like" v-if="item.like == '1'"
+                                                style="display: flex;"
                                                 :class="{'changed': eindex == currentQuestion}" >
                                                 <span class="num-default">{{eindex+1}}</span>
                                                 <span v-if="item.questionType == '4'">
@@ -695,14 +696,14 @@
                         </div>
                     </div>
                 </div>
-            </section> 
+            </section>
         </div>
 <%--        <script>--%>
 <%--            $(".clip").click(function(){--%>
 <%--                $(this).toggleClass('none');--%>
 <%--            });--%>
 <%--        </script>--%>
-        
+    
     </section>
     <script type="module">
         import MathLive from '${ASSETS}/script/mathlive/dist/src/mathlive.js';
@@ -746,8 +747,8 @@
                 }
             },
             created(){
-                // this.imgPath = window.location.protocol +'//'+ window.location.hostname+':80'+'/webapps/uploadingDir/'
-                this.imgPath = 'http://103.41.247.45:80/webapps/uploadingDir'
+                // this.imgPath = window.location.protocol +'//'+ window.location.hostname+':80'+'/uploadingDir/'
+                this.imgPath = 'http://asse.edunet.net/uploadingDir'
                 // console.log("here is Userid : " +this.userId);
             },
             methods:{

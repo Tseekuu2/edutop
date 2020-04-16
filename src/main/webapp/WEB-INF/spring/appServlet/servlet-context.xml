@@ -36,6 +36,7 @@
             <mapping path="/exam/**" />
             <exclude-mapping path="/exam/" />
             <exclude-mapping path="/index.html" />
+            <exclude-mapping path="/exam/resources/**" />
             <exclude-mapping path="/resources/**" />
             <exclude-mapping path="/uploadingDir/**" />
             <exclude-mapping path="/logout"/>
