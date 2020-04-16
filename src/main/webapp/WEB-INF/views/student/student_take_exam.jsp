@@ -9,10 +9,12 @@
 </head>
 
 <body>
-<section id="takeexam" v-cloak>
-<%--	<vue-signature ref="signature" :sigOption="option" :w="'800px'" :h="'400px'"></vue-signature>--%>
+
+<section id="takeexam">
+
 	<div id="solving">
 		<section class="solving-wrap">
+			<vue-signature ref="signature"  :w="'800px'" :h="'400px'"></vue-signature>
 			<h1 class="title" style="margin: 0px;">
 				<span class="col-orange02">[{{examInfo.examSubject}}]</span>
 				{{examInfo.examName}}
