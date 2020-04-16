@@ -745,7 +745,6 @@
             webIndex(item) {
                 this.nextQuestion()
                 this.currentQuestion = item
-				
                 this.leavedQuestion = 0
                 for (let i = 0; i < this.questions.length; i++) {
                     
