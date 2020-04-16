@@ -698,7 +698,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0bb7b2', end
 
 .class-btn {margin-bottom:20px; overflow: hidden;}
 .class-btn > button {padding:0 25px; border:1px solid #888; color:#333; height:28px; border-radius: 3px; background:#fff;}
-.btn-sort {font-size: 15px; color:#222; font-weight: 600; background:url(src/main/webapp/resources/assets/images/icon-sort-down.png) no-repeat center right; padding-right:17px;}
+.btn-sort {font-size: 15px; color:#222; font-weight: 600; background:url(../../images/icon-sort-down.png) no-repeat center right; padding-right:17px;}
 .btn-sort.on {background-image:url(src/main/webapp/resources/assets/images/icon-sort-up.png);}
 
 /* 폼 (input, select, textarea) */

@@ -64,12 +64,12 @@
 			</div>
 			<!-- //board -->
 		</div>
-		<div class="tab_top_n01">
-			<ul>
-				<li class="on"><a href="#">내가 만든 평가</a></li>
-				<li><a href="#">Edulap for Math</a></li>
-			</ul>
-		</div>
+<%--		<div class="tab_top_n01">--%>
+<%--			<ul>--%>
+<%--				<li class="on"><a href="#">내가 만든 평가</a></li>--%>
+<%--				<li><a href="#">Edulap for Math</a></li>--%>
+<%--			</ul>--%>
+<%--		</div>--%>
 		<div class="content-board">
 			<div class="class-btn">
 				<button class="ftl">삭제</button>

@@ -383,10 +383,10 @@
                                                     >{{aindex+1}}</span>
                                                 </label>
                                                 <span class="ftr" v-if="item.answerFlag == true"><img
-                                                        src="${ASSETS}/img/viewer/icon-x.png"
+                                                        src="${ASSETS}/img/viewer/icon-o.png"
                                                         alt=""
                                                 /></span>
-                                                <span class="ftr" v-else><img src="${ASSETS}/img/viewer/icon-o.png"
+                                                <span class="ftr" v-else><img src="${ASSETS}/img/viewer/icon-x.png"
                                                                               alt=""
                                                 /></span>
                                                 
@@ -823,7 +823,7 @@
                                         question.like = question.resultData.like
                                         question.memo = question.resultData.memo
                                         question.paint =  question.resultData.paint
-                                        if (Object.key !== 0 )
+                                        if (Object.keys(question.resultData).length !== 0 )
                                         {
                                             console.log("searching true data")
                                             for (let d = 0; d < question.resultData.details.length; d++) {
