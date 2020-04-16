@@ -6,14 +6,17 @@
 	<link rel="stylesheet" type="text/css" href="${ASSETS}/css/studentTakeExam.css">
 	<link rel="stylesheet" type="text/css" href="${ASSETS}/script/mathlive/dist/mathlive.core.css">
 	<link rel="stylesheet" type="text/css" href="${ASSETS}/script/mathlive/dist/mathlive.css">
-<%--	<script type="text/javascript" src="${ASSETS}/script/vue/signature_pad.min.js"></script>--%>
-<%--	<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>--%>
-<%--	<script type="text/javascript" src="${ASSETS}/script/vue/drawing.js"></script>--%>
+	<%--	<script type="text/javascript" src="${ASSETS}/script/vue/signature_pad.min.js"></script>--%>
+	<%--	<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>--%>
+	<%--	<script type="text/javascript" src="${ASSETS}/script/vue/drawing.js"></script>--%>
 </head>
 
 <body>
 <section id="takeexam">
+	
+	
 	<div id="solving">
+		<vue-signature ref="signature" :sigOption="option" :w="'800px'" :h="'400px'"></vue-signature>
 		<section class="solving-wrap">
 			<h1 class="title" style="margin: 0px;">
 				<span class="col-orange02">[초등 4 수학]</span>
@@ -30,16 +33,17 @@
                                         <b class="col-orange02">{{questions.length}}</b></span>
 							</p>
 						</div>
-<%--						:class="{ 'showCanvas' : pencil2}"--%>
-<%--						<VueSignaturePad--%>
-<%--								style="width: 74.5%; height: 100%;  position:absolute;--%>
-<%--                                top:0; left: 0px; padding: 0; z-index:1.5; background: #ccc;"--%>
-<%--								ref="signaturePad"--%>
-<%--								class="signature-pad"--%>
-<%--								:options="options">--%>
-<%--						</VueSignaturePad>--%>
+						<%--						:class="{ 'showCanvas' : pencil2}"--%>
+						<%--<VueSignaturePad--%>
+						<%--style="width: 74.5%; height: 100%;  position:absolute;--%>
+						<%--top:0; left: 0px; padding: 0; z-index:1.5; background: #ccc;"--%>
+						<%--ref="signaturePad"--%>
+						<%--class="signature-pad"--%>
+						<%--:options="options">--%>
+						<%--</VueSignaturePad>--%>
+					
 						<div class="class-area popup-scroll">
-<%--							<canvas id="signature-pad" class="signature-pad" style="width: 100%; height: 100%"></canvas>--%>
+							<%--							<canvas id="signature-pad" class="signature-pad" style="width: 100%; height: 100%"></canvas>--%>
 							<div class="pdl60" v-for="(item,examIndex) in questions" :key="examIndex"
 								 v-show="currentQuestion === examIndex"
 								 :class="{'activeQuestion': currentQuestion === examIndex}">
@@ -220,7 +224,7 @@
 									</div>
 								</div>
 								<div class="answers-exp mgt60 uk-margin-large-bottom" v-else>
-									<div v-for="(aItem,index) in item.answers"  :key="index">
+									<div v-for="(aItem,index) in item.answers" :key="index">
 										<div v-if="aItem.answerFlag == 'math'">
 											<div class="uk-flex uk-margin-bottom">
 												<b>Guide text: </b>
@@ -234,7 +238,7 @@
 													@focus="ping"
 													:on-keystroke="displayKeystroke"
 													v-model="aItem.answerWrite"
-													style="border: 1px solid #ccc;padding: 10px;font-size: 17px;" >
+													style="border: 1px solid #ccc;padding: 10px;font-size: 17px;">
 												{{aItem.answerWrite}}
 											</mathlive-mathfield>
 										</div>
@@ -242,9 +246,9 @@
 											<div class="uk-flex uk-margin-bottom">
 												<b>Guide text: </b>
 												<p class="uk-margin-remove" style="padding-left: 15px;">
-												{{aItem.answer}} </p>
+													{{aItem.answer}} </p>
 											</div>
-										
+											
 											<input type="text" class="txt-input" placeholder="정답을 입력해 주세요"
 												   v-model="aItem.answerWrite"
 												   class="uk-width1-1" style="font-size: 16px; width: 100%;
@@ -274,8 +278,9 @@
 									<div class="popup-scroll height-type01 mgt15">
 										<ul class="list-basic uk-padding-remove">
 											<template v-for="(item,eindex) in questions" :key="eindex">
-												<li @click="webIndex(eindex)" class="like" v-if="item.like == '1'" style="display: flex";
-													:class="{'changed': eindex == currentQuestion}" >
+												<li @click="webIndex(eindex)" class="like" v-if="item.like == '1'"
+													style="display: flex" ;
+													:class="{'changed': eindex == currentQuestion}">
 													<span class="num-default">{{eindex+1}}</span>
 													<span v-if="item.questionType == '4'">
 														<p class="num-default uk-margin-remove">그리기 문제</p>
@@ -285,9 +290,11 @@
 														<input type="text" placeholder="주관식 문제"
 															   class="num-default uk-margin-remove" disabled
 															   :value="questions[currentQuestion].answerWrite">
-														<p class="num-default uk-margin-remove" placeholder="주관식 문제"></p>
+														<p class="num-default uk-margin-remove"
+														   placeholder="주관식 문제"></p>
 													</span>
-													<label class="" v-else v-for="(aitem,aindex) in item.answers" :key="aindex">
+													<label class="" v-else v-for="(aitem,aindex) in item.answers"
+														   :key="aindex">
 														<span class="number-txt" style="margin-right: 10px"
 															  :class="{'answerFlag': aitem.selectedAnswer}"
 														>{{aindex+1}}</span>
@@ -301,7 +308,8 @@
 						                                            </span>
 													<span class="answer-text" v-else-if="item.questionType == '2'">
 <%--						                                                <p class="num-default uk-margin-remove">주관식 문제</p>--%>
-														<template v-for="(ans,ansIndex) in item.answers" :key="ansIndex">
+														<template v-for="(ans,ansIndex) in item.answers"
+																  :key="ansIndex">
 <%--														    <p class="num-default uk-margin-remove"></p>--%>
 															<input type="text" placeholder="주관식 문제" disabled
 																   class="num-default uk-margin-remove"
@@ -326,7 +334,7 @@
 										<ul class="list-basic uk-padding-remove">
 											<li v-for="(item,eindex) in questions" :key="eindex"
 												@click="webIndex(eindex)" v-if="item.answerselected == false"
-												:class="{'changed': eindex === currentQuestion}"  style="display: flex;">
+												:class="{'changed': eindex === currentQuestion}" style="display: flex;">
 												<span class="num-default">{{eindex+1}}</span>
 												<span v-if="item.questionType == '4'">
                                                     <p class="num-default uk-margin-remove">그리기 문제</p>
@@ -355,7 +363,8 @@
 									<div class="popup-scroll height-type01 mgt15">
 										<ul class="list-basic uk-padding-remove">
 											<template v-for="(item,eindex) in questions" :key="eindex">
-												<li @click="webIndex(eindex)" class="like" v-if="item.like == '1'" style="display: flex;"
+												<li @click="webIndex(eindex)" class="like" v-if="item.like == '1'"
+													style="display: flex;"
 													:class="{'changed': eindex == currentQuestion}">
 													<span class="num-default">{{eindex+1}}</span>
 													<span v-if="item.questionType == '4'">
@@ -396,10 +405,10 @@
 						<button class="clip mobile-view" @click="bigLike(currentQuestion)" v-else>찜하기</button>
 						<button class="pen_n mobile-blind">펜쓰기</button>
 						<button class="erase mobile-blind" @click="undo">지우개</button>
-<%--						<button class="memo_n mobile-view" href="#memosPopup"--%>
-<%--								v-if="questions[currentQuestion].memo.length > 0" uk-toggle>메모--%>
-<%--						</button>--%>
-<%--						v-else --%>
+						<%--						<button class="memo_n mobile-view" href="#memosPopup"--%>
+						<%--								v-if="questions[currentQuestion].memo.length > 0" uk-toggle>메모--%>
+						<%--						</button>--%>
+						<%--						v-else --%>
 						<button class="memo mobile-view" href="#memosPopup" uk-toggle>메모
 						</button>
 						<button class="next mobile-view" @click="nextQuestion">다음문제</button>
@@ -481,7 +490,9 @@
 						</ul>
 					</div>
 				</div>
-				
+				<vue-signature ref="signature" :sigOption="option" :w="'800px'" :h="'400px'"></vue-signature>
+				<button @click="save">Save</button>
+				<button @click="clear">clear</button>
 				<!-- 2020-02-27 -->
 				<div class="next-area mgt15">
 					<div class="solving-nav tac mobile-view" style="overflow:visible;">
@@ -491,34 +502,184 @@
 				<!-- //2020-02-27 -->
 			</div>
 		</section>
+		<template id="vue-signature" :style="{width:w,height:h}">
+			<canvas style="border:1px solid #000000;" :id="uid" class="canvas" :data-uid="uid"></canvas>
+		</template>
+		<div id="app">
 		
+		</div>
 	</div>
+	
+	
+	
 </section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
+
 <script type="module">
     // import VueSignaturePad from 'vue-signature-pad';
     // import Vue from 'vue';
 
     import MathLive from '${ASSETS}/script/mathlive/dist/src/mathlive.js';
     import Mathfield from '${ASSETS}/script/mathlive/dist/vue-mathlive.js';
+
+
     // import VueSignaturePad from '../../../../../../node_modules/vue-signature-pad/dist/vue-signature-pad.js';
     // Vue.use(VueSignaturePad);
     Vue.use(Mathfield, MathLive);
-
+    
+    
+    
+    
+    
     var router = new VueRouter({
         mode: 'history',
         routes: []
     });
 
+
+
+    Vue.component('vue-signature', {
+        template: '#vue-signature',
+        props:{
+            sigOption: {
+                type:Object,
+                default:()=>{
+                    return {
+                        backgroundColor:'rgb(255,255,255)',
+                        penColor : 'rgb(0, 0, 0)'
+                    }
+                },
+            },
+            w:{
+                type:String,
+                default:"100%"
+            },
+            h:{
+                type:String,
+                default:"100%"
+            },
+            clearOnResize:{
+                type:Boolean,
+                default:false
+            }
+        },
+        data(){
+            return {
+                sig:()=>{},
+                option:{
+                    backgroundColor:'rgb(255,255,255)',
+                    penColor : 'rgb(0, 0, 0)'
+                },
+                uid:""
+            }
+        },
+        created(){
+            var _this = this;
+            this.uid = "canvas" + _this._uid
+            var sigOptions = Object.keys(_this.sigOption);
+            for(var item of sigOptions){
+                _this.option[item] = _this.sigOption[item]
+            }
+        },
+        methods:{
+            draw(){
+                var _this = this;
+                var canvas = document.getElementById(_this.uid)
+                _this.sig = new SignaturePad(canvas,_this.option);
+                function resizeCanvas() {
+                    var url;
+                    if(!_this.isEmpty()){
+                        url = _this.save();
+                    }
+                    var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+                    canvas.width = canvas.offsetWidth * ratio;
+                    canvas.height = canvas.offsetHeight * ratio;
+                    canvas.getContext("2d").scale(ratio, ratio);
+                    _this.clear();
+                    !_this.clearOnResize && url !== undefined && _this.fromDataURL(url)
+                }
+                window.addEventListener("resize", resizeCanvas);
+                resizeCanvas();
+            },
+            clear(){
+                var _this = this;
+                _this.sig.clear();
+            },
+            save(format){
+                var _this = this;
+                return format ? _this.sig.toDataURL(format) :  _this.sig.toDataURL()
+                // signaturePad.toDataURL(); // save image as PNG
+                // signaturePad.toDataURL("image/jpeg"); // save image as JPEG
+                // signaturePad.toDataURL("image/svg+xml"); // save image as SVG
+            },
+            fromDataURL(url){
+                var _this = this;
+                _this.sig.fromDataURL(url)
+            },
+            isEmpty(){
+                var _this = this;
+                return _this.sig.isEmpty();
+            },
+            undo(){
+                var _this = this;
+                var data = _this.sig.toData();
+                if(data){
+                    data.pop()
+                    _this.sig.fromData(data);
+                }
+            },
+            addWaterMark(data){
+                var _this = this;
+                if(!(Object.prototype.toString.call(data) == '[object Object]')){
+                    throw new Error("Expected Object, got "+typeof data+".")
+                }else{
+                    var vCanvas = document.getElementById(_this.uid);
+                    var textData = {
+                        text:data.text || '',
+                        x:data.x || 20,
+                        y:data.y || 20,
+                        sx:data.sx || 40,
+                        sy:data.sy || 40
+                    }
+
+                    var ctx = vCanvas.getContext('2d');
+                    ctx.font = data.font || '20px sans-serif';
+                    ctx.fillStyle = data.fillStyle || "#333";
+                    ctx.strokeStyle = data.strokeStyle || "#333";
+                    if(data.style == 'all'){
+                        ctx.fillText(textData.text,textData.x,textData.y);
+                        ctx.strokeText(textData.text,textData.sx,textData.sx);
+                    }else if(data.style == 'stroke'){
+                        ctx.strokeText(textData.text,textData.sx,textData.sx);
+                    }else{
+                        ctx.fillText(textData.text,textData.x,textData.y);
+                    }
+                    _this.sig._isEmpty = false
+                }
+            }
+        },
+        mounted(){
+            var _this = this;
+            this.$nextTick(() => {
+                _this.draw()
+            });
+        }
+    })
+
     var app = new Vue({
         el: '#takeexam',
         router,
-		components:{
+        components: {
             // VueSignaturePad
-		},
+        },
         data: {
             formula: 'x=-b\\pm \\frac {\\sqrt{b^2-4ac}}{2a}',
             keystroke: '',
             // images: ['../../assets/img/viewer/icon_dec_on.png'],
+
+            option: {
+                penColor: "rgb(0, 0, 0)"
+            },
             options2: {
                 penColor: "#0d87f9"
             },
@@ -547,8 +708,8 @@
             isPopup: false,
             imgPath: '',
             empty: '',
-			isLast: 'notlast',
-			localPath: 'http://localhost:8084/exam/student',
+            isLast: 'notlast',
+            localPath: 'http://localhost:8081/keris/student',
             // localPath: 'http://devasse.edunet.net:8000/exam',
         },
         mounted() {
@@ -559,12 +720,12 @@
             this.imgPath = 'http://103.41.247.45:80/webapps/uploadingDir/'
             // this.imgPath = window.location.protocol +'//'+ window.location.hostname+':80'+'/webapps/uploadingDir/'
             console.log(this.imgPath)
-			
+
             if (typeof this.$route.query.examId != 'undefined') {
 
                 let id = this.$route.query.examId;
                 this.examId = id
-				
+
                 this.getQuestions(id)
             } else {
                 alert("exam id undefined")
@@ -572,8 +733,22 @@
         },
         created() {
             // this.imgPath = window.location.protocol +'//'+ window.location.hostname+':80'+'/webapps/uploadingDir/'
+
         },
         methods: {
+            save() {
+                var _this = this;
+                var png = _this.$refs.signature.save()
+                var jpeg = _this.$refs.signature.save('image/jpeg')
+                var svg = _this.$refs.signature.save('image/svg+xml');
+                console.log(png);
+                console.log(jpeg)
+                console.log(svg)
+            },
+            clear() {
+                var _this = this;
+                _this.$refs.signature.clear();
+            },
             colorChange() {
                 this.options2 = {
                     penColor: "#ff9d35"
@@ -589,51 +764,50 @@
                     penColor: "#0d87f9"
                 };
             },
-			saveLast(){
+            saveLast() {
                 console.log(this.questions.length)
                 // if (this.currentQuestion > this.questions.length - 1){
                 // 	if (this.leavedQuestion <= 1) {
-                        this.isLast = 'last'
-                        this.nextQuestion()
-					// }
-                    // else{
-                    //     alert(" You should finish all your question.")
-					// }
+                this.isLast = 'last'
+                this.nextQuestion()
+                // }
+                // else{
+                //     alert(" You should finish all your question.")
+                // }
                 // }
                 // else{
                 // 	alert(" This is not last question!!! ")
                 // }
-				},
+            },
             mobileBack() {
                 this.isPopup = false
             },
             webIndex(item) {
                 this.currentQuestion = item
-				
+
                 this.leavedQuestion = 0
                 for (let i = 0; i < this.questions.length; i++) {
-                    
+
                     let a = this.questions[i];
 
                     if (a.questionType == '2') {
                         //typeof(this.questions[i].answerWrite) !== 'undefined' ||
                         if (this.questions[i].answerWrite ==
-							"") {
+                            "") {
                             this.leavedQuestion++
                         }
                     }
-                    if(a.questionType == '4'){
+                    if (a.questionType == '4') {
                         if (a.drawingData == '') {
                             this.leavedQuestion++
                         }
-                    }
-                    else{
-                        if ( a.answerselected == false ) {
+                    } else {
+                        if (a.answerselected == false) {
                             this.leavedQuestion++
                         }
                     }
                 }
-               
+
                 // if (this.questions[this.currentQuestion].questionType === '4') {
                 //
                 //     let {isEmpty, data} = this.$refs.qcanvas[0].saveSignature()
@@ -649,7 +823,7 @@
 
                     return
                     console.log("false pencil2")
-					
+
                 } else {
 
                     // if (this.questions[item].questionType === '4') {
@@ -742,13 +916,12 @@
                 try {
                     let question = {}
                     let sendAnswer = []
-					let typeBool = false
+                    let typeBool = false
 
                     if (this.pencil2 == false) {
                         alert("펜쓰기 저장 버튼을 눌러주세요.")
                         return
-                    }
-                    else {
+                    } else {
                         if (this.leavedQuestion > 0) {
 
                             this.leavedQuestion = 0
@@ -758,41 +931,37 @@
 
                                 if (a.questionType == '2') {
                                     //typeof(this.questions[i].answerWrite) !== 'undefined' ||
-                                    if ( this.questions[i].answerWrite == "") {
+                                    if (this.questions[i].answerWrite == "") {
                                         this.leavedQuestion++
-                                    }
-                                    else{
+                                    } else {
                                     }
                                 }
-                                if(a.questionType == '4'){
+                                if (a.questionType == '4') {
                                     if (a.drawingData == '') {
                                         this.leavedQuestion++
                                     }
-                                }
-                                else{
-                                    if ( a.answerselected == false && a.questionType != 2) {
+                                } else {
+                                    if (a.answerselected == false && a.questionType != 2) {
                                         this.leavedQuestion++
-                                    }
-                                    else{
+                                    } else {
                                     }
                                 }
                             }
                         }
-						
+
                         if (this.questions[this.currentQuestion].questionType == "2") {
-							for (let i = 0; i < this.questions[this.currentQuestion].answers.length; i++)
-							{
-								let choose = this.questions[this.currentQuestion].answers[i]
-									let iitem ={
-										answerFlag: choose.answerFlag,
-										answerId: choose.id,
-										answerTrueData: choose.trueData,
-										answerData: choose.answerWrite,
-										optionNumber:""
-									}
-									
-								sendAnswer.push(iitem)
-							}
+                            for (let i = 0; i < this.questions[this.currentQuestion].answers.length; i++) {
+                                let choose = this.questions[this.currentQuestion].answers[i]
+                                let iitem = {
+                                    answerFlag: choose.answerFlag,
+                                    answerId: choose.id,
+                                    answerTrueData: choose.trueData,
+                                    answerData: choose.answerWrite,
+                                    optionNumber: ""
+                                }
+
+                                sendAnswer.push(iitem)
+                            }
                         }
                         if (this.questions[this.currentQuestion].questionType == "4") {
                             for (let i = 0; i < this.questions[this.currentQuestion].answers.length; i++) {
@@ -806,15 +975,13 @@
                                 }
                                 sendAnswer.push(iitem)
                             }
-                        }
-                        else {
+                        } else {
                             for (let i = 0; i < this.questions[this.currentQuestion].answers.length; i++) {
                                 let choose = this.questions[this.currentQuestion].answers[i]
                                 if (choose.selectedAnswer == true) {
-                                    if(choose.answerFlag == 'true')
-									{
-                                        typeBool  = true
-									}
+                                    if (choose.answerFlag == 'true') {
+                                        typeBool = true
+                                    }
                                     let iitem = {
                                         answerFlag: typeBool,
                                         answerId: choose.id,
@@ -827,7 +994,7 @@
                             }
                         }
                         var loginId = '${sessionScope.loginId}';
-                        
+
                         question.questionId = this.questions[this.currentQuestion].id
                         question.examId = this.examId
                         question.paint = this.questions[this.currentQuestion].paint
@@ -835,84 +1002,80 @@
                         question.memo = this.questions[this.currentQuestion].memo
                         question.time = this.questions[this.currentQuestion].time
                         question.answers = sendAnswer
-						question.loginId = loginId
-						question.islast = this.isLast
-						question.classId = 'demoClass'
-                        
+                        question.loginId = loginId
+                        question.islast = this.isLast
+                        question.classId = 'demoClass'
+
                         const headers = {
                             'Content-Type': 'application/json'
                         }
-                        
+
                         axios.post('${BASEURL}/exam/result/put',
-							question,
-							{
-							    headers: headers
-							}).then((response)=> {
+                            question,
+                            {
+                                headers: headers
+                            }).then((response) => {
 
                             console.log("question result put response ")
                             console.log(response)
-							
-							
-						if(response.status == 200) {
-                            if (this.currentQuestion >= this.questions.length-1) {
-                                if (this.isLast == 'last')
-								{
-                                    let url = this.localPath + "/result_see" + "?examId=" + this.examId + "&userId=" + loginId
 
-                                    window.location.href = url
-									
-								}
-                                else{
-                                    alert("마지막 문제입니다. 다음 문제가 없습니다.")
-                                    return
-								}
-                            }
-                            else{
 
-                                this.currentQuestion++
+                            if (response.status == 200) {
+                                if (this.currentQuestion >= this.questions.length - 1) {
+                                    if (this.isLast == 'last') {
+                                        let url = this.localPath + "/result_see" + "?examId=" + this.examId + "&userId=" + loginId
 
-                                // this.$nextTick(() => {
-                                //     this.$refs.qcanvas[0].fromDataURL(this.questions[this.currentQuestion].drawingData)
-                                // })
+                                        window.location.href = url
 
-                                if (this.questions[this.currentQuestion].like == '0') {
-                                    this.bigheartlike = false
+                                    } else {
+                                        alert("마지막 문제입니다. 다음 문제가 없습니다.")
+                                        return
+                                    }
                                 } else {
-                                    this.bigheartlike = true
+
+                                    this.currentQuestion++
+
+                                    // this.$nextTick(() => {
+                                    //     this.$refs.qcanvas[0].fromDataURL(this.questions[this.currentQuestion].drawingData)
+                                    // })
+
+                                    if (this.questions[this.currentQuestion].like == '0') {
+                                        this.bigheartlike = false
+                                    } else {
+                                        this.bigheartlike = true
+                                    }
+
+                                    this.pencil2 == false
+
                                 }
-
-                                this.pencil2 == false
-                                
-							}
-									// this.$refs.signaturePad.clearSignature();
-									// this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
+                                // this.$refs.signaturePad.clearSignature();
+                                // this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
 
 
-							// if (this.questions[this.currentQuestion].questionType === '4') {
-							//     this.$nextTick(() => {
-							//         this.$refs.qcanvas[this.currentQuestion].clearSignature();
-							//         this.$refs.qcanvas[this.currentQuestion].fromDataURL(this.questions[this.currentQuestion].answers[0].answerData)
-							//     });
-							// }
+                                // if (this.questions[this.currentQuestion].questionType === '4') {
+                                //     this.$nextTick(() => {
+                                //         this.$refs.qcanvas[this.currentQuestion].clearSignature();
+                                //         this.$refs.qcanvas[this.currentQuestion].fromDataURL(this.questions[this.currentQuestion].answers[0].answerData)
+                                //     });
+                                // }
 
 
-							// if (this.questions[this.currentQuestion].questionType === '4') {
-							//     let {isEmpty, data} = this.$refs.qcanvas[0].saveSignature()
-							//     if (isEmpty == false) {
-							//         this.questions[this.currentQuestion].drawingData = data
-							//     }
-							// }
-							}
-                            else{
+                                // if (this.questions[this.currentQuestion].questionType === '4') {
+                                //     let {isEmpty, data} = this.$refs.qcanvas[0].saveSignature()
+                                //     if (isEmpty == false) {
+                                //         this.questions[this.currentQuestion].drawingData = data
+                                //     }
+                                // }
+                            } else {
                                 alert(response.data.message)
                                 window.close();
                             }
-                        },function (error){
+                        }, function (error) {
                             console.log("axios error found")
                             console.log(error);
                         });
 
-                        
+
                     }
                 } catch (error) {
                     console.log(error)
@@ -935,14 +1098,14 @@
                     axios.get('${BASEURL}/exam/student/questions', {
                         params: {
                             examId: examId,
-                            loginId : loginId
+                            loginId: loginId
                         },
                         headers: headers
                     }).then(function (response) {
                         // _$.unblockUI()
                         for (let select = 0; select < response.data.result.result.questions.length; select++) {
                             let active = response.data.result.result.questions[select];
-						
+
                             active.like = '0'
                             active.memo = ""
                             active.paint = ""
@@ -950,25 +1113,25 @@
                             active.answerselected = false
                             active.time = 0
                             active.drawingData = ""
-							active.answerWrite = ''
+                            active.answerWrite = ''
                             for (let a = 0; a < active.answers.length; a++) {
                                 let item = active.answers[a];
                                 item.selectedAnswer = false
                                 item.answerWrite = ''
-                             
+
                                 if (active.questionType == '4') {
                                     // item.width = '100%'
                                     // item.height = '100%'
                                     item.width = '370px'
                                     item.height = '370px'
-						
+
                                     // let img = new Image();
-						
+
                                     // img.src = active.answers[0].drawingData
                                     // img.src = _this.imgPath + 'examanswer/' + active.answers[0].drawingData
-						
+
                                     <%--console.log(img.src);--%>
-									
+
                                     <%--img.onload = () => {--%>
                                     <%--    item.width = img.width + ""--%>
                                     <%--    item.height = img.height + ""--%>
@@ -987,22 +1150,22 @@
                                 //             if (active.questionType = '1')
                                 //             {
                                 //                 for(let jj=0; jj< res.answers; jj++)
-								// 				{
+                                // 				{
                                 //                     if ( item.id == jj.checkedAnswer )
-								// 					{
-								// 					    item.selectedAnswer == true
-								// 					}
+                                // 					{
+                                // 					    item.selectedAnswer == true
+                                // 					}
                                 //                     else{
                                 //                         item.selectedAnswer == false
-								// 					}
-								// 				}
+                                // 					}
+                                // 				}
                                 //             }
                                 //             if (active.questionType = '2')
                                 //             {
                                 //                 if ( item.id == jj.checkedAnswer )
-								// 				{
-								// 				    item.answerWrite == jj.inputedData
-								// 				}
+                                // 				{
+                                // 				    item.answerWrite == jj.inputedData
+                                // 				}
                                 //             }
                                 //             if (active.questionType = '3')
                                 //             {
@@ -1021,23 +1184,23 @@
                                 //                 console.log("canvas settings like this")
                                 //             }
                                 //         }
-								//
+                                //
                                 //     }
                                 // }
                             }
-                           
+
                         }
-                        
-                        
+
+
                         _this.questions = response.data.result.result.questions
                         console.log(_this.questions)
                         _this.leavedQuestion = _this.questions.length
 
                         // console.log("here is results")
                         // console.log(response.data.result.result.results)
-						
+
                         // var _this = this
-						
+
                         // if (response.data.success == true) {
                         //     if (_this.questions[_this.currentQuestion].questionType === '4') {
                         //         for (let i = 0; i < _this.questions.length; i++) {
@@ -1048,7 +1211,7 @@
                         //             });
                         //         }
                         //     }
-                            _this.toggleTimer()
+                        _this.toggleTimer()
                         // }
                         // _this.currentQuestion++;
                         // setTimeout(() => {
@@ -1087,13 +1250,12 @@
                                         this.leavedQuestion++
                                     }
                                 }
-                                if(a.questionType == '4'){
+                                if (a.questionType == '4') {
                                     if (a.drawingData == '') {
                                         this.leavedQuestion++
                                     }
-                                }
-                                else{
-                                    if ( a.answerselected == false && a.questionType != 2) {
+                                } else {
+                                    if (a.answerselected == false && a.questionType != 2) {
                                         this.leavedQuestion++
                                     }
                                 }
@@ -1174,19 +1336,20 @@
                         )) ||
                     ''
                 );
+            },
+            drawing() {
+                this.pencil2 = !this.pencil2
+                // this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].answerData);
+                if (this.pencil2 == true) {
+                    const {isEmpty, data} = this.$refs.signaturePad.saveSignature();
+                    this.questions[this.currentQuestion].paint = data
+                    this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
+                }
             }
-
-            // drawing() {
-            //     this.pencil2 = !this.pencil2
-            //     // this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].answerData);
-            //     if (this.pencil2 == true) {
-            //         const {isEmpty, data} = this.$refs.signaturePad.saveSignature();
-            //         this.questions[this.currentQuestion].paint = data
-            //         this.$refs.signaturePad.fromDataURL(this.questions[this.currentQuestion].paint)
-            //     }
-            // },
         }
     })
+
+    app.$mount('#app')
 </script>
 
 </body>

@@ -244,7 +244,7 @@
             imgPath: '',
             userId: 0,
             // localPath: 'http://192.168.1.9:8084/exam'
-            localPath: 'http://devasse.edunet.net:8000/exam',
+            localPath: 'http://asse.edunet.net/exam',
         },
         mounted(){
             let parameters = this.$route.query

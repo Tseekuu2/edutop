@@ -652,8 +652,8 @@
                 totalQuestionNumber: 0,
                 userId: 0,
                 linkPath: 'http://103.41.247.45/kerisexam',
-                // localPath: 'http://localhost:8084/exam'
-                localPath: 'http://devasse.edunet.net:8000/exam',
+                localPath: 'http://localhost:8081/keris'
+                // localPath: 'http://asse.edunet.net/exam',
             }
         },
 
